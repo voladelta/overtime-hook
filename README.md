@@ -15,4 +15,16 @@ forge lint src --severity high --severity med
 
 The pinned fork test reads `MAINNET_RPC_URL`. Architecture and evidence are indexed from [DESIGN.md](DESIGN.md), [TEST_PLAN.md](TEST_PLAN.md), and [submissions/overtime-v1/EVIDENCE.md](submissions/overtime-v1/EVIDENCE.md).
 
+## Run the MVP
+
+The React demo starts with an interactive representative round and can be bound to deployed contracts through its environment file.
+
+```sh
+cd demo
+npm install
+npm run dev
+```
+
+See [demo/README.md](demo/README.md) for the live-address configuration. The transaction path uses wagmi and viem and remains disabled until every required address and a nonzero minimum token output are configured.
+
 No deployment, audit, Programmable acceptance, routing support, or production availability is claimed.

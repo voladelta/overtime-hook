@@ -6,3 +6,5 @@ dependencies/runtime/
 evidence/raw/
 *.log
 .DS_Store
+demo/node_modules/
+demo/dist/
