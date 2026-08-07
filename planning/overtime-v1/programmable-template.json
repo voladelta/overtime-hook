@@ -1,0 +1,454 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "programmable-project-template",
+  "catalogDigest": "a7875ce817fafd7ca4e0655e2937fa5a49b602283aa846e804732d18e6c1478e",
+  "selectionDigest": "7fdc4dec40607828fd11ffe8b4d8d885d1bf98d14ae2af3ec233e6802fc4a3f2",
+  "policy": {
+    "selectionSemantics": "accelerator-only",
+    "eligibilityEffect": "none",
+    "unknownCapabilityOutcome": "architecture-review-required",
+    "missingCatalogLabelOutcome": "preserve-custom-capability",
+    "automaticAdverseDecision": false
+  },
+  "selection": {
+    "starterId": "custom-hook",
+    "requestedPackIds": [
+      "hook-owned-project-fee",
+      "launch-distribution-vesting-lp-custody"
+    ],
+    "defaultPackIds": [
+      "custom-hook-behavior",
+      "metadata-disclosures",
+      "programmable-volume-fee",
+      "test-evidence-threat-model"
+    ],
+    "autoIncludedPackIds": [],
+    "selectedPackIds": [
+      "custom-hook-behavior",
+      "hook-owned-project-fee",
+      "launch-distribution-vesting-lp-custody",
+      "metadata-disclosures",
+      "programmable-volume-fee",
+      "test-evidence-threat-model"
+    ]
+  },
+  "starter": {
+    "schemaVersion": "1.0.0",
+    "kind": "starter",
+    "id": "custom-hook",
+    "label": "Custom Uniswap v4 hook",
+    "summary": "Start a canonical v4 pool whose custom hook owns the required pool behavior and fee integration.",
+    "acceleratorOnly": true,
+    "eligibilityEffect": "none",
+    "unknownCapabilityPolicy": "preserve-and-route",
+    "reviewRoute": "custom-review",
+    "defaultPacks": [
+      "custom-hook-behavior",
+      "metadata-disclosures",
+      "programmable-volume-fee",
+      "test-evidence-threat-model"
+    ],
+    "conflictsWith": [],
+    "capabilities": [
+      "canonical-v4-pool",
+      "custom-hook-behavior"
+    ],
+    "projectSurfaces": [
+      "contract",
+      "indexer",
+      "metadata"
+    ],
+    "requiredFacts": [
+      "Why each enabled callback is necessary",
+      "The exact PoolKey, permission mask and hook address derivation",
+      "All currency flows, settlement rules, authorities and exits",
+      "How custom behavior composes with the mandatory Programmable fee"
+    ],
+    "requiredFiles": [
+      "Hook and launcher source",
+      "Pinned dependency and compiler configuration",
+      "Architecture proposal",
+      "Threat model",
+      "Test plan",
+      "Evidence index"
+    ],
+    "requiredTests": [
+      "PoolManager authentication and PoolKey admission",
+      "Permission-mask and hook-address checks",
+      "Value-conservation fuzzing and stateful invariants",
+      "Complete lifecycle and failure recovery"
+    ],
+    "risks": [
+      "Callback or accounting mistakes can affect every swap",
+      "Custom routing or hookData can narrow provider support"
+    ],
+    "definitionSha256": "755f095582c6b9c2f8c8c8c2cef0913b07c589a96e94fe2267b2173e488701ca"
+  },
+  "packs": [
+    {
+      "schemaVersion": "1.0.0",
+      "kind": "pack",
+      "id": "custom-hook-behavior",
+      "label": "Custom hook behavior",
+      "summary": "Document and test custom PoolManager callbacks without assuming any specific product category.",
+      "acceleratorOnly": true,
+      "eligibilityEffect": "none",
+      "unknownCapabilityPolicy": "preserve-and-route",
+      "reviewRoute": "custom-review",
+      "requires": [
+        "programmable-volume-fee"
+      ],
+      "conflictsWith": [],
+      "capabilities": [
+        "custom-hook-behavior"
+      ],
+      "projectSurfaces": [
+        "contract",
+        "indexer"
+      ],
+      "requiredFacts": [
+        "Every enabled callback and why it is necessary",
+        "Canonical PoolManager authentication and PoolKey admission",
+        "Permission bits, HookMiner preimage and deployment address",
+        "All returned deltas, settlement steps and callback failure effects"
+      ],
+      "requiredFiles": [
+        "Hook source",
+        "Hook address and permission evidence",
+        "Callback and accounting design",
+        "Integration tests"
+      ],
+      "requiredTests": [
+        "Direct non-PoolManager callback rejection",
+        "Permission mask and deployed address bits",
+        "Value conservation and settlement ordering",
+        "Unexpected PoolKey, malformed hookData and reentrancy paths"
+      ],
+      "risks": [
+        "The callback sender is not the end user",
+        "Returned deltas create hook liabilities and require explicit conservation",
+        "Every unnecessary permission expands the attack surface"
+      ],
+      "definitionSha256": "202848994958e3487badfa447199ad7de4691432b0ba750e243dbe2eaddb283c"
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "kind": "pack",
+      "id": "hook-owned-project-fee",
+      "label": "Hook-owned project fee",
+      "summary": "Add a disclosed project share inside the same effective total fee as the Programmable share.",
+      "acceleratorOnly": true,
+      "eligibilityEffect": "none",
+      "unknownCapabilityPolicy": "preserve-and-route",
+      "reviewRoute": "custom-review",
+      "requires": [
+        "custom-hook-behavior",
+        "programmable-volume-fee"
+      ],
+      "conflictsWith": [],
+      "capabilities": [
+        "claimable-project-fee",
+        "quote-side-volume-accounting"
+      ],
+      "projectSurfaces": [
+        "contract",
+        "indexer",
+        "metadata"
+      ],
+      "requiredFacts": [
+        "Selected total fee and the exact non-additive platform and project split",
+        "Project beneficiary, mutation rules, liability keys and claim behavior",
+        "Executed gross quote-side basis, rounding and partial-fill behavior",
+        "Public fee disclosure for every trading surface"
+      ],
+      "requiredFiles": [
+        "Integrated fee-hook source",
+        "Project beneficiary policy",
+        "Accounting and claim tests",
+        "Public fee disclosure"
+      ],
+      "requiredTests": [
+        "Project share is zero at the 10-basis-point floor",
+        "Higher selected totals split without adding another 10 basis points",
+        "Beneficiary mutation cannot redirect the platform share",
+        "Solvency, claims and pool isolation"
+      ],
+      "risks": [
+        "Additive implementation would charge more than the selected total",
+        "Mutable recipients can create undisclosed payout control"
+      ],
+      "definitionSha256": "2efb2f23e06ba24b45d05742966ca1910c43a78bddee20477bbde4cd4522e10d"
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "kind": "pack",
+      "id": "launch-distribution-vesting-lp-custody",
+      "label": "Launch distribution, vesting and LP custody",
+      "summary": "Plan initial allocations, vesting claims and liquidity-position custody as one conserved launch value flow.",
+      "acceleratorOnly": true,
+      "eligibilityEffect": "none",
+      "unknownCapabilityPolicy": "preserve-and-route",
+      "reviewRoute": "architecture-review-required",
+      "requires": [],
+      "conflictsWith": [],
+      "capabilities": [
+        "launch-distribution",
+        "liquidity-position-custody",
+        "vesting-schedules"
+      ],
+      "projectSurfaces": [
+        "application",
+        "contract",
+        "indexer",
+        "metadata"
+      ],
+      "requiredFacts": [
+        "Total supply allocation across sale, liquidity, treasury, team, rewards and every other recipient",
+        "Vesting start, cliff, duration, cadence, revocation, acceleration, transfer and unclaimed-token rules",
+        "Initial-liquidity funding and exact LP position owner, fee beneficiary, lock, removal and migration rules",
+        "Who can change recipients, schedules, custody or claims and which commitments are immutable",
+        "Treatment of failed launches, unsold allocation, rounding dust, retirement and user exits"
+      ],
+      "requiredFiles": [
+        "Supply-allocation table",
+        "Distribution and claim source",
+        "Vesting schedule source and beneficiary snapshot",
+        "LP custody, lock and removal policy",
+        "Public allocation and control disclosure"
+      ],
+      "requiredTests": [
+        "All allocations, claims, liquidity funding and residual balances conserve total supply",
+        "Cliff, linear or stepped vesting boundaries before, at and after every transition",
+        "Duplicate claim, recipient mutation, revocation, acceleration and abandoned-beneficiary cases",
+        "LP creation, fee collection, lock expiry, removal, migration and emergency-exit authority",
+        "Failed launch, unsold allocation, zero beneficiary, rounding dust and retirement behavior"
+      ],
+      "risks": [
+        "Allocation or vesting authority can hide insider control or change circulating supply expectations",
+        "LP custody claims can be misleading when removal, rescue or migration remains possible",
+        "Disconnected distribution and liquidity accounting can overallocate supply"
+      ],
+      "definitionSha256": "30a6acff120a9d8680f5d226e656bf3ab9072f39fd21973d2d43f184101779dc"
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "kind": "pack",
+      "id": "metadata-disclosures",
+      "label": "Metadata, tags and disclosures",
+      "summary": "Bind public names, media, economics, affiliations and provider-specific evidence without hidden tags.",
+      "acceleratorOnly": true,
+      "eligibilityEffect": "none",
+      "unknownCapabilityPolicy": "preserve-and-route",
+      "reviewRoute": "standard-review",
+      "requires": [],
+      "conflictsWith": [],
+      "capabilities": [
+        "provider-disclosures",
+        "public-metadata"
+      ],
+      "projectSurfaces": [
+        "application",
+        "indexer",
+        "metadata"
+      ],
+      "requiredFacts": [
+        "Project and token names, symbol, description, URIs and exact logo bytes or hash",
+        "Metadata owners, mutability, update authority and history",
+        "All fees, restrictions, external dependencies and affiliations in public language",
+        "Provider tags and support as separate time-bounded evidence states"
+      ],
+      "requiredFiles": [
+        "Canonical metadata record",
+        "Logo and media provenance",
+        "Public disclosure card",
+        "Provider evidence index"
+      ],
+      "requiredTests": [
+        "NFC, confusable, bidirectional, invisible and control-character checks",
+        "URI, media-byte, content-type and hash binding",
+        "Fee and restriction parity across public surfaces",
+        "Unknown, stale, unsupported and confirmed provider states"
+      ],
+      "risks": [
+        "Invisible or confusable text can hide identity or economics",
+        "Provider tags can become stale or imply support that does not exist",
+        "Mutable media can change after review"
+      ],
+      "definitionSha256": "a3e5fdb9cd89acda473906b534c799e51ebfd9540135e4ece1af6130147830cc"
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "kind": "pack",
+      "id": "programmable-volume-fee",
+      "label": "Mandatory Programmable volume fee",
+      "summary": "Specify the non-additive 0.1 percent Programmable share on executed canonical-pool volume.",
+      "acceleratorOnly": true,
+      "eligibilityEffect": "none",
+      "unknownCapabilityPolicy": "preserve-and-route",
+      "reviewRoute": "custom-review",
+      "requires": [],
+      "conflictsWith": [],
+      "capabilities": [
+        "claimable-platform-fee",
+        "quote-side-volume-accounting"
+      ],
+      "projectSurfaces": [
+        "contract",
+        "indexer",
+        "metadata"
+      ],
+      "requiredFacts": [
+        "The effective total is the greater of the selected fee and 10 basis points",
+        "Exactly 10 basis points belongs to 0x4957f49620AFf3Adbbe8195a4f633E49cc93376c and the remainder belongs to the project",
+        "The executed gross quote-side basis for all four swap quadrants",
+        "Rounding, dust, partial-fill and same-hook PoolManager-call behavior",
+        "Pool-scoped liabilities and owner-only claims to a selected per-claim destination"
+      ],
+      "requiredFiles": [
+        "Fee-enforcing hook source",
+        "Fee policy and worked examples",
+        "Fee accounting tests",
+        "Claim and reconstruction evidence"
+      ],
+      "requiredTests": [
+        "Ten-basis-point floor and non-additive split",
+        "All four swap quadrants and both swap directions",
+        "Rounding, dust, partial fills and self-call policy",
+        "Immutable owner-only claims and arbitrary safe per-claim destination",
+        "No bypass, cross-pool netting or liability leakage"
+      ],
+      "risks": [
+        "Incorrect gross-volume basis can overcharge or undercharge",
+        "Rounding and partial fills can break exact conservation",
+        "Mutable or shared claim authority can redirect accrued fees"
+      ],
+      "definitionSha256": "76eb4fbe05649bad1e168450fec1030dfca807c6810b697381f133fd16423e04"
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "kind": "pack",
+      "id": "test-evidence-threat-model",
+      "label": "Tests, evidence and threat model",
+      "summary": "Create project-specific security properties, test obligations and attributable evidence from the start.",
+      "acceleratorOnly": true,
+      "eligibilityEffect": "none",
+      "unknownCapabilityPolicy": "preserve-and-route",
+      "reviewRoute": "standard-review",
+      "requires": [],
+      "conflictsWith": [],
+      "capabilities": [
+        "evidence-plan",
+        "security-properties"
+      ],
+      "projectSurfaces": [
+        "application",
+        "contract",
+        "game",
+        "indexer",
+        "service"
+      ],
+      "requiredFacts": [
+        "Assets, actors, authorities, trust boundaries and attacker goals",
+        "Safety, solvency, conservation, liveness and user-exit properties",
+        "Exact commands, tool versions, fixtures, seeds, results and skipped checks",
+        "Which claims need maintainer, deployment, provider or onchain evidence"
+      ],
+      "requiredFiles": [
+        "Architecture proposal",
+        "Threat model",
+        "Test plan",
+        "Evidence index",
+        "Pinned build and dependency configuration"
+      ],
+      "requiredTests": [
+        "Unit, integration, fuzz and invariant checks appropriate to the project",
+        "Every authority, boundary, failure and recovery path",
+        "Adversarial dependencies and malformed inputs",
+        "Reproducible clean-environment build and test"
+      ],
+      "risks": [
+        "Template text is not project-specific evidence",
+        "Skipped or unavailable checks cannot be reported as passing",
+        "Local tests do not prove audit, deployment, indexing or availability"
+      ],
+      "definitionSha256": "9adfe6dc1bb0694febc2867eb85f722cbe495100efb9fece847f7ea9371c3f44"
+    }
+  ],
+  "customCapabilities": [
+    {
+      "id": "authenticated-challenge-router",
+      "label": "Authenticated challenge router",
+      "catalogStatus": "unlisted",
+      "automaticDecision": "none",
+      "reviewRoute": "architecture-review-required",
+      "eligibilityEffect": "none",
+      "requiredFacts": [
+        "Actors and assets",
+        "Authority and trust boundary",
+        "Value flow and conservation",
+        "Failure, recovery and user exit",
+        "Source, tests and attributable evidence"
+      ]
+    },
+    {
+      "id": "recurring-crown-time-game",
+      "label": "Recurring crown-time game",
+      "catalogStatus": "unlisted",
+      "automaticDecision": "none",
+      "reviewRoute": "architecture-review-required",
+      "eligibilityEffect": "none",
+      "requiredFacts": [
+        "Actors and assets",
+        "Authority and trust boundary",
+        "Value flow and conservation",
+        "Failure, recovery and user exit",
+        "Source, tests and attributable evidence"
+      ]
+    }
+  ],
+  "machineCapabilities": {
+    "semantics": "internal-planning-and-review-only",
+    "knownCapabilityIds": [
+      "canonical-v4-pool",
+      "claimable-platform-fee",
+      "claimable-project-fee",
+      "custom-hook-behavior",
+      "evidence-plan",
+      "launch-distribution",
+      "liquidity-position-custody",
+      "provider-disclosures",
+      "public-metadata",
+      "quote-side-volume-accounting",
+      "security-properties",
+      "vesting-schedules"
+    ],
+    "ownerDefinedCapabilityIds": [
+      "authenticated-challenge-router",
+      "recurring-crown-time-game"
+    ],
+    "allCapabilityIds": [
+      "authenticated-challenge-router",
+      "canonical-v4-pool",
+      "claimable-platform-fee",
+      "claimable-project-fee",
+      "custom-hook-behavior",
+      "evidence-plan",
+      "launch-distribution",
+      "liquidity-position-custody",
+      "provider-disclosures",
+      "public-metadata",
+      "quote-side-volume-accounting",
+      "recurring-crown-time-game",
+      "security-properties",
+      "vesting-schedules"
+    ],
+    "publicDiscoveryTagInference": "forbidden"
+  },
+  "tagSuggestions": {
+    "semantics": "owner-provided-local-discovery-only",
+    "catalogMembershipRequired": false,
+    "ownerProvidedLocalTags": [],
+    "machineCapabilityInference": "forbidden",
+    "providerSupportInference": "forbidden"
+  }
+}

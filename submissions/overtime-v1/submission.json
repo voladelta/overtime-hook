@@ -1,0 +1,2288 @@
+{
+  "$schema": "urn:programmable:v4-hook-submission:1.5.0",
+  "schemaVersion": 1,
+  "standardVersion": "1.5.0",
+  "stage": "proposal",
+  "model": {
+    "id": "overtime-v1",
+    "name": "Overtime v1",
+    "summary": "A recurring crown-time game in one canonical WETH/token pool where opt-in buys take the lead and immutable deadlines settle pull-based rewards.",
+    "userOutcome": "Traders may swap normally or route an exact-input WETH buy through the challenge router to take the crown; a leader can win a Knockout bonus while every crown holder earns by crown-seconds.",
+    "category": "custom-hook-project",
+    "whyV4": "The fee, authenticated challenge intent, actual settled-volume check, expiry-before-swap transition, refunds, and rollback must execute atomically inside the canonical PoolManager swap lifecycle."
+  },
+  "builder": {
+    "github": "voladelta",
+    "contact": "voladelta@protonmail.com",
+    "beneficiary": null,
+    "licenseDeclaration": "Original Overtime source is MIT-licensed; pinned dependencies retain their upstream licenses."
+  },
+  "builderTemplate": {
+    "schemaVersion": "1.0.0",
+    "source": "catalog",
+    "templateSelection": {
+      "catalogDigest": "a7875ce817fafd7ca4e0655e2937fa5a49b602283aa846e804732d18e6c1478e",
+      "selectionDigest": "7fdc4dec40607828fd11ffe8b4d8d885d1bf98d14ae2af3ec233e6802fc4a3f2",
+      "starterId": "custom-hook",
+      "requestedPackIds": [
+        "hook-owned-project-fee",
+        "launch-distribution-vesting-lp-custody"
+      ],
+      "defaultPackIds": [
+        "custom-hook-behavior",
+        "metadata-disclosures",
+        "programmable-volume-fee",
+        "test-evidence-threat-model"
+      ],
+      "autoIncludedPackIds": [],
+      "selectedPackIds": [
+        "custom-hook-behavior",
+        "hook-owned-project-fee",
+        "launch-distribution-vesting-lp-custody",
+        "metadata-disclosures",
+        "programmable-volume-fee",
+        "test-evidence-threat-model"
+      ],
+      "selectedCapabilityIds": [
+        "canonical-v4-pool",
+        "claimable-platform-fee",
+        "claimable-project-fee",
+        "custom-hook-behavior",
+        "evidence-plan",
+        "launch-distribution",
+        "liquidity-position-custody",
+        "provider-disclosures",
+        "public-metadata",
+        "quote-side-volume-accounting",
+        "security-properties",
+        "vesting-schedules"
+      ],
+      "customCapabilities": [
+        {
+          "id": "authenticated-challenge-router",
+          "label": "Authenticated challenge router",
+          "catalogStatus": "unlisted",
+          "automaticDecision": "none",
+          "reviewRoute": "architecture-review-required",
+          "eligibilityEffect": "none"
+        },
+        {
+          "id": "recurring-crown-time-game",
+          "label": "Recurring crown-time game",
+          "catalogStatus": "unlisted",
+          "automaticDecision": "none",
+          "reviewRoute": "architecture-review-required",
+          "eligibilityEffect": "none"
+        }
+      ],
+      "ownerProvidedLocalTags": [],
+      "localProjectTags": [
+        "authenticated-challenge-router",
+        "canonical-v4-pool",
+        "claimable-platform-fee",
+        "claimable-project-fee",
+        "custom-hook",
+        "custom-hook-behavior",
+        "evidence-plan",
+        "hook-owned-project-fee",
+        "launch-distribution",
+        "launch-distribution-vesting-lp-custody",
+        "liquidity-position-custody",
+        "metadata-disclosures",
+        "programmable-volume-fee",
+        "provider-disclosures",
+        "public-metadata",
+        "quote-side-volume-accounting",
+        "recurring-crown-time-game",
+        "security-properties",
+        "test-evidence-threat-model",
+        "vesting-schedules"
+      ]
+    }
+  },
+  "publicMetadata": {
+    "project": {
+      "name": "Overtime v1",
+      "description": "A recurring leader-time game implemented by one immutable fee-enforcing Uniswap v4 hook.",
+      "projectUri": null,
+      "logoUri": null,
+      "logoContentHash": null,
+      "metadataMutable": false,
+      "metadataOwner": null
+    },
+    "token": {
+      "name": "Overtime",
+      "symbol": "OVERTIME",
+      "metadataUri": null,
+      "metadataContentHash": null,
+      "logoUri": null,
+      "logoContentHash": null,
+      "metadataMutable": false,
+      "metadataOwner": null
+    },
+    "localDiscoveryTags": [],
+    "claimedAffiliations": [],
+    "providerPresentations": []
+  },
+  "target": {
+    "chainId": 1,
+    "network": "ethereum",
+    "solidityVersion": "0.8.26",
+    "evmVersion": "cancun",
+    "dependencyBaseline": "programmable-tested",
+    "officialLaunchProfileId": null
+  },
+  "assets": [
+    {
+      "id": "weth",
+      "role": "quote",
+      "origin": "existing-erc20",
+      "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+      "decimals": 18,
+      "decimalsSource": "token-contract-observation",
+      "supplyPolicy": "externally-managed",
+      "initialSupply": null,
+      "behaviors": [
+        "standard"
+      ],
+      "controls": []
+    },
+    {
+      "id": "launched-token",
+      "role": "launched",
+      "origin": "new-fixed-supply",
+      "address": null,
+      "decimals": 18,
+      "decimalsSource": "implementation-constant",
+      "supplyPolicy": "fixed-at-creation",
+      "initialSupply": "1000000000000000000000000000",
+      "behaviors": [
+        "standard"
+      ],
+      "controls": []
+    }
+  ],
+  "launchLifecycle": {
+    "tokenCreation": {
+      "applicable": true,
+      "actor": "OvertimeLauncher deployAssets validates committed creation-code hashes and deploys the fixed-supply token.",
+      "valueFlow": "The full 1,000,000,000 token supply is minted once for initial liquidity formation.",
+      "custody": "The launcher holds the fixed supply between the authority-gated asset-deployment and liquidity-lock transactions; it has no transfer or rescue surface.",
+      "failure": "Any bytecode, salt, ordering, or hook-mask mismatch reverts asset deployment; the token cannot be used by the canonical hook until launcher-only initialization.",
+      "event": "OvertimeTokenCreated",
+      "notApplicableReason": null
+    },
+    "poolInitialization": {
+      "applicable": true,
+      "actor": "OvertimeLauncher initializes the exact canonical PoolKey once.",
+      "valueFlow": "No fee or reward moves during initialization; the committed starting price is written to PoolManager.",
+      "custody": "PoolManager owns canonical pool state and the hook admits only this PoolKey.",
+      "failure": "Wrong key, hook mask, price, initializer, or PoolManager rejection reverts the complete liquidity-lock transaction.",
+      "event": "CanonicalPoolInitialized",
+      "notApplicableReason": null
+    },
+    "liquidityFormation": {
+      "applicable": true,
+      "actor": "OvertimeLauncher mints one explicit bounded v4 position.",
+      "valueFlow": "Launch WETH and the fixed token supply enter the canonical position with explicit maximum inputs and a finite deadline.",
+      "custody": "LockedLiquidityVault permanently owns the position and exposes no removal, transfer, approval, rescue, or withdrawal path.",
+      "failure": "Slippage, deadline, amount, transfer, or ownership mismatch reverts the complete launch.",
+      "event": "InitialLiquidityLocked",
+      "notApplicableReason": null
+    },
+    "initialTransaction": {
+      "applicable": false,
+      "actor": null,
+      "valueFlow": null,
+      "custody": null,
+      "failure": null,
+      "event": null,
+      "notApplicableReason": "The launch has no privileged initial buy; the first post-launch trade uses the same ordinary or challenge rules as every later trade."
+    },
+    "trading": {
+      "applicable": true,
+      "actor": "Any PoolManager-compatible router may make an ordinary trade; only OvertimeChallengeRouter may submit a challenge intent.",
+      "valueFlow": "Every accepted swap pays 10 bps Programmable plus 100 bps game in actual gross WETH; a challenge also pays the current crown cost.",
+      "custody": "The hook controls PoolManager WETH claims while recording separate category liabilities.",
+      "failure": "Invalid key, callback, data, mode, minimum, partial fill, slippage, or accounting state reverts the complete swap.",
+      "event": "OvertimeSwapFeeAccrued and CrownChallenged",
+      "notApplicableReason": null
+    },
+    "feesAndClaims": {
+      "applicable": true,
+      "actor": "The immutable Programmable owner and each recorded game beneficiary pull only their own entitlement.",
+      "valueFlow": "PoolManager WETH claims redeem the exact Programmable, champion, crown-time, or refund liability.",
+      "custody": "The hook ledger remains authoritative; no raw balance is assigned to a category.",
+      "failure": "Unauthorized, zero, double, reentrant, or failed-recipient claims revert without changing liability.",
+      "event": "ProgrammableFeesClaimed, ChampionClaimed, CrownTimeClaimed, and RefundClaimed",
+      "notApplicableReason": null
+    },
+    "dependencyFailure": {
+      "applicable": true,
+      "actor": "Any caller encountering PoolManager, PositionManager, WETH, or token failure.",
+      "valueFlow": "No value movement is accepted when a required dependency call fails.",
+      "custody": "Existing liabilities and the locked position remain unchanged by a reverted action.",
+      "failure": "Fail closed and retry the user action later; no fallback, rescue, or administrator path exists.",
+      "event": "No event is emitted for a reverted dependency failure.",
+      "notApplicableReason": null
+    },
+    "retirement": {
+      "applicable": false,
+      "actor": null,
+      "valueFlow": null,
+      "custody": null,
+      "failure": null,
+      "event": null,
+      "notApplicableReason": "V1 is immutable, non-upgradeable, and permanently locks initial liquidity; claims remain pull-based without a retirement or migration authority."
+    }
+  },
+  "pool": {
+    "currency0": "weth",
+    "currency1": "launched-token",
+    "orderingRule": "The launcher accepts only a mined token address greater than WETH, making WETH currency0 and the launched token currency1.",
+    "tickSpacing": 200,
+    "lpFee": {
+      "classification": "lp-fee",
+      "mode": "static",
+      "hundredthsOfBip": 0,
+      "initialHundredthsOfBip": null,
+      "initializationPath": null,
+      "applicationMode": null,
+      "overrideFlagPolicy": null,
+      "persistentUpdateActor": null,
+      "persistentUpdateCallSites": [],
+      "rateLimit": null,
+      "updatePath": null,
+      "minimum": null,
+      "maximum": null,
+      "inputMetric": null,
+      "referenceAsset": null,
+      "measurementUnit": null,
+      "observationMode": null,
+      "observationWindow": null,
+      "curve": null,
+      "updateCadence": null,
+      "liquidityDecreaseBehavior": null,
+      "manipulationResistance": null,
+      "failureRule": null,
+      "recipient": "pool-liquidity-providers"
+    },
+    "canonical": true,
+    "alternativePools": "Alternative pools may exist and do not inherit this model's behavior."
+  },
+  "programmableFee": {
+    "policyId": "programmable-volume-fee-v1",
+    "policyVersion": "1.1.0",
+    "poolScope": "canonical-launch-pool-key",
+    "rates": {
+      "unit": "hundredths-of-bip",
+      "selectedHundredthsOfBip": 11000,
+      "minimumEffectiveHundredthsOfBip": 1000,
+      "effectiveHundredthsOfBip": 11000,
+      "platformHundredthsOfBip": 1000,
+      "projectHundredthsOfBip": 10000,
+      "formula": "effective=max(selected,1000);platform=1000;project=effective-1000",
+      "lpFeeExcluded": true
+    },
+    "basis": {
+      "volume": "gross-quote-side-swap-volume",
+      "quoteAsset": "canonical-pool-quote-asset"
+    },
+    "ownership": {
+      "owner": "0x4957f49620AFf3Adbbe8195a4f633E49cc93376c",
+      "immutable": true,
+      "claimAuthority": "owner-only",
+      "claimAvailability": "anytime",
+      "claimDestinationPolicy": "owner-or-owner-selected-per-claim",
+      "storedMutableRecipient": false,
+      "builderCanMutate": false,
+      "projectCanMutate": false,
+      "administratorCanMutate": false
+    },
+    "collection": {
+      "status": "implemented",
+      "integration": "canonical-pool-hook",
+      "enforcement": "non-bypassable",
+      "hookFeeMechanismBinding": "hook.feeMechanism",
+      "supportedSwapModes": [
+        "zeroForOne-exactInput",
+        "zeroForOne-exactOutput",
+        "oneForZero-exactInput",
+        "oneForZero-exactOutput"
+      ],
+      "swapModePaths": {
+        "zeroForOneExactInput": "before-swap-return-delta",
+        "zeroForOneExactOutput": "after-swap-return-delta",
+        "oneForZeroExactInput": "after-swap-return-delta",
+        "oneForZeroExactOutput": "before-swap-return-delta"
+      },
+      "selfCallPolicy": "same-pool-swap-forbidden"
+    },
+    "accounting": {
+      "accrualMode": "claimable-liability",
+      "liabilityKeyDimensions": [
+        "poolId",
+        "currency",
+        "owner"
+      ],
+      "crossPoolNetting": false,
+      "roundingPolicy": "cumulative-independent-platform-project-remainders",
+      "remainderScope": "canonical-pool-lifetime",
+      "claimResetsRemainders": false,
+      "minimumGrossQuoteUnits": 1000,
+      "fragmentationResistant": true,
+      "valueFlowId": "swap-fee",
+      "collectionEvent": "OvertimeSwapFeeAccrued",
+      "claimEvent": "ProgrammableFeesClaimed"
+    },
+    "evidence": {
+      "sourcePaths": [
+        "src/OvertimeHook.sol"
+      ],
+      "testPaths": [
+        "test/OvertimeFeeKernel.t.sol",
+        "test/invariant/OvertimeAccountingInvariant.t.sol"
+      ]
+    }
+  },
+  "hook": {
+    "used": true,
+    "base": "OpenZeppelin BaseHook pinned at commit 26dc8e53f812a1ca390d470342adb6cd8c3286ad.",
+    "upgradeable": false,
+    "sharedAcrossPools": false,
+    "poolNamespace": "One hook instance admits one immutable PoolKey shape and derives exactly one PoolId; every liability still includes that PoolId.",
+    "poolAdmission": {
+      "enforcement": "Every callback compares currency0 WETH, currency1 launched token, zero LP fee, tick spacing 200, and hooks equal to address(this).",
+      "factoryOrRegistry": "OvertimeLauncher is the sole immutable initializer; deployAssets verifies the hook mask and launch initializes the precommitted key before locking liquidity.",
+      "alternativePoolBehavior": "Alternative pools may exist but cannot enter this hook, accrue game state, or inherit any Overtime claim.",
+      "rejectionRule": "Any changed PoolKey member reverts before fee or round state changes."
+    },
+    "permissions": {
+      "beforeInitialize": true,
+      "afterInitialize": false,
+      "beforeAddLiquidity": false,
+      "afterAddLiquidity": false,
+      "beforeRemoveLiquidity": false,
+      "afterRemoveLiquidity": false,
+      "beforeSwap": true,
+      "afterSwap": true,
+      "beforeDonate": false,
+      "afterDonate": false,
+      "beforeSwapReturnDelta": true,
+      "afterSwapReturnDelta": true,
+      "afterAddLiquidityReturnDelta": false,
+      "afterRemoveLiquidityReturnDelta": false
+    },
+    "callbackPolicies": [
+      {
+        "callback": "beforeInitialize",
+        "necessity": "Authenticate the only canonical PoolKey initialization across the two gas-bounded launcher phases.",
+        "allowedReverts": "Any non-launcher sender or changed PoolKey member reverts before PoolManager records a starting price.",
+        "userExitImpact": "Initialization occurs once before users can trade or acquire an entitlement; no later claim or exit invokes this callback.",
+        "noSelfCallImpact": "The hook never initializes a pool itself and the immutable launcher is the only accepted callback sender."
+      },
+      {
+        "callback": "beforeSwap",
+        "necessity": "Finalize expired rounds before processing and collect specified-WETH fees; validate authenticated challenge intent before core execution.",
+        "allowedReverts": "Wrong PoolKey, fee quantum, malformed or unauthorized hookData, unsupported challenge mode, deadline, minimum, or arithmetic failure reverts the swap.",
+        "userExitImpact": "Ordinary empty-data swaps remain permissionless; a rejected challenge can be retried as an ordinary swap or with corrected authenticated parameters.",
+        "noSelfCallImpact": "The hook exposes no PoolManager swap path, so self-call callback suppression cannot bypass fee or game accounting."
+      },
+      {
+        "callback": "afterSwap",
+        "necessity": "Collect fees when WETH is unspecified and validate specified-WETH actual core fill plus challenge settled volume before committing the swap.",
+        "allowedReverts": "Partial fill, gross-up, final delta, challenge minimum/output, backing, overflow, or state mismatch reverts the complete unlock.",
+        "userExitImpact": "A failed swap preserves every prior liability and entitlement; claims use a separate bounded pull path and are not routed through afterSwap.",
+        "noSelfCallImpact": "Hook-initiated claim unlocks contain no swap, so skipped self callbacks cannot change fees, rounds, or liabilities."
+      }
+    ],
+    "hookData": {
+      "used": true,
+      "schema": "abi.encode(uint8 version=1,uint8 mode=1,address player,uint256 expectedGrossWeth,uint256 minTokenOut,uint256 deadline)",
+      "identitySource": "trusted-router-decoded-user",
+      "trustedRouterDeploymentRecordId": "overtime-challenge-router-mainnet",
+      "callbackSenderRule": "pool-manager-callback-and-exact-router-binding",
+      "validation": "Reject wrong version, mode, length, player, direction, exactness, gross amount, deadline, partial fill, minimum WETH, or trailing bytes."
+    },
+    "feeMechanism": {
+      "used": true,
+      "classification": "hook-owned-fee",
+      "chargedCurrency": "WETH (currency0) in all four quadrants, with before/after path selected by whether WETH is specified.",
+      "swapQuadrants": {
+        "zeroForOneExactInput": {
+          "currency": "currency0",
+          "basis": "gross-input",
+          "formula": "Cumulative 110 bps of gross specified WETH; core receives gross minus fee and the final fill must match exactly.",
+          "rounding": "down",
+          "maximumHundredthsOfBip": 11000
+        },
+        "zeroForOneExactOutput": {
+          "currency": "currency0",
+          "basis": "unspecified-amount",
+          "formula": "Gross up executed WETH input so the hook receives cumulative 110 bps and the caller pays the gross amount.",
+          "rounding": "up",
+          "maximumHundredthsOfBip": 11000
+        },
+        "oneForZeroExactInput": {
+          "currency": "currency0",
+          "basis": "unspecified-amount",
+          "formula": "Cumulative 110 bps is removed from executed gross WETH output and the caller receives the net amount.",
+          "rounding": "down",
+          "maximumHundredthsOfBip": 11000
+        },
+        "oneForZeroExactOutput": {
+          "currency": "currency0",
+          "basis": "gross-output",
+          "formula": "Gross specified WETH output equals requested net output plus cumulative 110 bps, with exact fill required.",
+          "rounding": "up",
+          "maximumHundredthsOfBip": 11000
+        }
+      },
+      "maximumHundredthsOfBip": 11000,
+      "collectionPath": "quadrant-dependent-swap-return-delta",
+      "collectionValueFlowId": "swap-fee",
+      "liabilityKeyDimensions": [
+        "poolId",
+        "currency",
+        "beneficiary",
+        "epoch"
+      ],
+      "collectionEvent": "OvertimeSwapFeeAccrued",
+      "recipients": [
+        {
+          "role": "programmable-fee-owner",
+          "sharePpm": 90909,
+          "addressSource": "fixed-address",
+          "address": "0x4957f49620AFf3Adbbe8195a4f633E49cc93376c",
+          "binding": "exact-address",
+          "derivationRule": null,
+          "mutable": false,
+          "mutationController": "none",
+          "newAddressValidation": "none",
+          "mutationEvent": null
+        },
+        {
+          "role": "game-pot",
+          "sharePpm": 909091,
+          "addressSource": "derived-contract",
+          "address": null,
+          "binding": "immutable-derived-contract",
+          "derivationRule": "The OvertimeHook itself owns game-pot accounting for the canonical PoolId.",
+          "mutable": false,
+          "mutationController": "none",
+          "newAddressValidation": "none",
+          "mutationEvent": null
+        }
+      ],
+      "ownership": "The immutable Programmable owner controls only its liability; game entitlements are determined solely by immutable round rules and beneficiary pull claims.",
+      "claimPolicy": "Programmable chooses a per-call destination; champion, crown-time, and refund beneficiaries may claim only their own entitlement and cannot redirect another address."
+    },
+    "customAccounting": {
+      "used": true,
+      "backingSource": "Every returned WETH fee delta is backed by a same-unlock PoolManager ERC-6909 WETH claim minted to the hook.",
+      "conservationEquation": "hook-controlled WETH claims equal or exceed programmable plus pending plus active plus finalized champion plus finalized crown-time plus refund liabilities.",
+      "settlement": "During the callback the hook takes the exact positive WETH fee delta as an ERC-6909 claim; claims later burn/settle that claim and take WETH to the beneficiary in one unlock.",
+      "partialFillBehavior": "Specified-WETH partial fills revert after comparing actual core WETH with the expected fee-adjusted amount; unspecified-WETH fees use the executed delta.",
+      "liabilityNamespace": "chain 1, Overtime v1, canonical PoolId, WETH, category or beneficiary, and round epoch where applicable.",
+      "liabilityKeyDimensions": [
+        "chainId",
+        "modelVersion",
+        "poolId",
+        "currency",
+        "beneficiary",
+        "epoch"
+      ],
+      "crossPoolNetting": false,
+      "duplicateCurrencyPolicy": "Only WETH is a fee and reward currency; no second pool or currency namespace is admitted.",
+      "failureIsolation": "Any delta, transfer, liability, or redemption failure reverts the complete PoolManager unlock.",
+      "withdrawalOrdering": "Clear the exact beneficiary liability before burning/settling hook claims and taking WETH; a failed external transfer reverts both effects."
+    },
+    "returnDeltaAccounting": {
+      "used": true,
+      "quadrants": {
+        "zeroForOneExactInput": {
+          "supported": true,
+          "specifiedCurrency": "currency0",
+          "unspecifiedCurrency": "currency1",
+          "amountSign": "negative-exact-input",
+          "specifiedComponent": {
+            "mode": "positive-only",
+            "formula": "Cumulative 110 bps WETH fee on gross specified exact input; residual core input is gross minus fee.",
+            "minimum": "Zero only when the applicable gross WETH amount is zero.",
+            "maximum": "Less than the applicable gross WETH amount and representable as int128.",
+            "minimumSign": "zero",
+            "maximumSign": "positive",
+            "positiveSettlementActions": [
+              {
+                "order": 1,
+                "actor": "hook",
+                "operation": "take",
+                "currency": "specified",
+                "assetKind": "erc20",
+                "deltaOwner": "hook",
+                "deltaEffect": "negative",
+                "counterparty": "PoolManager",
+                "authorizationRule": "Authenticated canonical-pool callback only.",
+                "msgValueRule": null,
+                "amountRule": "Exactly the positive beforeSwap specified WETH fee delta.",
+                "completionDeadline": "before-hook-return"
+              }
+            ],
+            "negativeSettlementActions": []
+          },
+          "unspecifiedComponent": {
+            "mode": "zero-only",
+            "formula": null,
+            "minimum": "0",
+            "maximum": "0",
+            "minimumSign": "zero",
+            "maximumSign": "zero",
+            "positiveSettlementActions": [],
+            "negativeSettlementActions": []
+          },
+          "residualAmmEquation": "amountSpecified-plus-specifiedDelta",
+          "finalCallerDeltaEquation": "pool-manager-swap-delta-minus-hook-delta",
+          "specifiedDeltaCanConsumeEntireAmount": false,
+          "rounding": "Independent cumulative platform/game floors; both lifetime remainders are retained.",
+          "zeroAmmLeg": "forbidden",
+          "partialFillRule": "AfterSwap compares actual core WETH with gross minus fee; any partial fill reverts atomically.",
+          "slippageInvariant": "The router checks final token output after the hook fee and challenge mode also checks exact settled gross WETH.",
+          "failureRule": "Fee quantum, overflow, fill, challenge minimum, deadline, or backing mismatch reverts the complete swap."
+        },
+        "zeroForOneExactOutput": {
+          "supported": true,
+          "specifiedCurrency": "currency1",
+          "unspecifiedCurrency": "currency0",
+          "amountSign": "positive-exact-output",
+          "specifiedComponent": {
+            "mode": "zero-only",
+            "formula": null,
+            "minimum": "0",
+            "maximum": "0",
+            "minimumSign": "zero",
+            "maximumSign": "zero",
+            "positiveSettlementActions": [],
+            "negativeSettlementActions": []
+          },
+          "unspecifiedComponent": {
+            "mode": "zero-only",
+            "formula": null,
+            "minimum": "0",
+            "maximum": "0",
+            "minimumSign": "zero",
+            "maximumSign": "zero",
+            "positiveSettlementActions": [],
+            "negativeSettlementActions": []
+          },
+          "residualAmmEquation": "amountSpecified-plus-specifiedDelta",
+          "finalCallerDeltaEquation": "pool-manager-swap-delta-minus-hook-delta",
+          "specifiedDeltaCanConsumeEntireAmount": false,
+          "rounding": "afterSwap exact-output gross-up uses full-precision ceiling math and retained stream remainders.",
+          "zeroAmmLeg": "forbidden",
+          "partialFillRule": "Fee basis is the executed WETH input from the afterSwap delta; standard exact-output semantics and caller max-input bounds apply.",
+          "slippageInvariant": "Final gross WETH input after hook effects must not exceed the caller's maximum input.",
+          "failureRule": "Gross-up, overflow, fee quantum, backing, or final input-bound mismatch reverts the complete swap."
+        },
+        "oneForZeroExactInput": {
+          "supported": true,
+          "specifiedCurrency": "currency1",
+          "unspecifiedCurrency": "currency0",
+          "amountSign": "negative-exact-input",
+          "specifiedComponent": {
+            "mode": "zero-only",
+            "formula": null,
+            "minimum": "0",
+            "maximum": "0",
+            "minimumSign": "zero",
+            "maximumSign": "zero",
+            "positiveSettlementActions": [],
+            "negativeSettlementActions": []
+          },
+          "unspecifiedComponent": {
+            "mode": "zero-only",
+            "formula": null,
+            "minimum": "0",
+            "maximum": "0",
+            "minimumSign": "zero",
+            "maximumSign": "zero",
+            "positiveSettlementActions": [],
+            "negativeSettlementActions": []
+          },
+          "residualAmmEquation": "amountSpecified-plus-specifiedDelta",
+          "finalCallerDeltaEquation": "pool-manager-swap-delta-minus-hook-delta",
+          "specifiedDeltaCanConsumeEntireAmount": false,
+          "rounding": "afterSwap deducts cumulative platform/game floors from executed gross WETH output.",
+          "zeroAmmLeg": "forbidden",
+          "partialFillRule": "Fee basis is actual executed gross WETH output after any core partial fill.",
+          "slippageInvariant": "Final net WETH output after the hook fee must meet the caller's minimum output.",
+          "failureRule": "Fee quantum, overflow, backing, or final output-bound mismatch reverts the complete swap."
+        },
+        "oneForZeroExactOutput": {
+          "supported": true,
+          "specifiedCurrency": "currency0",
+          "unspecifiedCurrency": "currency1",
+          "amountSign": "positive-exact-output",
+          "specifiedComponent": {
+            "mode": "positive-only",
+            "formula": "Gross WETH output equals requested net WETH plus the cumulative 110 bps fee returned beforeSwap.",
+            "minimum": "Zero only when the applicable gross WETH amount is zero.",
+            "maximum": "Less than the applicable gross WETH amount and representable as int128.",
+            "minimumSign": "zero",
+            "maximumSign": "positive",
+            "positiveSettlementActions": [
+              {
+                "order": 1,
+                "actor": "hook",
+                "operation": "take",
+                "currency": "specified",
+                "assetKind": "erc20",
+                "deltaOwner": "hook",
+                "deltaEffect": "negative",
+                "counterparty": "PoolManager",
+                "authorizationRule": "Authenticated canonical-pool callback only.",
+                "msgValueRule": null,
+                "amountRule": "Exactly the positive beforeSwap gross-up WETH fee delta.",
+                "completionDeadline": "before-hook-return"
+              }
+            ],
+            "negativeSettlementActions": []
+          },
+          "unspecifiedComponent": {
+            "mode": "zero-only",
+            "formula": null,
+            "minimum": "0",
+            "maximum": "0",
+            "minimumSign": "zero",
+            "maximumSign": "zero",
+            "positiveSettlementActions": [],
+            "negativeSettlementActions": []
+          },
+          "residualAmmEquation": "amountSpecified-plus-specifiedDelta",
+          "finalCallerDeltaEquation": "pool-manager-swap-delta-minus-hook-delta",
+          "specifiedDeltaCanConsumeEntireAmount": false,
+          "rounding": "Full-precision ceiling gross-up with independent lifetime stream remainders.",
+          "zeroAmmLeg": "forbidden",
+          "partialFillRule": "AfterSwap requires actual gross WETH core output to equal requested net plus fee; partial fill reverts.",
+          "slippageInvariant": "Final net WETH output equals the requested exact output while token input remains under the caller maximum.",
+          "failureRule": "Gross-up, fee quantum, overflow, fill, or backing mismatch reverts the complete swap."
+        }
+      },
+      "executionEvent": "OvertimeSwapFeeAccrued"
+    },
+    "postReturnDeltaAccounting": {
+      "afterSwap": {
+        "used": true,
+        "returnedDeltaShape": "unspecified-currency-int128",
+        "positiveMeaning": "hook-credit-caller-debit",
+        "negativeMeaning": "hook-debt-caller-credit",
+        "backingSource": "The executed unspecified WETH delta and a same-callback PoolManager WETH claim taken by the hook.",
+        "callerDeltaEquation": "protocol-delta-minus-hook-delta",
+        "componentPolicies": {
+          "unspecified": {
+            "mode": "positive-only",
+            "formula": "Positive cumulative WETH fee for quote-unspecified quadrants; zero for quote-specified quadrants already charged before swap.",
+            "minimum": "Zero only when the applicable executed gross WETH amount is zero.",
+            "maximum": "Less than the applicable executed gross WETH amount and representable as int128.",
+            "minimumSign": "zero",
+            "maximumSign": "positive",
+            "positiveSettlementActions": [
+              {
+                "order": 1,
+                "actor": "hook",
+                "operation": "take",
+                "currency": "unspecified",
+                "assetKind": "erc20",
+                "deltaOwner": "hook",
+                "deltaEffect": "negative",
+                "counterparty": "PoolManager",
+                "authorizationRule": "Only the authenticated hook callback for the canonical PoolKey executes this take.",
+                "msgValueRule": null,
+                "amountRule": "Exactly the positive afterSwap WETH fee delta returned by the hook.",
+                "completionDeadline": "before-hook-return"
+              }
+            ],
+            "negativeSettlementActions": []
+          },
+          "currency0": null,
+          "currency1": null
+        },
+        "bounds": "Zero through the cumulative 110 bps fee, strictly less than executed gross WETH and representable as int128.",
+        "rounding": "Independent lifetime Programmable and game remainders; exact-output gross-up uses full-precision ceiling math.",
+        "slippageOrMinimums": "Router validates the final caller delta; challenges additionally require exact fill, 0.01 WETH settled minimum, token minimum, and deadline.",
+        "failureRule": "Overflow, fee quantum, gross-up, fill, or settlement mismatch reverts the complete swap.",
+        "executionEvent": "OvertimeSwapFeeAccrued"
+      },
+      "afterAddLiquidity": {
+        "used": false,
+        "returnedDeltaShape": null,
+        "positiveMeaning": null,
+        "negativeMeaning": null,
+        "backingSource": null,
+        "callerDeltaEquation": null,
+        "componentPolicies": {
+          "unspecified": null,
+          "currency0": null,
+          "currency1": null
+        },
+        "bounds": null,
+        "rounding": null,
+        "slippageOrMinimums": null,
+        "failureRule": null,
+        "executionEvent": null
+      },
+      "afterRemoveLiquidity": {
+        "used": false,
+        "returnedDeltaShape": null,
+        "positiveMeaning": null,
+        "negativeMeaning": null,
+        "backingSource": null,
+        "callerDeltaEquation": null,
+        "componentPolicies": {
+          "unspecified": null,
+          "currency0": null,
+          "currency1": null
+        },
+        "bounds": null,
+        "rounding": null,
+        "slippageOrMinimums": null,
+        "failureRule": null,
+        "executionEvent": null
+      }
+    },
+    "erc6909Claims": {
+      "used": true,
+      "currencyIdDerivation": "currency-address-uint160",
+      "claimBalanceScope": "claim-owner-and-currency",
+      "poolIdIncludedInClaimId": false,
+      "owner": "OvertimeHook owns the PoolManager WETH claim; its internal ledger adds the sole canonical PoolId and beneficiary/category namespace.",
+      "operatorPolicy": "No operator or transferable beneficiary claim exists; only hook code can redeem its PoolManager claim.",
+      "mintFlow": "During an authenticated swap callback the hook takes the exact WETH fee with claims=true, minting the currency-address ERC-6909 claim to itself.",
+      "burnFlow": "A pull claim opens PoolManager unlock, settles by burning the hook's exact WETH claim amount, then takes underlying WETH to the authorized beneficiary.",
+      "takeSettleFlow": "Fee accrual: return delta plus take(claims=true). Redemption: settle/burn hook claim, then take underlying WETH to beneficiary before unlock end.",
+      "liabilityKeys": "Internal keys are canonical PoolId, WETH, category or beneficiary, and round epoch; Programmable also uses its immutable owner address.",
+      "liabilityKeyDimensions": [
+        "chainId",
+        "modelVersion",
+        "poolId",
+        "currency",
+        "beneficiary",
+        "epoch"
+      ],
+      "crossPoolNetting": false,
+      "transferPolicy": "PoolManager claims and internal entitlements are non-transferable through OvertimeHook.",
+      "redemption": "Only the exact liability-specific pull function may burn claims and pay its authorized recipient; no rescue or aggregate withdrawal exists.",
+      "roundingDust": "Fee remainders remain explicit lifetime state and finalized crown-time division dust remains reserved; neither is inferred or swept.",
+      "aggregateSolvencyEquation": "PoolManager WETH claim balance owned by hook >= programmable + pendingPot + activePot + unclaimed champion + unclaimed crown-time + refunds."
+    },
+    "nestedActions": {
+      "used": true,
+      "directPoolManagerCalls": true,
+      "routerCalls": false,
+      "allowedActions": [
+        "take",
+        "settle",
+        "burn-claim"
+      ],
+      "samePoolPolicy": "same-pool swaps are forbidden and no hook entry point can initiate PoolManager.swap",
+      "crossPoolPolicy": "No cross-pool action or PoolKey is accepted.",
+      "callbackSuppression": "The only hook-initiated unlock is a claim redemption containing no swap, liquidity, or donate action.",
+      "directCallbackBehavior": "self-call-hook-callbacks-skipped",
+      "routerCallbackBehavior": "hook-callbacks-can-reenter",
+      "maximumDepth": 1,
+      "stateCommitOrder": "Finalize expired round, compute and record liabilities, take backing claim, return delta; claims clear liability before redemption.",
+      "transientDeltaOwner": "The hook owns only the exact fee delta and challenge router owns user swap settlement deltas.",
+      "syncInterleaving": "No ERC-20 sync interleaving is used for fee claims; PoolManager ERC-6909 claims are minted/burned in the same unlock accounting model.",
+      "slippageAggregation": "The router checks final token output and exact settled gross WETH after hook effects.",
+      "failureAtomicity": "Any nested take, settle, burn, transfer, or final-delta failure reverts its complete unlock."
+    }
+  },
+  "noHookArchitecture": null,
+  "tokenMechanics": null,
+  "valueFlows": [
+    {
+      "id": "swap-fee",
+      "action": "canonical pool swap fee accrual",
+      "asset": "weth",
+      "from": "swap caller delta",
+      "to": "OvertimeHook PoolManager WETH claim and category liabilities",
+      "amountRule": "Exactly 10 bps Programmable plus 100 bps game of accepted actual gross WETH using independent lifetime remainders.",
+      "settlement": "Quadrant-dependent before/after return delta backed by a same-callback PoolManager claim taken to the hook.",
+      "failure": "Wrong key, fee quantum, gross-up, fill, overflow, or backing mismatch reverts the complete swap."
+    },
+    {
+      "id": "crown-contribution",
+      "action": "challenge crown payment",
+      "asset": "weth",
+      "from": "authenticated challenge router caller",
+      "to": "active pot or same-block refund liability",
+      "amountRule": "clamp(activePot times 50 bps, 0.001 WETH, 0.05 WETH), paid on every valid challenge.",
+      "settlement": "The router settles the exact WETH amount in the same PoolManager unlock and the hook records one matching liability category.",
+      "failure": "Insufficient payment, wrong identity, partial fill, deadline, or accounting mismatch reverts the complete challenge."
+    },
+    {
+      "id": "reward-claim",
+      "action": "pull-based WETH liability redemption",
+      "asset": "weth",
+      "from": "OvertimeHook PoolManager WETH claim",
+      "to": "immutable Programmable owner-selected destination or exact game beneficiary",
+      "amountRule": "Only the caller-authorized Programmable, champion, crown-time, or refund liability is redeemed once.",
+      "settlement": "Clear liability, burn or settle the exact hook claim, and take underlying WETH to the beneficiary before unlock end.",
+      "failure": "Unauthorized, zero, double, reentrant, or failed-recipient redemption reverts and restores the liability."
+    },
+    {
+      "id": "initial-liquidity",
+      "action": "authenticated initial position mint",
+      "asset": "weth and launched-token",
+      "from": "launch caller and fixed token supply",
+      "to": "canonical PoolManager position permanently owned by LockedLiquidityVault",
+      "amountRule": "Explicit committed liquidity with amount0Max, amount1Max, starting price, and finite deadline.",
+      "settlement": "After committed asset deployment, OvertimeLauncher atomically initializes and mints in the second bounded transaction, then verifies position ownership.",
+      "failure": "Any price, amount, deadline, transfer, key, hook-mask, or ownership mismatch reverts the complete launch."
+    }
+  ],
+  "authorities": [
+    {
+      "role": "permissionless-trader",
+      "controller": "any Ethereum address or compatible smart account",
+      "capabilities": [
+        "ordinary-swap",
+        "call-own-pull-claim"
+      ],
+      "mutable": false,
+      "delay": "none",
+      "userExitImpact": "May affect price and round pot through ordinary volume but cannot change another address's leader identity, deadlines, or claims."
+    },
+    {
+      "role": "immutable-challenge-router",
+      "controller": "OvertimeChallengeRouter bytecode at the hook constructor-bound address",
+      "capabilities": [
+        "submit-versioned-challenge-intent-bound-to-msg-sender"
+      ],
+      "mutable": false,
+      "delay": "none",
+      "userExitImpact": "Can only mediate exact-input WETH-to-token challenges and cannot redirect payer, player, beneficiary, or token output."
+    },
+    {
+      "role": "programmable-fee-owner",
+      "controller": "0x4957f49620AFf3Adbbe8195a4f633E49cc93376c",
+      "capabilities": [
+        "claim-only-own-programmable-liability-to-per-call-destination"
+      ],
+      "mutable": false,
+      "delay": "none",
+      "userExitImpact": "Cannot mutate fees, game state, other liabilities, pool configuration, or custody."
+    },
+    {
+      "role": "launch-caller",
+      "controller": "immutable launchAuthority configured in OvertimeLauncher",
+      "capabilities": [
+        "execute-committed-asset-deployment",
+        "execute-one-liquidity-lock-launch"
+      ],
+      "mutable": false,
+      "delay": "one-shot",
+      "userExitImpact": "Can execute only the two committed one-shot phases and retains no authority after launch."
+    },
+    {
+      "role": "reward-beneficiary",
+      "controller": "each address recorded by immutable round accounting",
+      "capabilities": [
+        "claim-only-own-champion-crown-time-or-refund-liability"
+      ],
+      "mutable": false,
+      "delay": "none",
+      "userExitImpact": "Cannot redirect or consume another beneficiary's historic entitlement."
+    }
+  ],
+  "dependencies": {
+    "onchain": [
+      {
+        "id": "pool-manager",
+        "name": "Uniswap v4 PoolManager",
+        "kind": "protocol-singleton",
+        "repository": "https://github.com/Uniswap/v4-core",
+        "revision": "59d3ecf53afa9264a16bba0e38f4c5d2231f80bc",
+        "packageVersion": "1.0.0-production-pin",
+        "license": "BUSL-1.1",
+        "sourceProvenance": "pinned-source",
+        "deploymentRecordId": "v4-poolmanager-ethereum",
+        "chainAddress": "0x000000000004444c5dc75cB358380D2e3dE08A90",
+        "runtimeHash": "0x785f1014552b7ce7d5fb7d0c970ca60edee94fd00425d7ca21609acac7ce1293",
+        "deploymentEvidencePath": "evidence/fork-evidence.json",
+        "trust": "Immutable callback and flash-accounting authority for the one canonical PoolKey.",
+        "failure": "A revert or runtime mismatch blocks swaps, launch, or claims fail closed.",
+        "fallback": "No protocol fallback; users retry only after the exact dependency is available and matched."
+      },
+      {
+        "id": "position-manager",
+        "name": "Uniswap v4 PositionManager",
+        "kind": "liquidity-position-manager",
+        "repository": "https://github.com/Uniswap/v4-periphery",
+        "revision": "ad04c9f24a170accf5ea1b2836bbafd514537ca6",
+        "packageVersion": "2656054-production-deployment",
+        "license": "GPL-2.0-or-later",
+        "sourceProvenance": "pinned-source",
+        "deploymentRecordId": "v4-positionmanager-ethereum",
+        "chainAddress": "0xbD216513d74C8cf14cf4747E6AaA6420FF64ee9e",
+        "runtimeHash": "0x77e36c08b19959a30dde46dec9abe6208e371ff2f56884a56fe1e1a53615528b",
+        "deploymentEvidencePath": "evidence/fork-evidence.json",
+        "trust": "Creates and accounts for the initial permanently held v4 position.",
+        "failure": "Any launch-time mint or ownership mismatch reverts the atomic launch.",
+        "fallback": "No alternative position manager is accepted."
+      },
+      {
+        "id": "weth-mainnet",
+        "name": "Wrapped Ether",
+        "kind": "standard-erc20-quote",
+        "repository": null,
+        "revision": null,
+        "packageVersion": null,
+        "license": "GPL-3.0-only",
+        "sourceProvenance": null,
+        "deploymentRecordId": null,
+        "chainAddress": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+        "runtimeHash": null,
+        "deploymentEvidencePath": "evidence/fork-evidence.json",
+        "trust": "Canonical WETH ERC-20 transfer and balance semantics on Ethereum Mainnet.",
+        "failure": "Transfer or runtime mismatch reverts swaps, challenges, launch, or claims.",
+        "fallback": "No substitute quote currency is accepted."
+      },
+      {
+        "id": "overtime-challenge-router",
+        "name": "Overtime Challenge Router",
+        "kind": "project-router",
+        "repository": "https://github.com/voladelta/overtime-hook",
+        "revision": null,
+        "packageVersion": "1.0.0",
+        "license": "MIT",
+        "sourceProvenance": null,
+        "deploymentRecordId": "overtime-challenge-router-mainnet",
+        "chainAddress": null,
+        "runtimeHash": null,
+        "deploymentEvidencePath": null,
+        "trust": "The hook constructor binds exactly one deployed router; that router binds payer, player, beneficiary, and recipient to msg.sender.",
+        "failure": "An absent or mismatched router prevents challenge mode while empty-hookData ordinary swaps remain available.",
+        "fallback": "No alternative router is accepted by the immutable hook instance."
+      }
+    ],
+    "offchain": []
+  },
+  "operations": {
+    "keeper": {
+      "required": false,
+      "actor": null,
+      "action": null,
+      "cadence": null,
+      "authentication": null,
+      "funding": null,
+      "failure": null,
+      "fallback": null
+    },
+    "oracle": {
+      "required": false,
+      "actor": null,
+      "action": null,
+      "cadence": null,
+      "authentication": null,
+      "funding": null,
+      "failure": null,
+      "fallback": null
+    },
+    "monitoring": "After an authorized deployment, monitor runtime hashes, canonical PoolId, hook mask, WETH claim solvency versus category liabilities, deadline ordering, claim failures, and event/indexer lag; monitoring cannot mutate contracts.",
+    "incidentResponse": "Fail affected product transaction preparation closed, preserve pull claims and chain truth, publish a factual incident record, and require a separately reviewed new immutable version for any repair."
+  },
+  "integration": {
+    "routerGeneration": null,
+    "routerDependencyId": null,
+    "permit2DependencyId": null,
+    "stateViewDependencyId": null,
+    "quoterDependencyId": null,
+    "sdkDependencies": [],
+    "routerActionProfile": {
+      "routerVersionExplicit": null,
+      "universalRouterCommand": null,
+      "v4Actions": [],
+      "settlementMode": null,
+      "permit2Mode": null,
+      "finalSwapDeltaValidated": null
+    },
+    "sdkSafetyProfile": {
+      "packageRootImportsOnly": null,
+      "hookedQuoteSource": null,
+      "localHookedPoolMathDisabled": null,
+      "hookDataParity": null,
+      "multiHopHookDataMode": null,
+      "perHopPriceBounds": null,
+      "slippageSemantics": null,
+      "deprecatedLiquidityActionsDisabled": null
+    },
+    "appSourcePaths": [],
+    "integrationTestPaths": [],
+    "quoteExecutionParity": null,
+    "swapModes": [
+      "zeroForOne-exactInput",
+      "zeroForOne-exactOutput",
+      "oneForZero-exactInput",
+      "oneForZero-exactOutput"
+    ],
+    "partialFills": "Specified-WETH partial fills revert atomically; unspecified-WETH ordinary fees use actual executed delta; every challenge partial fill reverts.",
+    "slippage": "Ordinary routers enforce their final delta bounds; OvertimeChallengeRouter enforces minimum token output and exact settled gross WETH after hook effects.",
+    "deadline": "The challenge router requires a finite caller deadline and reverts at or after expiry; launcher liquidity also uses a finite deadline.",
+    "permit2": "Not used by the project challenge router; the caller grants only an exact WETH ERC-20 allowance to that immutable router. External ordinary routers own their separate approval policy.",
+    "stateReads": "Canonical PoolKey and onchain hook state are authoritative; later quotes and displays must read one coherent confirmed block.",
+    "events": [
+      "OvertimeTokenCreated",
+      "CanonicalPoolInitialized",
+      "InitialLiquidityLocked",
+      "OvertimeSwapFeeAccrued",
+      "RoundStarted",
+      "CrownChallenged",
+      "RoundFinalized",
+      "SameBlockRefundCredited",
+      "ProgrammableFeesClaimed",
+      "ChampionClaimed",
+      "CrownTimeClaimed",
+      "RefundClaimed"
+    ],
+    "routingAndDiscoverability": {
+      "routingMode": "not-planned",
+      "allowlistTriggers": {
+        "usesDeltaFlag": true,
+        "addressStartsWith91": false,
+        "targetsMajorPair": false,
+        "permissionedPool": false
+      },
+      "uniswapRoutingStatus": "not-applicable",
+      "hookRegistryStatus": "not-submitted",
+      "customHookDataRequired": true,
+      "standardRouterCompatible": false,
+      "permissionedRouting": {
+        "required": false,
+        "minimumRouterGeneration": null,
+        "adapterCurrencyUsed": null,
+        "allowedWrapperBindings": null,
+        "positionManagerBinding": null,
+        "routingAllowlistRequiredPerChain": null
+      },
+      "sourcePaths": [],
+      "testPaths": []
+    },
+    "dataReconstruction": {
+      "mode": "events-with-confirmed-reads",
+      "eventCoverage": "Launch identity, fee accrual and remainders, round starts/challenges/finalization, refund credits, and every claim are emitted with PoolId, round, and beneficiary keys.",
+      "cursor": "block-number-transaction-index-log-index",
+      "startBlockPolicy": "Begin at the confirmed launcher deployment block and require the exact launch event/provenance commitment.",
+      "finalityDepth": 12,
+      "reorgPolicy": "Rollback all entities at and after the common ancestor, replay canonical logs in cursor order, then reconcile current onchain state at one confirmed block.",
+      "backfillPolicy": "Permissionless deterministic replay from the launch block with bounded pages and no omission-as-absence assumption.",
+      "checkpointPolicy": "Persist the confirmed block hash and cursor; discard a checkpoint whose block hash no longer matches canonical chain state.",
+      "freshnessTargetSeconds": 30,
+      "staleAfterSeconds": 120,
+      "freshnessMeasurement": "Wall-clock age of the last confirmed reconciled block plus indexed head lag.",
+      "reconciliation": "Compare event-derived round/liability totals with hook views and the hook's PoolManager WETH claim at the same confirmed block.",
+      "reserveReconstruction": {
+        "used": true,
+        "balanceSources": [
+          "PoolManager ERC-6909 WETH claim balance owned by the exact OvertimeHook at one confirmed block"
+        ],
+        "liabilitySources": [
+          "OvertimeHook programmable, pending, active, finalized champion, finalized crown-time, and refund ledger views"
+        ],
+        "attributionKeys": [
+          "chainId",
+          "modelVersion",
+          "poolId",
+          "currency",
+          "beneficiary",
+          "epoch"
+        ],
+        "solvencyEquation": "hook PoolManager WETH claim >= programmable + pendingPot + activePot + unclaimed champion + unclaimed crown-time + refunds",
+        "poolLiquidityTreatment": "excluded-from-hook-reserves",
+        "donationAndDustPolicy": "Pool donations and raw balances do not create a liability category; fee remainders and crown-time division dust remain explicit reserved state.",
+        "reconciliation": "Replay all accrual/finalization/claim events and compare each category plus aggregate liabilities to exact onchain views and claim backing."
+      },
+      "sourcePaths": [
+        "src/OvertimeHook.sol"
+      ],
+      "testPaths": [
+        "test/invariant/OvertimeAccountingInvariant.t.sol"
+      ]
+    },
+    "platformHandoff": {
+      "intended": true,
+      "websiteRegistryPath": null,
+      "uiSourcePaths": [],
+      "apiSourcePaths": [],
+      "indexerSourcePaths": [],
+      "testPaths": [],
+      "reviewStatus": "pending-maintainer-review",
+      "maintainerReviewRequired": true,
+      "selfApproval": false,
+      "availabilityClaimed": false,
+      "handoffNotes": "After maintainers accept one exact prototype, separately scope registry, UI, API, reorg-aware indexer, executable V4Quoter, ordinary and challenge trade paths, claim UX, and solvency monitoring against the accepted release."
+    }
+  },
+  "projectSurfaces": [
+    {
+      "id": "canonical-pool-model",
+      "kind": "onchain-contract",
+      "name": "Canonical pool model",
+      "summary": "The token, launcher, locked-liquidity vault, challenge router, canonical PoolKey, fee kernel, round state, and pull claims reviewed as one onchain boundary.",
+      "executionBoundary": "onchain",
+      "capabilityIds": [
+        "canonical-pool-state",
+        "canonical-v4-pool",
+        "claimable-platform-fee",
+        "claimable-project-fee",
+        "custom-hook-behavior",
+        "evidence-plan",
+        "launch-distribution",
+        "liquidity-position-custody",
+        "provider-disclosures",
+        "public-metadata",
+        "quote-side-volume-accounting",
+        "security-properties",
+        "vesting-schedules",
+        "authenticated-challenge-router",
+        "recurring-crown-time-game"
+      ],
+      "authorityRefs": [
+        "permissionless-trader",
+        "immutable-challenge-router",
+        "programmable-fee-owner",
+        "launch-caller",
+        "reward-beneficiary"
+      ],
+      "valueFlowRefs": [
+        "swap-fee",
+        "crown-contribution",
+        "reward-claim",
+        "initial-liquidity"
+      ],
+      "assetRefs": [
+        "weth",
+        "launched-token"
+      ],
+      "sourcePaths": [
+        "src/OvertimeHook.sol",
+        "src/OvertimeChallengeRouter.sol",
+        "src/OvertimeToken.sol",
+        "src/OvertimeLauncher.sol",
+        "src/LockedLiquidityVault.sol",
+        "src/RoundMath.sol",
+        "src/HookDataCodec.sol"
+      ],
+      "testPaths": [
+        "test/OvertimeFeeKernel.t.sol",
+        "test/OvertimeGame.t.sol",
+        "test/OvertimeLauncher.t.sol",
+        "test/RoundMath.t.sol",
+        "test/invariant/OvertimeAccountingInvariant.t.sol",
+        "test/fork/OvertimeMainnetFork.t.sol"
+      ],
+      "schemaPaths": [
+        "submissions/overtime-v1/submission.json"
+      ],
+      "evidencePaths": [
+        "submissions/overtime-v1/EVIDENCE.md"
+      ],
+      "exposure": {
+        "movesValue": true,
+        "usesSignatures": false,
+        "makesExternalCalls": true,
+        "holdsCustody": true,
+        "handlesPii": false,
+        "usesGeolocation": false,
+        "usesSecrets": false
+      },
+      "profiles": {
+        "authority": {
+          "status": "applicable",
+          "summary": "PoolManager callback authentication and the declared launch authorities bound in this submission govern the exact onchain boundary.",
+          "controls": [
+            "Authenticate every hook callback through the exact PoolManager and declared pool-admission rule."
+          ],
+          "evidenceRefs": []
+        },
+        "valueFlow": {
+          "status": "applicable",
+          "summary": "All swap fees, crown contributions, reward claims, and initial liquidity use the four declared value-flow ids and conserve WETH/token value.",
+          "controls": [
+            "Keep Programmable, pending, active, finalized, refund, and claimed accounting separate and reconcile every event."
+          ],
+          "evidenceRefs": [
+            "submissions/overtime-v1/EVIDENCE.md"
+          ]
+        },
+        "sourceOfTruth": {
+          "status": "applicable",
+          "summary": "Confirmed PoolManager and contract state for the exact chain and PoolId is the authoritative source of truth.",
+          "controls": [
+            "Key every state read and emitted event by the exact chain, model revision and PoolId."
+          ],
+          "evidenceRefs": []
+        },
+        "signaturesReplay": {
+          "status": "not-applicable",
+          "summary": "The starter surface consumes no model-specific signed message or signed offchain payload.",
+          "controls": [],
+          "evidenceRefs": []
+        },
+        "externalCalls": {
+          "status": "applicable",
+          "summary": "The launcher, hook, and router call only typed immutable PoolManager, PositionManager, WETH, and launched-token surfaces.",
+          "controls": [
+            "Check all return values, reject arbitrary targets, guard reentrancy, and revert every partial external failure atomically."
+          ],
+          "evidenceRefs": [
+            "submissions/overtime-v1/EVIDENCE.md"
+          ]
+        },
+        "custody": {
+          "status": "applicable",
+          "summary": "OvertimeHook owns WETH PoolManager claims against explicit liabilities and LockedLiquidityVault permanently owns the initial position.",
+          "controls": [
+            "Prove WETH claim solvency, beneficiary-only exits, no rescue, and no position approval, transfer, decrease, or withdrawal path."
+          ],
+          "evidenceRefs": [
+            "submissions/overtime-v1/EVIDENCE.md"
+          ]
+        },
+        "piiGeolocation": {
+          "status": "not-applicable",
+          "summary": "The onchain starter surface collects no private identity data or precise user geolocation.",
+          "controls": [],
+          "evidenceRefs": []
+        },
+        "secretBoundary": {
+          "status": "not-applicable",
+          "summary": "The onchain starter surface assumes no secret can remain confidential in contract state or calldata.",
+          "controls": [],
+          "evidenceRefs": []
+        },
+        "sourceTestSchema": {
+          "status": "applicable",
+          "summary": "The implementation manifest binds the exact source, tests, compiler input and specification reviewed for this boundary.",
+          "controls": [
+            "Bind prototype source and tests to implementation paths and include every imported executable byte in the review target."
+          ],
+          "evidenceRefs": []
+        },
+        "failureRecovery": {
+          "status": "applicable",
+          "summary": "An invalid callback or state transition reverts atomically and does not block the separately declared user exit path.",
+          "controls": [
+            "Test dependency failure, callback revert and recovery without partial settlement or trapped user funds."
+          ],
+          "evidenceRefs": []
+        }
+      },
+      "signedDataSource": {
+        "used": false,
+        "signerAuthorityRefs": [],
+        "signatureScheme": null,
+        "payloadSchemaPath": null,
+        "freshnessRule": null,
+        "replayProtection": null,
+        "onchainVerifierSurfaceId": null
+      },
+      "onchainOracleVerifier": {
+        "used": false,
+        "verifiedSourceSurfaceIds": [],
+        "verificationRule": null,
+        "freshnessRule": null,
+        "replayProtection": null,
+        "failureRule": null
+      }
+    }
+  ],
+  "projectCapabilities": [
+    {
+      "id": "canonical-pool-state",
+      "kind": "onchain-value-flow",
+      "summary": "The canonical-pool-state capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    },
+    {
+      "id": "canonical-v4-pool",
+      "kind": "onchain-value-flow",
+      "summary": "The canonical-v4-pool capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    },
+    {
+      "id": "claimable-platform-fee",
+      "kind": "onchain-value-flow",
+      "summary": "The claimable-platform-fee capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    },
+    {
+      "id": "claimable-project-fee",
+      "kind": "onchain-value-flow",
+      "summary": "The claimable-project-fee capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    },
+    {
+      "id": "custom-hook-behavior",
+      "kind": "onchain-value-flow",
+      "summary": "The custom-hook-behavior capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    },
+    {
+      "id": "evidence-plan",
+      "kind": "onchain-value-flow",
+      "summary": "The evidence-plan capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    },
+    {
+      "id": "launch-distribution",
+      "kind": "onchain-value-flow",
+      "summary": "The launch-distribution capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    },
+    {
+      "id": "liquidity-position-custody",
+      "kind": "onchain-value-flow",
+      "summary": "The liquidity-position-custody capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    },
+    {
+      "id": "provider-disclosures",
+      "kind": "onchain-value-flow",
+      "summary": "The provider-disclosures capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    },
+    {
+      "id": "public-metadata",
+      "kind": "onchain-value-flow",
+      "summary": "The public-metadata capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    },
+    {
+      "id": "quote-side-volume-accounting",
+      "kind": "onchain-value-flow",
+      "summary": "The quote-side-volume-accounting capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    },
+    {
+      "id": "security-properties",
+      "kind": "onchain-value-flow",
+      "summary": "The security-properties capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    },
+    {
+      "id": "vesting-schedules",
+      "kind": "onchain-value-flow",
+      "summary": "The vesting-schedules capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    },
+    {
+      "id": "authenticated-challenge-router",
+      "kind": "onchain-value-flow",
+      "summary": "The authenticated-challenge-router capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    },
+    {
+      "id": "recurring-crown-time-game",
+      "kind": "onchain-value-flow",
+      "summary": "The recurring-crown-time-game capability executes only inside the authenticated canonical Overtime pool boundary.",
+      "surfaceIds": [
+        "canonical-pool-model"
+      ],
+      "securityTriggers": {
+        "authority": true,
+        "valueFlow": true,
+        "sourceOfTruth": true,
+        "signaturesReplay": false,
+        "externalCalls": true,
+        "custody": true,
+        "piiGeolocation": false,
+        "secretBoundary": false,
+        "sourceTestSchema": true,
+        "failureRecovery": true
+      },
+      "requiredProfiles": [
+        "authority",
+        "custody",
+        "external-calls",
+        "failure-recovery",
+        "source-of-truth",
+        "source-test-schema",
+        "value-flow"
+      ]
+    }
+  ],
+  "capabilities": {
+    "externalCalls": {
+      "used": true,
+      "targets": [
+        "pool-manager",
+        "position-manager",
+        "weth-mainnet",
+        "launched-token"
+      ],
+      "callSites": [
+        "OvertimeHook fee claim mint and pull redemption",
+        "OvertimeChallengeRouter unlock settlement",
+        "OvertimeLauncher initialization and position mint"
+      ],
+      "reentrancyPolicy": "Transient guards protect router and claim entry; state effects precede redemption; no arbitrary target or callback extension exists.",
+      "stateDriftPolicy": "PoolKey and immutable dependency addresses are revalidated at each relevant action; launch and quote inputs use coherent current state.",
+      "returnValuePolicy": "Safe ERC-20 transfer wrappers and exact PoolManager/PositionManager return, delta, and owner checks; malformed or false results revert.",
+      "failureAtomicity": "Every external-call failure reverts its complete swap, challenge, claim, or launch transaction."
+    },
+    "permissionedAsset": {
+      "used": false,
+      "officialUniswapPermissionedPool": null,
+      "issuer": null,
+      "jurisdiction": null,
+      "legalDocuments": [],
+      "underlyingClaim": null,
+      "custodian": null,
+      "adapter": null,
+      "hooks": null,
+      "positionManager": null,
+      "swapEligibility": null,
+      "liquidityEligibility": null,
+      "positionTransferability": null,
+      "pauseFreezeUnwind": null,
+      "redemption": null,
+      "routingLimitations": null
+    },
+    "oracle": {
+      "used": false,
+      "source": null,
+      "value": null,
+      "deployment": null,
+      "runtimeHash": null,
+      "decimals": null,
+      "heartbeatSeconds": null,
+      "maxAgeSeconds": null,
+      "observationType": null,
+      "windowSeconds": null,
+      "minimumAnswer": null,
+      "maximumAnswer": null,
+      "maximumDeviation": null,
+      "roundChecks": null,
+      "manipulationResistance": null,
+      "governance": null,
+      "fallback": null,
+      "maxFallbackAgeSeconds": null,
+      "failureRule": null
+    },
+    "keeper": {
+      "used": false,
+      "executionMode": null,
+      "minIntervalSeconds": null,
+      "maxDelaySeconds": null,
+      "permissionlessFallbackAfterSeconds": null,
+      "idempotencyKey": null,
+      "duplicateBehavior": null,
+      "lastProcessedState": null,
+      "boundedWork": null,
+      "maxItems": null,
+      "retryPolicy": null,
+      "zeroWorkBehavior": null,
+      "fundingSource": null,
+      "minimumGasRunway": null,
+      "alertThreshold": null,
+      "maximumGas": null,
+      "failureImpact": null,
+      "userExitIndependent": null,
+      "poolBinding": null,
+      "slippage": null,
+      "deadline": null,
+      "mevPolicy": null
+    },
+    "proof": {
+      "used": false,
+      "proofSystem": null,
+      "circuitRevision": null,
+      "verifyingKeyHash": null,
+      "verifierAddress": null,
+      "runtimeHash": null,
+      "setupType": null,
+      "setupProvenance": null,
+      "publicInputs": [],
+      "domainBindings": {
+        "chainId": null,
+        "verifyingContract": null,
+        "modelVersion": null,
+        "pool": null,
+        "action": null,
+        "actorOrRecipient": null,
+        "amountBounds": null,
+        "epochOrDeadline": null
+      },
+      "replayMode": null,
+      "nullifierScope": null,
+      "nullifierDerivation": null,
+      "nullifierStorage": null,
+      "atomicSpentCheck": null,
+      "resetPolicy": null,
+      "maximumProofBytes": null,
+      "maximumVerificationGas": null,
+      "verifierAuthority": null,
+      "failureRule": null,
+      "privacyClaim": null,
+      "metadataLeakage": null
+    },
+    "crossChain": {
+      "used": false,
+      "bridgeDependencyId": null,
+      "source": {
+        "network": {
+          "namespace": null,
+          "reference": null
+        },
+        "domain": null,
+        "authenticatedSender": {
+          "encoding": null,
+          "value": null,
+          "canonicalizationRule": null
+        }
+      },
+      "destination": {
+        "chainId": null,
+        "domain": null,
+        "receiver": null,
+        "receiverDependencyId": null,
+        "authenticatedBridgeCaller": null
+      },
+      "message": {
+        "identifierDerivation": null,
+        "nonceDerivation": null,
+        "nonceScope": null,
+        "customNonceRule": null,
+        "payloadHashRule": null,
+        "idempotencyKeyRule": null,
+        "idempotencyStorage": null,
+        "atomicConsumption": null,
+        "duplicateBehavior": null,
+        "domainBindings": {
+          "bridgeDependencyId": null,
+          "sourceNetwork": null,
+          "sourceDomain": null,
+          "sourceSender": null,
+          "destinationChainId": null,
+          "destinationDomain": null,
+          "receiver": null,
+          "receiverDependencyId": null,
+          "modelId": null,
+          "poolId": null,
+          "action": null,
+          "payloadHash": null,
+          "timestampOrExpiry": null,
+          "messageId": null,
+          "nonce": null
+        }
+      },
+      "finality": {
+        "mode": null,
+        "minimumSourceConfirmations": null,
+        "challengePeriodSeconds": null,
+        "attestationRule": null,
+        "reorgBehavior": null,
+        "customFinalityRule": null
+      },
+      "ordering": {
+        "mode": null,
+        "sequenceKey": null,
+        "outOfOrderBehavior": null,
+        "maximumPendingMessages": null,
+        "queueOverflowBehavior": null,
+        "pendingMessageExpirySeconds": null,
+        "cleanupRule": null,
+        "releaseRule": null
+      },
+      "staleness": {
+        "timestampSource": null,
+        "customTimestampRule": null,
+        "maximumMessageAgeSeconds": null,
+        "maximumFutureSkewSeconds": null,
+        "staleMessageBehavior": null
+      },
+      "failureBehavior": null,
+      "failureRule": null,
+      "fallback": {
+        "mode": null,
+        "authority": null,
+        "rule": null
+      },
+      "quarantine": {
+        "used": null,
+        "storageRule": null,
+        "maximumEntries": null,
+        "entryExpirySeconds": null,
+        "overflowBehavior": null,
+        "cleanupRule": null,
+        "releaseMode": null,
+        "releaseRule": null,
+        "releaseAuthority": null,
+        "atomicRelease": null
+      }
+    },
+    "externalLiquidity": {
+      "used": false,
+      "custody": null,
+      "ownership": null,
+      "shareAccounting": null,
+      "solvencyEquation": null,
+      "lossAllocation": null,
+      "donationPolicy": null,
+      "exitPath": null,
+      "dependencyFailure": null
+    },
+    "asyncSwap": {
+      "used": false,
+      "supportedExactness": null,
+      "custody": null,
+      "fillRule": null,
+      "partialFillRule": null,
+      "cancellation": null,
+      "expiry": null,
+      "refund": null,
+      "queueBound": null,
+      "liveness": null,
+      "failureRule": null
+    },
+    "customCurve": {
+      "used": false,
+      "invariant": null,
+      "domain": null,
+      "rounding": null,
+      "monotonicity": null,
+      "discontinuities": null,
+      "inverse": null,
+      "differentialReference": null,
+      "failureRule": null
+    }
+  },
+  "capabilityExtensions": [
+    {
+      "capabilityId": "canonical-v4-pool",
+      "summary": "The canonical-v4-pool capability is an explicit part of Overtime v1 and is reviewed within the canonical pool model.",
+      "interactionRefs": [
+        "canonical-pool-model"
+      ],
+      "trustBoundary": "PoolManager authentication, immutable contract bindings, canonical PoolKey validation, and beneficiary-bound pull claims delimit this capability.",
+      "failureMode": "Invalid authority, settlement, accounting, or lifecycle state reverts atomically without changing a recorded entitlement.",
+      "schemaPath": null,
+      "sourcePaths": [],
+      "testPaths": [],
+      "evidencePaths": [
+        "DESIGN.md"
+      ]
+    },
+    {
+      "capabilityId": "claimable-platform-fee",
+      "summary": "The claimable-platform-fee capability is an explicit part of Overtime v1 and is reviewed within the canonical pool model.",
+      "interactionRefs": [
+        "canonical-pool-model"
+      ],
+      "trustBoundary": "PoolManager authentication, immutable contract bindings, canonical PoolKey validation, and beneficiary-bound pull claims delimit this capability.",
+      "failureMode": "Invalid authority, settlement, accounting, or lifecycle state reverts atomically without changing a recorded entitlement.",
+      "schemaPath": null,
+      "sourcePaths": [],
+      "testPaths": [],
+      "evidencePaths": [
+        "DESIGN.md"
+      ]
+    },
+    {
+      "capabilityId": "claimable-project-fee",
+      "summary": "The claimable-project-fee capability is an explicit part of Overtime v1 and is reviewed within the canonical pool model.",
+      "interactionRefs": [
+        "canonical-pool-model"
+      ],
+      "trustBoundary": "PoolManager authentication, immutable contract bindings, canonical PoolKey validation, and beneficiary-bound pull claims delimit this capability.",
+      "failureMode": "Invalid authority, settlement, accounting, or lifecycle state reverts atomically without changing a recorded entitlement.",
+      "schemaPath": null,
+      "sourcePaths": [],
+      "testPaths": [],
+      "evidencePaths": [
+        "DESIGN.md"
+      ]
+    },
+    {
+      "capabilityId": "custom-hook-behavior",
+      "summary": "The custom-hook-behavior capability is an explicit part of Overtime v1 and is reviewed within the canonical pool model.",
+      "interactionRefs": [
+        "canonical-pool-model"
+      ],
+      "trustBoundary": "PoolManager authentication, immutable contract bindings, canonical PoolKey validation, and beneficiary-bound pull claims delimit this capability.",
+      "failureMode": "Invalid authority, settlement, accounting, or lifecycle state reverts atomically without changing a recorded entitlement.",
+      "schemaPath": null,
+      "sourcePaths": [],
+      "testPaths": [],
+      "evidencePaths": [
+        "DESIGN.md"
+      ]
+    },
+    {
+      "capabilityId": "evidence-plan",
+      "summary": "The evidence-plan capability is an explicit part of Overtime v1 and is reviewed within the canonical pool model.",
+      "interactionRefs": [
+        "canonical-pool-model"
+      ],
+      "trustBoundary": "PoolManager authentication, immutable contract bindings, canonical PoolKey validation, and beneficiary-bound pull claims delimit this capability.",
+      "failureMode": "Invalid authority, settlement, accounting, or lifecycle state reverts atomically without changing a recorded entitlement.",
+      "schemaPath": null,
+      "sourcePaths": [],
+      "testPaths": [],
+      "evidencePaths": [
+        "DESIGN.md"
+      ]
+    },
+    {
+      "capabilityId": "launch-distribution",
+      "summary": "The launch-distribution capability is an explicit part of Overtime v1 and is reviewed within the canonical pool model.",
+      "interactionRefs": [
+        "canonical-pool-model"
+      ],
+      "trustBoundary": "PoolManager authentication, immutable contract bindings, canonical PoolKey validation, and beneficiary-bound pull claims delimit this capability.",
+      "failureMode": "Invalid authority, settlement, accounting, or lifecycle state reverts atomically without changing a recorded entitlement.",
+      "schemaPath": null,
+      "sourcePaths": [],
+      "testPaths": [],
+      "evidencePaths": [
+        "DESIGN.md"
+      ]
+    },
+    {
+      "capabilityId": "liquidity-position-custody",
+      "summary": "The liquidity-position-custody capability is an explicit part of Overtime v1 and is reviewed within the canonical pool model.",
+      "interactionRefs": [
+        "canonical-pool-model"
+      ],
+      "trustBoundary": "PoolManager authentication, immutable contract bindings, canonical PoolKey validation, and beneficiary-bound pull claims delimit this capability.",
+      "failureMode": "Invalid authority, settlement, accounting, or lifecycle state reverts atomically without changing a recorded entitlement.",
+      "schemaPath": null,
+      "sourcePaths": [],
+      "testPaths": [],
+      "evidencePaths": [
+        "DESIGN.md"
+      ]
+    },
+    {
+      "capabilityId": "provider-disclosures",
+      "summary": "The provider-disclosures capability is an explicit part of Overtime v1 and is reviewed within the canonical pool model.",
+      "interactionRefs": [
+        "canonical-pool-model"
+      ],
+      "trustBoundary": "PoolManager authentication, immutable contract bindings, canonical PoolKey validation, and beneficiary-bound pull claims delimit this capability.",
+      "failureMode": "Invalid authority, settlement, accounting, or lifecycle state reverts atomically without changing a recorded entitlement.",
+      "schemaPath": null,
+      "sourcePaths": [],
+      "testPaths": [],
+      "evidencePaths": [
+        "DESIGN.md"
+      ]
+    },
+    {
+      "capabilityId": "public-metadata",
+      "summary": "The public-metadata capability is an explicit part of Overtime v1 and is reviewed within the canonical pool model.",
+      "interactionRefs": [
+        "canonical-pool-model"
+      ],
+      "trustBoundary": "PoolManager authentication, immutable contract bindings, canonical PoolKey validation, and beneficiary-bound pull claims delimit this capability.",
+      "failureMode": "Invalid authority, settlement, accounting, or lifecycle state reverts atomically without changing a recorded entitlement.",
+      "schemaPath": null,
+      "sourcePaths": [],
+      "testPaths": [],
+      "evidencePaths": [
+        "DESIGN.md"
+      ]
+    },
+    {
+      "capabilityId": "quote-side-volume-accounting",
+      "summary": "The quote-side-volume-accounting capability is an explicit part of Overtime v1 and is reviewed within the canonical pool model.",
+      "interactionRefs": [
+        "canonical-pool-model"
+      ],
+      "trustBoundary": "PoolManager authentication, immutable contract bindings, canonical PoolKey validation, and beneficiary-bound pull claims delimit this capability.",
+      "failureMode": "Invalid authority, settlement, accounting, or lifecycle state reverts atomically without changing a recorded entitlement.",
+      "schemaPath": null,
+      "sourcePaths": [],
+      "testPaths": [],
+      "evidencePaths": [
+        "DESIGN.md"
+      ]
+    },
+    {
+      "capabilityId": "security-properties",
+      "summary": "The security-properties capability is an explicit part of Overtime v1 and is reviewed within the canonical pool model.",
+      "interactionRefs": [
+        "canonical-pool-model"
+      ],
+      "trustBoundary": "PoolManager authentication, immutable contract bindings, canonical PoolKey validation, and beneficiary-bound pull claims delimit this capability.",
+      "failureMode": "Invalid authority, settlement, accounting, or lifecycle state reverts atomically without changing a recorded entitlement.",
+      "schemaPath": null,
+      "sourcePaths": [],
+      "testPaths": [],
+      "evidencePaths": [
+        "DESIGN.md"
+      ]
+    },
+    {
+      "capabilityId": "vesting-schedules",
+      "summary": "The vesting-schedules capability is an explicit part of Overtime v1 and is reviewed within the canonical pool model.",
+      "interactionRefs": [
+        "canonical-pool-model"
+      ],
+      "trustBoundary": "PoolManager authentication, immutable contract bindings, canonical PoolKey validation, and beneficiary-bound pull claims delimit this capability.",
+      "failureMode": "Invalid authority, settlement, accounting, or lifecycle state reverts atomically without changing a recorded entitlement.",
+      "schemaPath": null,
+      "sourcePaths": [],
+      "testPaths": [],
+      "evidencePaths": [
+        "DESIGN.md"
+      ]
+    },
+    {
+      "capabilityId": "authenticated-challenge-router",
+      "summary": "The authenticated-challenge-router capability is an explicit part of Overtime v1 and is reviewed within the canonical pool model.",
+      "interactionRefs": [
+        "canonical-pool-model"
+      ],
+      "trustBoundary": "PoolManager authentication, immutable contract bindings, canonical PoolKey validation, and beneficiary-bound pull claims delimit this capability.",
+      "failureMode": "Invalid authority, settlement, accounting, or lifecycle state reverts atomically without changing a recorded entitlement.",
+      "schemaPath": null,
+      "sourcePaths": [],
+      "testPaths": [],
+      "evidencePaths": [
+        "DESIGN.md"
+      ]
+    },
+    {
+      "capabilityId": "recurring-crown-time-game",
+      "summary": "The recurring-crown-time-game capability is an explicit part of Overtime v1 and is reviewed within the canonical pool model.",
+      "interactionRefs": [
+        "canonical-pool-model"
+      ],
+      "trustBoundary": "PoolManager authentication, immutable contract bindings, canonical PoolKey validation, and beneficiary-bound pull claims delimit this capability.",
+      "failureMode": "Invalid authority, settlement, accounting, or lifecycle state reverts atomically without changing a recorded entitlement.",
+      "schemaPath": null,
+      "sourcePaths": [],
+      "testPaths": [],
+      "evidencePaths": [
+        "DESIGN.md"
+      ]
+    }
+  ],
+  "tokenBehaviorExtensions": [],
+  "security": {
+    "usesTxOrigin": false,
+    "userControlledDelegatecall": false,
+    "arbitraryExecution": false,
+    "unboundedCriticalLoop": false,
+    "ignoredCallResults": false,
+    "hiddenControls": false,
+    "assumesOnchainSecrecy": false,
+    "bypassesHookAddressValidation": false,
+    "signatureScheme": {
+      "used": false,
+      "standard": null,
+      "nonce": null,
+      "deadline": null,
+      "chain": null,
+      "verifyingContract": null,
+      "action": null,
+      "parameters": null,
+      "erc1271": null
+    }
+  },
+  "implementation": {
+    "sourcePaths": [
+      "src/OvertimeHook.sol",
+      "src/OvertimeChallengeRouter.sol",
+      "src/OvertimeToken.sol",
+      "src/OvertimeLauncher.sol",
+      "src/LockedLiquidityVault.sol",
+      "src/RoundMath.sol",
+      "src/HookDataCodec.sol"
+    ],
+    "testPaths": [
+      "test/OvertimeFeeKernel.t.sol",
+      "test/OvertimeGame.t.sol",
+      "test/OvertimeLauncher.t.sol",
+      "test/RoundMath.t.sol",
+      "test/invariant/OvertimeAccountingInvariant.t.sol",
+      "test/fork/OvertimeMainnetFork.t.sol"
+    ],
+    "compilerBuildInfoPaths": [],
+    "specificationPath": "DESIGN.md",
+    "testEvidencePath": "evidence/test-evidence.json",
+    "dependencyLockPath": "dependencies/lock.json",
+    "gateStatusPath": "evidence/gate-status.json",
+    "reviewTargetPath": "evidence/review-target.json",
+    "runtimeAssetManifestPath": null
+  },
+  "risk": {
+    "dimensions": {
+      "complexity": 5,
+      "customMath": 3,
+      "externalDependencies": 2,
+      "externalLiquidity": 0,
+      "valueAtRisk": 4,
+      "teamMaturity": 3,
+      "upgradeability": 0,
+      "autonomy": 2,
+      "priceImpact": 1
+    },
+    "rationales": {
+      "complexity": "One hook combines four-quadrant return deltas, cumulative fees, rounds, refunds, and several pull claims with a launcher and custody vault.",
+      "customMath": "Fee gross-up, cumulative remainders, crown cost, capped deadlines, and pro-rata crown-time require boundary and conservation proofs.",
+      "externalDependencies": "Runtime depends on immutable Uniswap PoolManager, PositionManager, and canonical WETH with pinned source/runtime checks.",
+      "externalLiquidity": "The hook does not place assets into an external yield or liquidity protocol; initial v4 liquidity stays in the canonical pool.",
+      "valueAtRisk": "The hook may custody growing fee pots and finalized claims, while the initial liquidity position is deliberately permanent.",
+      "teamMaturity": "No independently reviewed Overtime release or operating history exists, so maturity is conservatively scored at the maximum.",
+      "upgradeability": "All Overtime contracts are immutable and have no proxy, admin, setter, pause, or rescue mechanism.",
+      "autonomy": "Timestamp-triggered finalization and deadline extension are automatic but bounded by immutable formulas and require no keeper.",
+      "priceImpact": "The hook charges a fixed disclosed fee and challenge crown payment but does not replace the AMM curve or use an oracle."
+    },
+    "declaredTotal": 20,
+    "declaredTier": "high",
+    "featureTriggers": [
+      "autonomous",
+      "custom-accounting",
+      "custom-math",
+      "external-calls",
+      "price-impact",
+      "project-custody",
+      "project-external-calls",
+      "project-value-flow",
+      "return-delta"
+    ]
+  },
+  "disclosures": [
+    "Overtime v1 is an unaudited implementation candidate and has not been accepted, deployed, source-verified, routed, indexed, or made available by Programmable or Uniswap.",
+    "Ordinary swaps pay a fixed 110 bps hook-owned WETH fee; exactly 10 bps belongs to Programmable and 100 bps funds the game.",
+    "Challenge trades require the custom router and non-empty hookData; ordinary empty-data swaps remain separate.",
+    "Specified-WETH partial fills revert atomically, and every challenge partial fill reverts.",
+    "Initial liquidity is permanently locked with no rescue or migration path, and Overtime contracts have no pause, upgrade, setter, or administrator sweep.",
+    "Hooklist, Universal Router, UniswapX, indexer, scanner, and interface support are external states and are not claimed."
+  ],
+  "unresolved": []
+}

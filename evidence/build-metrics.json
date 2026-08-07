@@ -1,0 +1,19 @@
+{
+  "status": "local-build-only",
+  "compiler": "solc 0.8.26",
+  "optimizerRuns": 1000,
+  "evmVersion": "cancun",
+  "contracts": {
+    "OvertimeHook": { "runtimeBytes": 17198, "initcodeBytes": 18582 },
+    "OvertimeChallengeRouter": { "runtimeBytes": 5133, "initcodeBytes": 5441 },
+    "OvertimeToken": { "runtimeBytes": 1920, "initcodeBytes": 2918 },
+    "OvertimeLauncher": { "runtimeBytes": 14489, "initcodeBytes": 15387 },
+    "LockedLiquidityVault": { "runtimeBytes": 519, "initcodeBytes": 737 }
+  },
+  "hookPermissionMask": "0x20cc",
+  "launchGas": {
+    "deployAssetsObserved": 5555394,
+    "lockLiquidityObserved": 815063
+  },
+  "report": "evidence/reports/bytecode-sizes.txt"
+}

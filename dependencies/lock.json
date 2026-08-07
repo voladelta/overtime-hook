@@ -1,0 +1,18 @@
+{
+  "sourceOfTruth": {
+    "repository": "https://github.com/0xprogrammable/programmable",
+    "branch": "production",
+    "revision": "c7346ab41046e5a600acc88acb37b73d3bbb80b9"
+  },
+  "dependencies": {
+    "forge-std": "3b20d60d14b343ee4f908cb8079495c07f5e8981",
+    "liquidity-launcher": "e4660afe4f820f4a39181c7ea1f9bce6c423499f",
+    "openzeppelin-contracts": "21c8312b022f495ebe3621d5daeed20552b43ff9",
+    "openzeppelin-uniswap-hooks": "26dc8e53f812a1ca390d470342adb6cd8c3286ad",
+    "permit2": "cc56ad0f3439c502c246fc5cfcc3db92bb8b7219",
+    "solady": "33b4b98e350bbcba6aa85642957c313e98b5f911",
+    "solmate": "4b47a19038b798b4a33d9749d25e570443520647",
+    "v4-core": "59d3ecf53afa9264a16bba0e38f4c5d2231f80bc",
+    "v4-periphery": "ad04c9f24a170accf5ea1b2836bbafd514537ca6"
+  }
+}

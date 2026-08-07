@@ -1,0 +1,40 @@
+Impossible to generate IR for OvertimeHook._takeCrown (src/OvertimeHook.sol#506-548):
+ 'NoneType' object has no attribute 'parameters'
+
+Detector: reentrancy-benign
+Reentrancy in OvertimeLauncher.launch(uint160,uint256) (src/OvertimeLauncher.sol#168-190):
+	External calls:
+	- result = _mintLockedPosition(overtimeToken,overtimeHook,initialSqrtPriceX96,wethLiquidityBudget) (src/OvertimeLauncher.sol#187)
+		- initialTick = poolManager.initialize(key,initialSqrtPriceX96) (src/OvertimeLauncher.sol#218)
+		- positionManager.modifyLiquidities(abi.encode(plan.actions,plan.params),block.timestamp) (src/OvertimeLauncher.sol#231)
+	State variables written after the call(s):
+	- launchResult = result (src/OvertimeLauncher.sol#188)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
+
+Detector: timestamp
+OvertimeChallengeRouter.challenge(PoolKey,uint256,uint256,uint256,uint160) (src/OvertimeChallengeRouter.sol#68-104) uses timestamp for comparisons
+	Dangerous comparisons:
+	- deadline < block.timestamp (src/OvertimeChallengeRouter.sol#75)
+OvertimeHook.previewChallenge(uint256) (src/OvertimeHook.sol#248-268) uses timestamp for comparisons
+	Dangerous comparisons:
+	- round.active && block.timestamp >= round.softEnd (src/OvertimeHook.sol#257)
+	- round.leaderSince == block.timestamp (src/OvertimeHook.sol#262)
+OvertimeHook.isRoundExpired() (src/OvertimeHook.sol#286-288) uses timestamp for comparisons
+	Dangerous comparisons:
+	- currentRound.active && block.timestamp >= currentRound.softEnd (src/OvertimeHook.sol#287)
+OvertimeHook._beforeChallenge(address,SwapParams,bytes) (src/OvertimeHook.sol#417-452) uses timestamp for comparisons
+	Dangerous comparisons:
+	- intent.deadline < block.timestamp (src/OvertimeHook.sol#424)
+	- currentRound.active && currentRound.leaderSince == block.timestamp (src/OvertimeHook.sol#431)
+OvertimeHook._finalizeExpiredRound() (src/OvertimeHook.sol#550-581) uses timestamp for comparisons
+	Dangerous comparisons:
+	- ! currentRound.active || block.timestamp < currentRound.softEnd (src/OvertimeHook.sol#551)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: constable-states
+OvertimeHook.roundId (src/OvertimeHook.sol#82) should be constant 
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant
+. analyzed (76 contracts with 102 detectors), 7 result(s) found
+'forge clean' running (wd: /Users/mbp/Codehub/overtime-hook)
+'forge config --json' running
+'forge build --build-info --deny never --skip ./test/** ./script/** --force' running (wd: /Users/mbp/Codehub/overtime-hook)

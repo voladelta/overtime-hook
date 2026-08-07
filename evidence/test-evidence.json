@@ -1,0 +1,30 @@
+{
+  "status": "passed-local",
+  "reviewTarget": "working tree pending exact reviewed commit",
+  "solc": "0.8.26",
+  "forge": "1.7.1-stable",
+  "command": "MAINNET_RPC_URL=<provider> forge test -vv",
+  "summary": {
+    "testsPassed": 35,
+    "testsFailed": 0,
+    "testsSkipped": 0,
+    "fuzzRunsPerProperty": 1000,
+    "invariantRunsPerProperty": 256,
+    "invariantDepth": 64,
+    "aggregateInvariantCalls": 49152
+  },
+  "fork": {
+    "chainId": 1,
+    "block": 25700561,
+    "status": "passed",
+    "test": "test/fork/OvertimeMainnetFork.t.sol"
+  },
+  "reports": [
+    "evidence/reports/forge-test.txt",
+    "evidence/reports/gas-report.txt",
+    "evidence/reports/bytecode-sizes.txt",
+    "evidence/reports/fork-rehearsal.txt",
+    "evidence/reports/forge-lint.txt",
+    "evidence/reports/slither.txt"
+  ]
+}

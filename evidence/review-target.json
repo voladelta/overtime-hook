@@ -1,0 +1,14 @@
+{
+  "status": "pending-final-commit-binding",
+  "sourceCommit": null,
+  "sourceTree": null,
+  "productionSourceOfTruth": {
+    "repository": "https://github.com/0xprogrammable/programmable",
+    "branch": "production",
+    "revision": "c7346ab41046e5a600acc88acb37b73d3bbb80b9"
+  },
+  "builderTooling": {
+    "repository": "https://github.com/0xprogrammable/programmable-v4-builder",
+    "revision": "5b47504299c5dbe0ab694be8d163e80d352c8166"
+  }
+}

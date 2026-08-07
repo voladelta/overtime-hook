@@ -1,0 +1,18 @@
+{
+  "local": {
+    "format": "passed",
+    "build": "passed",
+    "unitFuzzInvariant": "passed",
+    "forkRehearsal": "passed-at-block-25700561",
+    "forgeLintHighMedium": "passed",
+    "slither": "completed-with-reviewed-findings",
+    "bytecodeSize": "passed"
+  },
+  "external": {
+    "independentSecurityReview": "pending",
+    "programmableMaintainerReview": "pending",
+    "routingApproval": "not-claimed",
+    "deployment": "not-performed",
+    "sourceVerification": "not-performed"
+  }
+}
