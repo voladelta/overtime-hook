@@ -2,13 +2,13 @@ Impossible to generate IR for OvertimeHook._takeCrown (src/OvertimeHook.sol#506-
  'NoneType' object has no attribute 'parameters'
 
 Detector: reentrancy-benign
-Reentrancy in OvertimeLauncher.launch(uint160,uint256) (src/OvertimeLauncher.sol#168-190):
+Reentrancy in OvertimeLauncher._launch(uint160,uint256) (src/OvertimeLauncher.sol#200-220):
 	External calls:
-	- result = _mintLockedPosition(overtimeToken,overtimeHook,initialSqrtPriceX96,wethLiquidityBudget) (src/OvertimeLauncher.sol#187)
-		- initialTick = poolManager.initialize(key,initialSqrtPriceX96) (src/OvertimeLauncher.sol#218)
-		- positionManager.modifyLiquidities(abi.encode(plan.actions,plan.params),block.timestamp) (src/OvertimeLauncher.sol#231)
+	- result = _mintLockedPosition(overtimeToken,overtimeHook,initialSqrtPriceX96,wethLiquidityBudget) (src/OvertimeLauncher.sol#217)
+		- initialTick = poolManager.initialize(key,initialSqrtPriceX96) (src/OvertimeLauncher.sol#252)
+		- positionManager.modifyLiquidities(abi.encode(plan.actions,plan.params),block.timestamp) (src/OvertimeLauncher.sol#265)
 	State variables written after the call(s):
-	- launchResult = result (src/OvertimeLauncher.sol#188)
+	- launchResult = result (src/OvertimeLauncher.sol#218)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
 
 Detector: timestamp

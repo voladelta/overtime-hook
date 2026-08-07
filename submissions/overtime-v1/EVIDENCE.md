@@ -14,11 +14,11 @@ Current state: local prototype evidence passed and repository closure is complet
 
 ## Local results
 
-- 35 tests passed, including 1,000-run fuzz properties and 49,152 aggregate stateful invariant calls.
+- 38 tests passed, including 1,000-run fuzz properties and 49,152 aggregate stateful invariant calls.
 - All four fee quadrants, cumulative exact 10 bps Programmable accounting, specified-WETH and challenge partial-fill rollback, PoolKey isolation, router identity, same-block refunds, double claims, Knockout, Decision, and post-expiry recurrence passed.
 - Ethereum mainnet fork block `25,700,561` matched the production PoolManager and PositionManager runtime hashes and bindings.
-- Runtime sizes: hook 17,198 bytes; router 5,133; launcher 14,489; token 1,920; vault 519. All are below EIP-170.
-- The gas-bounded launch phases measured approximately 5.56M gas for asset deployment and 0.82M gas for authenticated initialization plus liquidity lock.
+- Runtime sizes: hook 17,198 bytes; router 5,133; launcher 14,828; token 1,920; vault 519. All are below EIP-170.
+- Atomic deployment, initialization, and permanent liquidity custody measured approximately 6.37M gas. The gas-bounded rehearsal phases measured approximately 5.56M and 0.82M gas.
 - Forge high/medium lint was clean. Slither findings and dispositions are recorded in `evidence/reports/STATIC_ANALYSIS.md`.
 - The production Builder verifier reports `PROTOTYPE_READY`, zero blockers, repository closure complete, and hook mask `0x20cc`.
 

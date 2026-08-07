@@ -2232,7 +2232,7 @@
       "test/fork/OvertimeMainnetFork.t.sol"
     ],
     "compilerBuildInfoPaths": [],
-    "specificationPath": "DESIGN.md",
+    "specificationPath": "spec/overtime-v1.launch.json",
     "testEvidencePath": "evidence/test-evidence.json",
     "dependencyLockPath": "dependencies/lock.json",
     "gateStatusPath": "evidence/gate-status.json",

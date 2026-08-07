@@ -38,12 +38,14 @@ The final lock records repository, commit, tree, license, and clean checkout sta
 
 ## Planned transaction sequence
 
-Deployment uses two launcher-controlled transactions so neither approaches the block gas limit:
+The production entry point is `deployAndLaunch`. It validates the committed creation-code hashes, deploys the ordered token and permission-mined hook, pulls the exact WETH budget, initializes the precommitted PoolKey, mints the full-range position to `LockedLiquidityVault`, and verifies ownership. Any failure rolls back the complete transaction, including both CREATE2 child deployments.
 
-1. `deployAssets` validates the committed creation-code hashes, deploys the ordered token and mined hook, and records both addresses. The hook accepts pool initialization only from this immutable launcher.
-2. `launch` pulls the exact WETH budget, initializes the precommitted PoolKey, mints the full-range position to `LockedLiquidityVault`, sweeps launch dust to that vault, and verifies ownership before returning.
+For gas measurement and fork rehearsal, the same one-shot state machine is also exposed as two authority-only phases:
 
-The second transaction is atomic across pool initialization, settlement, position mint, and ownership verification:
+1. `deployAssets` deploys and records the committed token and hook.
+2. `launch` performs authenticated initialization and permanent liquidity formation.
+
+The production transaction is atomic across deployment, pool initialization, settlement, position mint, and ownership verification:
 
 1. Deploy or bind the narrow immutable challenge router.
 2. Deploy token with its full fixed supply.
@@ -63,4 +65,4 @@ Exercise and record ordinary swaps in all four quadrants, a valid challenge, ove
 
 ## Explicit non-actions
 
-This repository work must not sign, broadcast, deploy, verify source externally, publish, open a pull request, submit to Hooklist/routing, or activate a product without separate exact human authorization.
+Publishing source and opening the bounded Builder application PR require exact human authorization. Deployment, signing, broadcast, explorer verification, Hooklist/routing submission, and product activation remain separate actions and are not authorized by the application PR.

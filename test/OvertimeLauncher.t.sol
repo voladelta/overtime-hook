@@ -90,6 +90,35 @@ contract OvertimeLauncherTest is Test, Deployers {
         positionManager.transferFrom(result.vault, address(this), result.positionTokenId);
     }
 
+    function test_atomicLaunchAuthenticatesInitializationAndLocksSupplyLifecycle() public {
+        address predictedHook = launcher.predictHookAddress(hookSalt, predictedToken, hookCreationCode);
+        uint160 initialPrice = uint160(uint256(SQRT_PRICE_1_1) * 10_000);
+
+        OvertimeLauncher.LaunchResult memory result = launcher.deployAndLaunch(
+            tokenCreationCode, hookCreationCode, tokenSalt, hookSalt, initialPrice, 10 ether
+        );
+
+        assertEq(result.token, predictedToken);
+        assertEq(result.hook, predictedHook);
+        assertEq(uint160(result.hook) & Hooks.ALL_HOOK_MASK, 0x20cc);
+        assertEq(IERC721(address(positionManager)).ownerOf(result.positionTokenId), result.vault);
+        assertTrue(LockedLiquidityVault(result.vault).positionIsLocked());
+        assertEq(OvertimeToken(result.token).balanceOf(address(launcher)), 0);
+        assertEq(wethToken.balanceOf(address(launcher)), 0);
+    }
+
+    function test_atomicLaunchRollbackRemovesChildrenAndState() public {
+        address predictedHook = launcher.predictHookAddress(hookSalt, predictedToken, hookCreationCode);
+
+        vm.expectRevert(abi.encodeWithSelector(OvertimeLauncher.InvalidInitialPrice.selector, uint160(0)));
+        launcher.deployAndLaunch(tokenCreationCode, hookCreationCode, tokenSalt, hookSalt, 0, 10 ether);
+
+        assertFalse(launcher.assetsDeployed());
+        assertFalse(launcher.launched());
+        assertEq(predictedToken.code.length, 0);
+        assertEq(predictedHook.code.length, 0);
+    }
+
     function test_launcherIsOneShot() public {
         uint160 initialPrice = uint160(uint256(SQRT_PRICE_1_1) * 10_000);
         launcher.deployAssets(tokenCreationCode, hookCreationCode, tokenSalt, hookSalt);
@@ -107,6 +136,17 @@ contract OvertimeLauncherTest is Test, Deployers {
         launcher.deployAssets(tokenCreationCode, hookCreationCode, tokenSalt, hookSalt);
         vm.resumeGasMetering();
         launcher.launch(uint160(uint256(SQRT_PRICE_1_1) * 10_000), 10 ether);
+    }
+
+    function test_gas_atomicLaunch() public {
+        launcher.deployAndLaunch(
+            tokenCreationCode,
+            hookCreationCode,
+            tokenSalt,
+            hookSalt,
+            uint160(uint256(SQRT_PRICE_1_1) * 10_000),
+            10 ether
+        );
     }
 
     function test_creationCodeCommitmentRejectsSubstitution() public {

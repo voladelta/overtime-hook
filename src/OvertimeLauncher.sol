@@ -26,7 +26,8 @@ import { OvertimeHook } from "./OvertimeHook.sol";
 import { OvertimeToken } from "./OvertimeToken.sol";
 
 /// @title Overtime Launcher
-/// @notice Two-phase deployment and launch, with hook-authenticated initialization and permanent LP custody.
+/// @notice Atomic or gas-bounded two-phase deployment and launch, with authenticated initialization and permanent LP
+/// custody.
 contract OvertimeLauncher is ReentrancyGuardTransient {
     using PoolIdLibrary for PoolKey;
     using SafeERC20 for IERC20;
@@ -138,9 +139,31 @@ contract OvertimeLauncher is ReentrancyGuardTransient {
         bytes32 tokenSalt,
         bytes32 hookSalt
     ) external nonReentrant returns (address tokenAddress, address hookAddress) {
-        if (msg.sender != launchAuthority) {
-            revert LaunchUnauthorized(msg.sender, launchAuthority);
-        }
+        _requireLaunchAuthority();
+        return _deployAssets(tokenCreationCode, hookCreationCode, tokenSalt, hookSalt);
+    }
+
+    /// @notice Deploys the committed token and hook, initializes the pool, and locks initial liquidity atomically.
+    /// @dev Any failure rolls back both CREATE2 child deployments and the complete liquidity lifecycle.
+    function deployAndLaunch(
+        bytes calldata tokenCreationCode,
+        bytes calldata hookCreationCode,
+        bytes32 tokenSalt,
+        bytes32 hookSalt,
+        uint160 initialSqrtPriceX96,
+        uint256 wethLiquidityBudget
+    ) external nonReentrant returns (LaunchResult memory result) {
+        _requireLaunchAuthority();
+        _deployAssets(tokenCreationCode, hookCreationCode, tokenSalt, hookSalt);
+        result = _launch(initialSqrtPriceX96, wethLiquidityBudget);
+    }
+
+    function _deployAssets(
+        bytes calldata tokenCreationCode,
+        bytes calldata hookCreationCode,
+        bytes32 tokenSalt,
+        bytes32 hookSalt
+    ) private returns (address tokenAddress, address hookAddress) {
         if (assetsDeployed) revert AssetsAlreadyDeployed();
 
         address predictedToken = predictTokenAddress(tokenSalt, tokenCreationCode);
@@ -170,7 +193,14 @@ contract OvertimeLauncher is ReentrancyGuardTransient {
         nonReentrant
         returns (LaunchResult memory result)
     {
-        if (msg.sender != launchAuthority) revert LaunchUnauthorized(msg.sender, launchAuthority);
+        _requireLaunchAuthority();
+        result = _launch(initialSqrtPriceX96, wethLiquidityBudget);
+    }
+
+    function _launch(uint160 initialSqrtPriceX96, uint256 wethLiquidityBudget)
+        private
+        returns (LaunchResult memory result)
+    {
         if (!assetsDeployed) revert AssetsNotDeployed();
         if (launched) revert AlreadyLaunched();
         if (wethLiquidityBudget == 0) revert NoWethLiquidity();
@@ -187,6 +217,10 @@ contract OvertimeLauncher is ReentrancyGuardTransient {
         result = _mintLockedPosition(overtimeToken, overtimeHook, initialSqrtPriceX96, wethLiquidityBudget);
         launchResult = result;
         _emitLaunch(result, initialSqrtPriceX96);
+    }
+
+    function _requireLaunchAuthority() private view {
+        if (msg.sender != launchAuthority) revert LaunchUnauthorized(msg.sender, launchAuthority);
     }
 
     function _emitLaunch(LaunchResult memory result, uint160 initialSqrtPriceX96) private {

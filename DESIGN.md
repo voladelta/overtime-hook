@@ -28,7 +28,7 @@ There are no setters, upgrades, pause, WETH or game-token rescue, payout redirec
 - `OvertimeHook.sol`: the one canonical pool hook; fee kernel, round state, refunds, and claims.
 - `OvertimeChallengeRouter.sol`: exact-input challenge execution. It transfers WETH from `msg.sender`, sets payer/player/beneficiary to `msg.sender`, forwards authenticated versioned hook data, rejects a partial fill, and sends bought tokens only to `msg.sender`.
 - `OvertimeToken.sol`: fixed-supply ERC-20 with no privileged post-construction behavior.
-- `OvertimeLauncher.sol`: deterministic two-phase creation followed by launcher-authenticated canonical-pool initialization and liquidity formation, keeping each transaction below a safe block-gas budget.
+- `OvertimeLauncher.sol`: deterministic atomic creation, authenticated canonical-pool initialization, and permanent liquidity formation, with the same one-shot state machine exposed as gas-bounded phases for rehearsal.
 - `LockedLiquidityVault.sol`: permanent owner of the initial v4 liquidity position; it exposes no decrease, transfer, approval, rescue, or withdrawal path.
 - `RoundMath.sol`: pure fee, crown-cost, deadline, and distribution math.
 - `HookDataCodec.sol`: bounded versioned challenge-intent encoding and decoding.
@@ -43,12 +43,13 @@ The hook accepts exactly one PoolKey shape: the immutable WETH address, immutabl
 
 The implementation enables only:
 
+- `beforeInitialize`
 - `beforeSwap`
 - `afterSwap`
 - `beforeSwapReturnDelta`
 - `afterSwapReturnDelta`
 
-All initialize, liquidity, donation, and liquidity-return-delta callbacks are disabled. Pool initialization is performed by the launcher after exact hook-address permission validation.
+All other initialize, liquidity, donation, and liquidity-return-delta callbacks are disabled. `beforeInitialize` admits only the immutable launcher after exact hook-address permission validation.
 
 Permission mask: `0x20cc` (`beforeInitialize | beforeSwap | afterSwap | beforeSwapReturnDelta | afterSwapReturnDelta`). `beforeInitialize` admits only the immutable launcher, preventing a price-initialization front-run between the two bounded launch transactions.
 
@@ -83,7 +84,7 @@ If leader A takes the crown and is displaced within the same block, A's crown co
 7. Mint the explicit initial position to the vault using bounded token inputs and a finite deadline.
 8. Verify the vault is the position owner and emit the complete launch commitment.
 
-The launcher has no retained authority after the bounded two-phase sequence. Between phases, only the immutable launcher can initialize the hook's canonical PoolKey.
+The production path calls `deployAndLaunch`, so any child deployment, initialization, settlement, or custody failure rolls back the entire launch. The gas-bounded phase functions preserve the same one-shot state machine for rehearsal; between phases, only the immutable launcher can initialize the hook's canonical PoolKey. The launcher has no post-launch authority over the hook, token, or locked position.
 
 ## External dependencies
 
