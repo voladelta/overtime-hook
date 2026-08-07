@@ -64,7 +64,7 @@ The hook cannot initiate PoolManager swaps, so v4's self-call callback suppressi
 
 Only the current round is mutable. Finalized entitlements are pull-based mappings keyed by round and beneficiary; no payout array is stored or iterated.
 
-For each crown interval, the hook records the interval start and cumulative round crown-seconds. When a leader is displaced or the round is finalized, elapsed seconds are credited to that address. Integer payout dust remains in rollover.
+For each crown interval, the hook records the interval start and cumulative round crown-seconds. When a leader is displaced or the round is finalized, elapsed seconds are credited to that address. Integer payout dust remains an explicit finalized-round liability; it is never inferred as free balance or swept.
 
 An expired round is finalized at the start of `beforeSwap`, before fee or challenge processing. Therefore a post-expiry ordinary swap funds `pendingPot`, and a post-expiry challenge starts a fresh round from the finalized rollover plus pending fees. No later action can mutate the finalized leader, deadlines, pool sizes, or crown-seconds.
 
