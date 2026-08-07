@@ -1,22 +1,18 @@
 No files changed, compilation skipped
 
-Ran 1 test for test/fork/OvertimeMainnetFork.t.sol:OvertimeMainnetForkTest
-[SKIP] testFork_mainnetDependenciesMatchProductionSnapshot() (gas: 0)
-Suite result: ok. 0 passed; 0 failed; 1 skipped; finished in 582.79µs (366.96µs CPU time)
-
 Ran 4 tests for test/RoundMath.t.sol:RoundMathTest
-[PASS] testFuzz_deadlineIsMonotoneAndCapped(uint64,uint64) (runs: 1000, μ: 17677, ~: 17736)
+[PASS] testFuzz_deadlineIsMonotoneAndCapped(uint64,uint64) (runs: 1000, μ: 17654, ~: 17736)
 Logs:
-  Bound result 11000000000000000
-  Bound result 11000000000003044
+  Bound result 157873698
+  Bound result 157875538
 
-[PASS] testFuzz_distributionConservesPot(uint256,bool) (runs: 1000, μ: 13355, ~: 13265)
+[PASS] testFuzz_distributionConservesPot(uint256,bool) (runs: 1000, μ: 13350, ~: 13265)
 Logs:
-  Bound result 2086849903065298171408722588
+  Bound result 276028230810889340408348013749270860076
 
 [PASS] test_crownCostClamps() (gas: 25387)
 [PASS] test_initialDeadlinesAreImmutableOffsets() (gas: 9279)
-Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 16.45ms (30.21ms CPU time)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 14.39ms (28.27ms CPU time)
 
 Ran 11 tests for test/OvertimeFeeKernel.t.sol:OvertimeFeeKernelTest
 [PASS] test_cumulativeProgrammableFeeIsExactlyTenBpsAcrossQuadrants() (gas: 1046084)
@@ -30,18 +26,21 @@ Ran 11 tests for test/OvertimeFeeKernel.t.sol:OvertimeFeeKernelTest
 [PASS] test_programmableOwnerClaimPreservesRemaindersAndPaysChosenRecipient() (gas: 610906)
 [PASS] test_quoteGrossFeesCarriesIndependentRemainders() (gas: 14962)
 [PASS] test_specifiedWethPartialFillRevertsAtomically() (gas: 317864)
-Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 175.64ms (4.70ms CPU time)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 168.08ms (4.07ms CPU time)
 
-Ran 8 tests for test/OvertimeLauncher.t.sol:OvertimeLauncherTest
-[PASS] test_atomicLaunchAuthenticatesInitializationAndLocksSupplyLifecycle() (gas: 7970586)
-[PASS] test_atomicLaunchRollbackRemovesChildrenAndState() (gas: 7218535)
-[PASS] test_creationCodeCommitmentRejectsSubstitution() (gas: 213597)
-[PASS] test_gas_atomicLaunch() (gas: 6625939)
-[PASS] test_gas_deployAssets() (gas: 5893498)
-[PASS] test_gas_lockLiquidity() (gas: 803938)
-[PASS] test_launcherIsOneShot() (gas: 6722924)
-[PASS] test_twoPhaseLaunchAuthenticatesInitializationAndLocksSupplyLifecycle() (gas: 8100095)
-Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 274.94ms (8.28ms CPU time)
+Ran 11 tests for test/OvertimeLauncher.t.sol:OvertimeLauncherTest
+[PASS] test_atomicLaunchAuthenticatesInitializationAndLocksSupplyLifecycle() (gas: 7970601)
+[PASS] test_atomicLaunchRollbackRemovesChildrenAndState() (gas: 7218540)
+[PASS] test_creationCodeCommitmentRejectsSubstitution() (gas: 213596)
+[PASS] test_gas_atomicLaunch() (gas: 6625865)
+[PASS] test_gas_deployAssets() (gas: 5893497)
+[PASS] test_gas_lockLiquidity() (gas: 803887)
+[PASS] test_launchRejectsAlternateValidStartingPrice() (gas: 5908998)
+[PASS] test_launchRejectsAlternateWethBudget() (gas: 5908750)
+[PASS] test_launcherIsOneShot() (gas: 6722872)
+[PASS] test_manualSigningDigestBindsCompleteLaunchInput() (gas: 4526709)
+[PASS] test_twoPhaseLaunchAuthenticatesInitializationAndLocksSupplyLifecycle() (gas: 8100120)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 269.92ms (13.12ms CPU time)
 
 Ran 11 tests for test/OvertimeGame.t.sol:OvertimeGameTest
 [PASS] test_challengeCreditsCrownSecondsAndExtendsMonotonically() (gas: 670468)
@@ -55,7 +54,7 @@ Ran 11 tests for test/OvertimeGame.t.sol:OvertimeGameTest
 [PASS] test_routerBindsPlayerBeneficiaryAndTokenRecipient() (gas: 400154)
 [PASS] test_sameBlockDisplacementCreditsPullRefund() (gas: 851581)
 [PASS] test_wrongCallbackSenderCannotForgePlayer() (gas: 97091)
-Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 4.88s (11.93ms CPU time)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 555.08ms (10.15ms CPU time)
 
 Ran 3 tests for test/invariant/OvertimeAccountingInvariant.t.sol:OvertimeAccountingInvariantTest
 [PASS] invariant_crownTimeConservation() (runs: 256, calls: 16384, reverts: 0)
@@ -63,88 +62,75 @@ Ran 3 tests for test/invariant/OvertimeAccountingInvariant.t.sol:OvertimeAccount
 ╭--------------------------+--------------+-------+---------+----------╮
 | Contract                 | Selector     | Calls | Reverts | Discards |
 +======================================================================+
-| OvertimeInvariantHandler | challenge    | 4015  | 0       | 0        |
+| OvertimeInvariantHandler | challenge    | 4124  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | claimRefund  | 4179  | 0       | 0        |
+| OvertimeInvariantHandler | claimRefund  | 4129  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | claimRewards | 4083  | 0       | 0        |
+| OvertimeInvariantHandler | claimRewards | 4074  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | finalize     | 4107  | 0       | 0        |
+| OvertimeInvariantHandler | finalize     | 4057  | 0       | 0        |
 ╰--------------------------+--------------+-------+---------+----------╯
 
 Logs:
-  Bound result 125
-  Bound result 1416923158937675725
-  Bound result 0
-  Bound result 1817816163203415641
-  Bound result 2
-  Bound result 267
-  Bound result 1
   Bound result 518
-  Bound result 1
-  Bound result 202
-  Bound result 1
-  Bound result 43
-  Bound result 1501549559910495650
-  Bound result 7
-  Bound result 17951829116046326
-  Bound result 400
-  Bound result 1461931123882141131
-  Bound result 379
-  Bound result 1990000000000009915
+  Bound result 1990000000000008866
   Bound result 1
   Bound result 1
-  Bound result 382
-  Bound result 1990000110951782641
-  Bound result 394
-  Bound result 1990000000000000491
+  Bound result 20
   Bound result 1
-  Bound result 456
-  Bound result 1990000000000002050
-  Bound result 2
-  Bound result 3
-  Bound result 2
-  Bound result 206
-  Bound result 1991960503418038156
-  Bound result 1198
-  Bound result 2
+  Bound result 1
+  Bound result 543
+  Bound result 1
+  Bound result 1
+  Bound result 34
+  Bound result 561124147470138155
+  Bound result 383
+  Bound result 447
+  Bound result 1
+  Bound result 1
+  Bound result 1
+  Bound result 18
+  Bound result 1990000000000002679
+  Bound result 102
+  Bound result 1528663162103293129
+  Bound result 69
+  Bound result 1990000000002828334
+  Bound result 34
+  Bound result 1
+  Bound result 822
+  Bound result 1
+  Bound result 352
+  Bound result 184337553730803342
   Bound result 0
-  Bound result 220
-  Bound result 1990000657062792460
-  Bound result 8
-  Bound result 1990000000000006208
+  Bound result 1990000000000000007
+  Bound result 1
+  Bound result 1
+  Bound result 0
+  Bound result 2
+  Bound result 3
+  Bound result 1
+  Bound result 444
+  Bound result 1990000000000000126
+  Bound result 1150
+  Bound result 2
+  Bound result 1
+  Bound result 3
+  Bound result 78
+  Bound result 110812135098704318
+  Bound result 3
+  Bound result 74
+  Bound result 2
+  Bound result 1990003948222165363
+  Bound result 541
+  Bound result 3
+  Bound result 4
+  Bound result 4
+  Bound result 1
   Bound result 366
-  Bound result 1990000002325054948
-  Bound result 101
-  Bound result 3
-  Bound result 657
-  Bound result 7
-  Bound result 130442205234049648
+  Bound result 1990007564323718841
   Bound result 1
-  Bound result 394
-  Bound result 1537205657003740805
-  Bound result 71
-  Bound result 1990000000000001411
-  Bound result 566
-  Bound result 1330519582554590638
-  Bound result 899
-  Bound result 3
-  Bound result 2
-  Bound result 1990000000000000132
-  Bound result 798
-  Bound result 1
-  Bound result 192
-  Bound result 1990000000000008227
-  Bound result 6
-  Bound result 688
-  Bound result 1
-  Bound result 397
-  Bound result 125
-  Bound result 10000000000000002
-  Bound result 7
-  Bound result 2
-  Bound result 9
   Bound result 5
+  Bound result 593
   Bound result 1
 
 [PASS] invariant_deadlineMonotonicityAndNoResurrection() (runs: 256, calls: 16384, reverts: 0)
@@ -152,88 +138,75 @@ Logs:
 ╭--------------------------+--------------+-------+---------+----------╮
 | Contract                 | Selector     | Calls | Reverts | Discards |
 +======================================================================+
-| OvertimeInvariantHandler | challenge    | 4015  | 0       | 0        |
+| OvertimeInvariantHandler | challenge    | 4124  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | claimRefund  | 4179  | 0       | 0        |
+| OvertimeInvariantHandler | claimRefund  | 4129  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | claimRewards | 4083  | 0       | 0        |
+| OvertimeInvariantHandler | claimRewards | 4074  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | finalize     | 4107  | 0       | 0        |
+| OvertimeInvariantHandler | finalize     | 4057  | 0       | 0        |
 ╰--------------------------+--------------+-------+---------+----------╯
 
 Logs:
-  Bound result 125
-  Bound result 1416923158937675725
-  Bound result 0
-  Bound result 1817816163203415641
-  Bound result 2
-  Bound result 267
-  Bound result 1
   Bound result 518
-  Bound result 1
-  Bound result 746
-  Bound result 1
-  Bound result 43
-  Bound result 1501549559910495650
-  Bound result 7
-  Bound result 17951829116046326
-  Bound result 400
-  Bound result 1461931123882141131
-  Bound result 149
-  Bound result 1990000000000009913
+  Bound result 1990000000000008866
   Bound result 1
   Bound result 1
-  Bound result 382
-  Bound result 1990000110951782641
-  Bound result 394
-  Bound result 1990000000000003310
+  Bound result 20
   Bound result 1
-  Bound result 315
-  Bound result 1990000000000007882
-  Bound result 2
-  Bound result 3
-  Bound result 2
-  Bound result 206
-  Bound result 1991960503418038156
-  Bound result 1198
-  Bound result 3
+  Bound result 1
+  Bound result 543
+  Bound result 1
+  Bound result 1
+  Bound result 34
+  Bound result 561124147470138155
+  Bound result 383
+  Bound result 447
+  Bound result 1
+  Bound result 1
+  Bound result 1
+  Bound result 18
+  Bound result 1990000000000002679
+  Bound result 102
+  Bound result 1528663162103293129
+  Bound result 69
+  Bound result 1990000000002828334
+  Bound result 34
+  Bound result 1
+  Bound result 822
+  Bound result 1
+  Bound result 352
+  Bound result 184337553730803342
   Bound result 0
-  Bound result 220
-  Bound result 1990000657062792460
-  Bound result 8
-  Bound result 1990000000000005240
-  Bound result 83
-  Bound result 1990000002325054949
-  Bound result 101
-  Bound result 3
-  Bound result 657
-  Bound result 7
-  Bound result 130442205234049648
+  Bound result 1990000000000000007
   Bound result 1
-  Bound result 394
-  Bound result 1537205657003740805
-  Bound result 71
-  Bound result 1990000000000001411
-  Bound result 566
-  Bound result 1330519582554590638
-  Bound result 899
-  Bound result 3
-  Bound result 2
-  Bound result 1990000000000000132
-  Bound result 798
   Bound result 1
-  Bound result 192
-  Bound result 1990000000000009750
+  Bound result 0
   Bound result 2
-  Bound result 688
-  Bound result 5
-  Bound result 397
-  Bound result 125
-  Bound result 10000000000000002
   Bound result 3
-  Bound result 6
-  Bound result 8
+  Bound result 1
+  Bound result 445
+  Bound result 1990000000000000126
+  Bound result 1150
+  Bound result 2
+  Bound result 1
+  Bound result 3
+  Bound result 103
+  Bound result 110812135098704317
+  Bound result 3
+  Bound result 74
+  Bound result 2
+  Bound result 1990003948222165363
+  Bound result 541
+  Bound result 3
+  Bound result 4
+  Bound result 4
+  Bound result 1
+  Bound result 366
+  Bound result 1990007564323718841
+  Bound result 1
   Bound result 5
+  Bound result 593
   Bound result 1
 
 [PASS] invariant_solvencyAndLiabilityConservation() (runs: 256, calls: 16384, reverts: 0)
@@ -241,91 +214,89 @@ Logs:
 ╭--------------------------+--------------+-------+---------+----------╮
 | Contract                 | Selector     | Calls | Reverts | Discards |
 +======================================================================+
-| OvertimeInvariantHandler | challenge    | 4015  | 0       | 0        |
+| OvertimeInvariantHandler | challenge    | 4124  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | claimRefund  | 4179  | 0       | 0        |
+| OvertimeInvariantHandler | claimRefund  | 4129  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | claimRewards | 4083  | 0       | 0        |
+| OvertimeInvariantHandler | claimRewards | 4074  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | finalize     | 4107  | 0       | 0        |
+| OvertimeInvariantHandler | finalize     | 4057  | 0       | 0        |
 ╰--------------------------+--------------+-------+---------+----------╯
 
 Logs:
-  Bound result 125
-  Bound result 1416923158937675725
-  Bound result 0
-  Bound result 1817816163203415641
-  Bound result 2
-  Bound result 267
-  Bound result 1
   Bound result 518
-  Bound result 1
-  Bound result 746
-  Bound result 1
-  Bound result 43
-  Bound result 1501549559910495650
-  Bound result 7
-  Bound result 17951829116046326
-  Bound result 400
-  Bound result 1461931123882141131
-  Bound result 149
-  Bound result 1990000000000009913
+  Bound result 1990000000000008866
   Bound result 1
   Bound result 1
-  Bound result 382
-  Bound result 1990000110951782641
-  Bound result 394
-  Bound result 1990000000000003310
+  Bound result 20
   Bound result 1
-  Bound result 315
-  Bound result 1990000000000007882
-  Bound result 2
-  Bound result 3
-  Bound result 2
-  Bound result 206
-  Bound result 1991960503418038156
-  Bound result 1198
-  Bound result 3
+  Bound result 1
+  Bound result 543
+  Bound result 1
+  Bound result 1
+  Bound result 34
+  Bound result 561124147470138155
+  Bound result 383
+  Bound result 447
+  Bound result 1
+  Bound result 1
+  Bound result 1
+  Bound result 18
+  Bound result 1990000000000002679
+  Bound result 102
+  Bound result 1528663162103293129
+  Bound result 69
+  Bound result 1990000000002828334
+  Bound result 34
+  Bound result 1
+  Bound result 822
+  Bound result 1
+  Bound result 352
+  Bound result 184337553730803342
   Bound result 0
-  Bound result 220
-  Bound result 1990000657062792460
-  Bound result 8
-  Bound result 1990000000000005240
-  Bound result 265
-  Bound result 1990000002325054949
-  Bound result 101
-  Bound result 3
-  Bound result 657
-  Bound result 7
-  Bound result 130442205234049648
-  Bound result 5
-  Bound result 394
-  Bound result 1537205657003740805
-  Bound result 71
-  Bound result 1990000000000001411
-  Bound result 566
-  Bound result 1330519582554590637
-  Bound result 899
-  Bound result 3
-  Bound result 2
-  Bound result 1990000000000000132
-  Bound result 798
+  Bound result 1990000000000000007
   Bound result 1
-  Bound result 192
-  Bound result 1990000000000009952
-  Bound result 6
-  Bound result 688
   Bound result 1
-  Bound result 397
-  Bound result 125
-  Bound result 10000000000000002
-  Bound result 7
+  Bound result 0
   Bound result 2
-  Bound result 9
+  Bound result 3
+  Bound result 1
+  Bound result 445
+  Bound result 1990000000000000126
+  Bound result 1150
+  Bound result 2
+  Bound result 1
+  Bound result 3
+  Bound result 103
+  Bound result 110812135098704317
+  Bound result 3
+  Bound result 74
+  Bound result 2
+  Bound result 1990003948222165363
+  Bound result 541
+  Bound result 3
+  Bound result 4
+  Bound result 4
+  Bound result 1
+  Bound result 366
+  Bound result 1990007564323718841
+  Bound result 1
   Bound result 5
+  Bound result 593
   Bound result 1
 
-Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.95s (13.54s CPU time)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 6.27s (14.05s CPU time)
+
+Ran 2 tests for test/fork/OvertimeMainnetFork.t.sol:OvertimeMainnetForkTest
+[PASS] testFork_currentHeadLifecycleSmoke() (gas: 16599414)
+Logs:
+  current head block: 25706467
+
+[PASS] testFork_pinnedCandidateLifecycle() (gas: 16599473)
+Logs:
+  pinned candidate block: 25700561
+
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 10.95s (11.28s CPU time)
 
 ╭-------------------------------------------------------------------+-----------------+-------+--------+-------+---------╮
 | lib/solmate/src/test/utils/mocks/MockERC20.sol:MockERC20 Contract |                 |       |        |       |         |
@@ -338,11 +309,11 @@ Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.95s (13.54s CPU t
 |-------------------------------------------------------------------+-----------------+-------+--------+-------+---------|
 | Function Name                                                     | Min             | Avg   | Median | Max   | # Calls |
 |-------------------------------------------------------------------+-----------------+-------+--------+-------+---------|
-| approve                                                           |           46475 | 46484 |  46487 | 46487 |     630 |
+| approve                                                           |           46475 | 46484 |  46487 | 46487 |     687 |
 |-------------------------------------------------------------------+-----------------+-------+--------+-------+---------|
-| balanceOf                                                         |             539 |  1539 |   1539 |  2539 |   24608 |
+| balanceOf                                                         |             539 |  1539 |   1539 |  2539 |   25208 |
 |-------------------------------------------------------------------+-----------------+-------+--------+-------+---------|
-| mint                                                              |           68231 | 68231 |  68231 | 68231 |      66 |
+| mint                                                              |           68231 | 68231 |  68231 | 68231 |      72 |
 |-------------------------------------------------------------------+-----------------+-------+--------+-------+---------|
 | transfer                                                          |           51292 | 51296 |  51292 | 51304 |      28 |
 ╰-------------------------------------------------------------------+-----------------+-------+--------+-------+---------╯
@@ -366,7 +337,7 @@ Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.95s (13.54s CPU t
 |------------------------------------------------------+-----------------+-------+--------+-------+---------|
 | initialize                                           |           29632 | 57607 |  58726 | 58726 |      26 |
 |------------------------------------------------------+-----------------+-------+--------+-------+---------|
-| setProtocolFeeController                             |           47206 | 47206 |  47206 | 47206 |      33 |
+| setProtocolFeeController                             |           47206 | 47206 |  47206 | 47206 |      36 |
 ╰------------------------------------------------------+-----------------+-------+--------+-------+---------╯
 
 ╭-----------------------------------------------------------------------------------+-----------------+--------+--------+--------+---------╮
@@ -394,7 +365,7 @@ Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.95s (13.54s CPU t
 |-------------------------------------------------------------------------------+-----------------+------+--------+------+---------|
 | Function Name                                                                 | Min             | Avg  | Median | Max  | # Calls |
 |-------------------------------------------------------------------------------+-----------------+------+--------+------+---------|
-| executor                                                                      |            2380 | 2380 |   2380 | 2380 |      66 |
+| executor                                                                      |            2380 | 2380 |   2380 | 2380 |      72 |
 ╰-------------------------------------------------------------------------------+-----------------+------+--------+------+---------╯
 
 ╭-------------------------------------------------------------+-----------------+--------+--------+--------+---------╮
@@ -426,7 +397,7 @@ Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.95s (13.54s CPU t
 |-------------------------------------------------------------------+-----------------+-------+--------+-------+---------|
 | ownerOf                                                           |             576 |  1464 |    576 |  2576 |       9 |
 |-------------------------------------------------------------------+-----------------+-------+--------+-------+---------|
-| poolManager                                                       |             304 |   304 |    304 |   304 |       8 |
+| poolManager                                                       |             304 |   304 |    304 |   304 |      11 |
 |-------------------------------------------------------------------+-----------------+-------+--------+-------+---------|
 | transferFrom                                                      |           32690 | 32690 |  32690 | 32690 |       1 |
 ╰-------------------------------------------------------------------+-----------------+-------+--------+-------+---------╯
@@ -442,7 +413,7 @@ Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.95s (13.54s CPU t
 |------------------------------------------------------------+-----------------+------+--------+------+---------|
 | Function Name                                              | Min             | Avg  | Median | Max  | # Calls |
 |------------------------------------------------------------+-----------------+------+--------+------+---------|
-| positionIsLocked                                           |            5686 | 5686 |   5686 | 5686 |       2 |
+| positionIsLocked                                           |            5686 | 5847 |   5847 | 6009 |       4 |
 ╰------------------------------------------------------------+-----------------+------+--------+------+---------╯
 
 ╭------------------------------------------------------------------+-----------------+--------+--------+--------+---------╮
@@ -450,13 +421,13 @@ Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.95s (13.54s CPU t
 +=========================================================================================================================+
 | Deployment Cost                                                  | Deployment Size |        |        |        |         |
 |------------------------------------------------------------------+-----------------+--------+--------+--------+---------|
-|                                                          1159117 |            5505 |        |        |        |         |
+|                                                          1159057 |            5505 |        |        |        |         |
 |------------------------------------------------------------------+-----------------+--------+--------+--------+---------|
 |                                                                  |                 |        |        |        |         |
 |------------------------------------------------------------------+-----------------+--------+--------+--------+---------|
 | Function Name                                                    | Min             | Avg    | Median | Max    | # Calls |
 |------------------------------------------------------------------+-----------------+--------+--------+--------+---------|
-| challenge                                                        |          234949 | 297503 | 273822 | 467941 |   12130 |
+| challenge                                                        |           26290 | 296779 | 273822 | 467941 |   12436 |
 ╰------------------------------------------------------------------+-----------------+--------+--------+--------+---------╯
 
 ╭--------------------------------------------+-----------------+--------+--------+--------+---------╮
@@ -470,23 +441,25 @@ Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.95s (13.54s CPU t
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
 | Function Name                              | Min             | Avg    | Median | Max    | # Calls |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| CANONICAL_LP_FEE                           |             293 |    293 |    293 |    293 |       5 |
+| CANONICAL_LP_FEE                           |             293 |    293 |    293 |    293 |       7 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| CANONICAL_TICK_SPACING                     |             298 |    298 |    298 |    298 |      10 |
+| CANONICAL_TICK_SPACING                     |             298 |    298 |    298 |    298 |      14 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| PROGRAMMABLE_FEE_OWNER                     |             328 |    328 |    328 |    328 |       1 |
+| PROGRAMMABLE_FEE_OWNER                     |             328 |    328 |    328 |    328 |       3 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
 | canonicalPoolId                            |             274 |    274 |    274 |    274 |       1 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
+| canonicalPoolKey                           |             752 |    752 |    752 |    752 |       2 |
+|--------------------------------------------+-----------------+--------+--------+--------+---------|
 | championPool                               |            2492 |   2492 |   2492 |   2492 |       2 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| claimChampionReward                        |           24071 |  37175 |  24071 | 123974 |   12304 |
+| claimChampionReward                        |           24071 |  37243 |  24071 | 123974 |   12300 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| claimCrownTimeReward                       |           24160 |  52004 |  30821 | 151041 |   12306 |
+| claimCrownTimeReward                       |           24160 |  53250 |  30821 | 151041 |   12302 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| claimProgrammableFees                      |          134046 | 134046 | 134046 | 134046 |       1 |
+| claimProgrammableFees                      |          116688 | 122474 | 116688 | 134046 |       3 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| claimRefund                                |           23826 |  25624 |  23826 | 121148 |   12571 |
+| claimRefund                                |           23826 |  25426 |  23826 | 121148 |   12433 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
 | claimedChampionRewards                     |            2351 |   2351 |   2351 |   2351 |       1 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
@@ -496,23 +469,23 @@ Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.95s (13.54s CPU t
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
 | claimedRefunds                             |            2395 |   2395 |   2395 |   2395 |       1 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| crownSeconds                               |            2672 |   2672 |   2672 |   2672 |      20 |
+| crownSeconds                               |            2672 |   2672 |   2672 |   2672 |      12 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
 | crownTimePool                              |            2536 |   2536 |   2536 |   2536 |       3 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| currentRound                               |           11189 |  11189 |  11189 |  11189 |   49382 |
+| currentRound                               |           11189 |  11189 |  11189 |  11189 |   49384 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| finalizeExpiredRound                       |           23594 |  63359 |  23727 | 222047 |   12369 |
+| finalizeExpiredRound                       |           23594 |  64116 |  23727 | 222047 |   12215 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| finalizedCrownSeconds                      |            2534 |   2534 |   2534 |   2534 |      10 |
+| finalizedCrownSeconds                      |            2534 |   2534 |   2534 |   2534 |       6 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
 | gameFeeRemainder                           |            2373 |   2373 |   2373 |   2373 |       1 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
 | pendingPot                                 |            2372 |   2372 |   2372 |   2372 |       7 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| previewChallenge                           |           17414 |  18323 |  17414 |  20237 |   12130 |
+| previewChallenge                           |           17414 |  18309 |  17414 |  20237 |   12434 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| programmableFeeLiability                   |            2396 |   2396 |   2396 |   2396 |       7 |
+| programmableFeeLiability                   |            2396 |   2396 |   2396 |   2396 |      11 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
 | programmableFeeRemainder                   |            2417 |   2417 |   2417 |   2417 |       3 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
@@ -522,23 +495,23 @@ Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.95s (13.54s CPU t
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
 | roundChampion                              |            2610 |   2610 |   2610 |   2610 |       2 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| roundId                                    |            2350 |   2350 |   2350 |   2350 |   73217 |
+| roundId                                    |            2350 |   2350 |   2350 |   2350 |   73192 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
 | roundWasDecision                           |            2536 |   2536 |   2536 |   2536 |       2 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
 | solvencyStatus                             |           18940 |  18940 |  18940 |  18940 |       1 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| totalFeesAccrued                           |            2373 |   2373 |   2373 |   2373 |       3 |
+| totalFeesAccrued                           |            2373 |   2373 |   2373 |   2373 |       5 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| totalGrossQuoteVolume                      |            2393 |   2393 |   2393 |   2393 |       8 |
+| totalGrossQuoteVolume                      |            2393 |   2393 |   2393 |   2393 |      10 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
 | totalRefundLiability                       |            2417 |   2417 |   2417 |   2417 |       1 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| totalUnclaimedLiabilities                  |           13312 |  13312 |  13312 |  13312 |      24 |
+| totalUnclaimedLiabilities                  |           13312 |  13312 |  13312 |  13312 |      32 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| totalWethClaimed                           |            2350 |   2350 |   2350 |   2350 |      13 |
+| totalWethClaimed                           |            2350 |   2350 |   2350 |   2350 |      17 |
 |--------------------------------------------+-----------------+--------+--------+--------+---------|
-| totalWethTaken                             |            2417 |   2417 |   2417 |   2417 |      14 |
+| totalWethTaken                             |            2417 |   2417 |   2417 |   2417 |      22 |
 ╰--------------------------------------------+-----------------+--------+--------+--------+---------╯
 
 ╭----------------------------------------------------+-----------------+---------+---------+---------+---------╮
@@ -546,25 +519,29 @@ Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.95s (13.54s CPU t
 +==============================================================================================================+
 | Deployment Cost                                    | Deployment Size |         |         |         |         |
 |----------------------------------------------------+-----------------+---------+---------+---------+---------|
-|                                            3257147 |           15936 |         |         |         |         |
+|                                            3274862 |           16017 |         |         |         |         |
 |----------------------------------------------------+-----------------+---------+---------+---------+---------|
 |                                                    |                 |         |         |         |         |
 |----------------------------------------------------+-----------------+---------+---------+---------+---------|
 | Function Name                                      | Min             | Avg     | Median  | Max     | # Calls |
 |----------------------------------------------------+-----------------+---------+---------+---------+---------|
+| INITIAL_SQRT_PRICE_X96                             |             251 |     251 |     251 |     251 |       7 |
+|----------------------------------------------------+-----------------+---------+---------+---------+---------|
+| WETH_LIQUIDITY_BUDGET                              |             240 |     240 |     240 |     240 |       7 |
+|----------------------------------------------------+-----------------+---------+---------+---------+---------|
 | assetsDeployed                                     |            2364 |    2364 |    2364 |    2364 |       1 |
 |----------------------------------------------------+-----------------+---------+---------+---------+---------|
-| deployAndLaunch                                    |         4405833 | 4946153 | 5216314 | 5216314 |       3 |
+| deployAndLaunch                                    |         4405836 | 4861866 | 5191401 | 5216285 |       7 |
 |----------------------------------------------------+-----------------+---------+---------+---------+---------|
-| deployAssets                                       |          337956 | 3388136 | 4404863 | 4404863 |       4 |
+| deployAssets                                       |          337956 | 3388119 | 4404840 | 4404840 |       4 |
 |----------------------------------------------------+-----------------+---------+---------+---------+---------|
-| launch                                             |           24798 |  654277 |  864104 |  864104 |       4 |
+| launch                                             |           24798 |  654239 |  864053 |  864053 |       4 |
 |----------------------------------------------------+-----------------+---------+---------+---------+---------|
 | launched                                           |            2375 |    2375 |    2375 |    2375 |       2 |
 |----------------------------------------------------+-----------------+---------+---------+---------+---------|
-| predictHookAddress                                 |           14492 |   14492 |   14492 |   14492 |       3 |
+| predictHookAddress                                 |           14503 |   14503 |   14503 |   14503 |       3 |
 |----------------------------------------------------+-----------------+---------+---------+---------+---------|
-| predictTokenAddress                                |            1894 |    3118 |    3272 |    3272 |       9 |
+| predictTokenAddress                                |            1916 |    3185 |    3283 |    3283 |      14 |
 ╰----------------------------------------------------+-----------------+---------+---------+---------+---------╯
 
 ╭----------------------------------------------+-----------------+------+--------+------+---------╮
@@ -578,9 +555,9 @@ Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.95s (13.54s CPU t
 |----------------------------------------------+-----------------+------+--------+------+---------|
 | Function Name                                | Min             | Avg  | Median | Max  | # Calls |
 |----------------------------------------------+-----------------+------+--------+------+---------|
-| FIXED_SUPPLY                                 |             238 |  238 |    238 |  238 |      10 |
+| FIXED_SUPPLY                                 |             238 |  238 |    238 |  238 |      14 |
 |----------------------------------------------+-----------------+------+--------+------+---------|
-| balanceOf                                    |             560 | 1383 |    560 | 2560 |      17 |
+| balanceOf                                    |             560 | 1522 |    560 | 2560 |      27 |
 |----------------------------------------------+-----------------+------+--------+------+---------|
 | totalSupply                                  |            2303 | 2303 |   2303 | 2303 |       1 |
 ╰----------------------------------------------+-----------------+------+--------+------+---------╯
@@ -598,9 +575,9 @@ Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.95s (13.54s CPU t
 |------------------------------------------------+-----------------+------+--------+------+---------|
 | cost                                           |             513 |  529 |    535 |  539 |       3 |
 |------------------------------------------------+-----------------+------+--------+------+---------|
-| distribute                                     |             975 | 1049 |    975 | 1124 |     251 |
+| distribute                                     |             975 | 1052 |   1124 | 1124 |     251 |
 |------------------------------------------------+-----------------+------+--------+------+---------|
-| extend                                         |             816 |  817 |    816 |  826 |     251 |
+| extend                                         |             816 |  818 |    816 |  826 |     251 |
 |------------------------------------------------+-----------------+------+--------+------+---------|
 | initial                                        |             660 |  660 |    660 |  660 |       1 |
 ╰------------------------------------------------+-----------------+------+--------+------+---------╯
@@ -616,18 +593,18 @@ Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.95s (13.54s CPU t
 |------------------------------------------------------------------------------------+-----------------+--------+--------+--------+---------|
 | Function Name                                                                      | Min             | Avg    | Median | Max    | # Calls |
 |------------------------------------------------------------------------------------+-----------------+--------+--------+--------+---------|
-| challenge                                                                          |          281989 | 354079 | 321958 | 555750 |   12105 |
+| challenge                                                                          |          281989 | 353211 | 321958 | 555750 |   12405 |
 |------------------------------------------------------------------------------------+-----------------+--------+--------+--------+---------|
-| claimRefund                                                                        |           47214 |  55264 |  53930 | 151402 |   12570 |
+| claimRefund                                                                        |           47214 |  55136 |  53930 | 151402 |   12432 |
 |------------------------------------------------------------------------------------+-----------------+--------+--------+--------+---------|
-| claimRewards                                                                       |           87492 | 133532 |  99941 | 303397 |   12303 |
+| claimRewards                                                                       |           87492 | 134810 |  99941 | 303397 |   12297 |
 |------------------------------------------------------------------------------------+-----------------+--------+--------+--------+---------|
 | deadlineViolated                                                                   |            2399 |   2399 |   2399 |   2399 |       1 |
 |------------------------------------------------------------------------------------+-----------------+--------+--------+--------+---------|
-| finalize                                                                           |           50523 |  99340 |  57760 | 279022 |   12366 |
+| finalize                                                                           |           50523 | 100140 |  57760 | 279022 |   12210 |
 |------------------------------------------------------------------------------------+-----------------+--------+--------+--------+---------|
 | resurrectedRound                                                                   |            2365 |   2365 |   2365 |   2365 |       1 |
 ╰------------------------------------------------------------------------------------+-----------------+--------+--------+--------+---------╯
 
 
-Ran 6 test suites in 6.63s (11.29s CPU time): 37 tests passed, 0 failed, 1 skipped (38 total tests)
+Ran 6 test suites in 10.96s (18.23s CPU time): 42 tests passed, 0 failed, 0 skipped (42 total tests)

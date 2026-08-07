@@ -1,18 +1,20 @@
-No files changed, compilation skipped
+Compiling 4 files with Solc 0.8.26
+Solc 0.8.26 finished in 4.97s
+Compiler run successful!
 
 Ran 4 tests for test/RoundMath.t.sol:RoundMathTest
-[PASS] testFuzz_deadlineIsMonotoneAndCapped(uint64,uint64) (runs: 1000, μ: 15188, ~: 15236)
+[PASS] testFuzz_deadlineIsMonotoneAndCapped(uint64,uint64) (runs: 1000, μ: 15163, ~: 15236)
 Logs:
-  Bound result 461376
-  Bound result 463716
+  Bound result 0
+  Bound result 695
 
-[PASS] testFuzz_distributionConservesPot(uint256,bool) (runs: 1000, μ: 13343, ~: 13265)
+[PASS] testFuzz_distributionConservesPot(uint256,bool) (runs: 1000, μ: 13330, ~: 13265)
 Logs:
-  Bound result 105327799313035511958914410906883156241
+  Bound result 1
 
 [PASS] test_crownCostClamps() (gas: 11387)
 [PASS] test_initialDeadlinesAreImmutableOffsets() (gas: 9279)
-Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 20.38ms (36.45ms CPU time)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 12.12ms (23.80ms CPU time)
 
 Ran 11 tests for test/OvertimeFeeKernel.t.sol:OvertimeFeeKernelTest
 [PASS] test_cumulativeProgrammableFeeIsExactlyTenBpsAcrossQuadrants() (gas: 628420)
@@ -26,22 +28,21 @@ Ran 11 tests for test/OvertimeFeeKernel.t.sol:OvertimeFeeKernelTest
 [PASS] test_programmableOwnerClaimPreservesRemaindersAndPaysChosenRecipient() (gas: 421874)
 [PASS] test_quoteGrossFeesCarriesIndependentRemainders() (gas: 14962)
 [PASS] test_specifiedWethPartialFillRevertsAtomically() (gas: 284492)
-Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 89.83ms (3.14ms CPU time)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 85.69ms (3.58ms CPU time)
 
-Ran 8 tests for test/OvertimeLauncher.t.sol:OvertimeLauncherTest
-[PASS] test_atomicLaunchAuthenticatesInitializationAndLocksSupplyLifecycle() (gas: 6507378)
-[PASS] test_atomicLaunchRollbackRemovesChildrenAndState() (gas: 5696251)
-[PASS] test_creationCodeCommitmentRejectsSubstitution() (gas: 213597)
-[PASS] test_gas_atomicLaunch() (gas: 6367231)
-[PASS] test_gas_deployAssets() (gas: 5555542)
-[PASS] test_gas_lockLiquidity() (gas: 815322)
-[PASS] test_launcherIsOneShot() (gas: 6372936)
-[PASS] test_twoPhaseLaunchAuthenticatesInitializationAndLocksSupplyLifecycle() (gas: 6519083)
-Suite result: ok. 8 passed; 0 failed; 0 skipped; finished in 230.12ms (8.18ms CPU time)
-
-Ran 1 test for test/fork/OvertimeMainnetFork.t.sol:OvertimeMainnetForkTest
-[PASS] testFork_mainnetDependenciesMatchProductionSnapshot() (gas: 23971)
-Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 316.17ms (312.26ms CPU time)
+Ran 11 tests for test/OvertimeLauncher.t.sol:OvertimeLauncherTest
+[PASS] test_atomicLaunchAuthenticatesInitializationAndLocksSupplyLifecycle() (gas: 6507393)
+[PASS] test_atomicLaunchRollbackRemovesChildrenAndState() (gas: 5696256)
+[PASS] test_creationCodeCommitmentRejectsSubstitution() (gas: 213596)
+[PASS] test_gas_atomicLaunch() (gas: 6367157)
+[PASS] test_gas_deployAssets() (gas: 5555541)
+[PASS] test_gas_lockLiquidity() (gas: 815271)
+[PASS] test_launchRejectsAlternateValidStartingPrice() (gas: 5561546)
+[PASS] test_launchRejectsAlternateWethBudget() (gas: 5561418)
+[PASS] test_launcherIsOneShot() (gas: 6372884)
+[PASS] test_manualSigningDigestBindsCompleteLaunchInput() (gas: 1794209)
+[PASS] test_twoPhaseLaunchAuthenticatesInitializationAndLocksSupplyLifecycle() (gas: 6519108)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 228.60ms (8.57ms CPU time)
 
 Ran 11 tests for test/OvertimeGame.t.sol:OvertimeGameTest
 [PASS] test_challengeCreditsCrownSecondsAndExtendsMonotonically() (gas: 630026)
@@ -55,7 +56,7 @@ Ran 11 tests for test/OvertimeGame.t.sol:OvertimeGameTest
 [PASS] test_routerBindsPlayerBeneficiaryAndTokenRecipient() (gas: 435062)
 [PASS] test_sameBlockDisplacementCreditsPullRefund() (gas: 690844)
 [PASS] test_wrongCallbackSenderCannotForgePlayer() (gas: 69675)
-Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 453.90ms (7.37ms CPU time)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 453.75ms (7.19ms CPU time)
 
 Ran 3 tests for test/invariant/OvertimeAccountingInvariant.t.sol:OvertimeAccountingInvariantTest
 [PASS] invariant_crownTimeConservation() (runs: 256, calls: 16384, reverts: 0)
@@ -63,265 +64,228 @@ Ran 3 tests for test/invariant/OvertimeAccountingInvariant.t.sol:OvertimeAccount
 ╭--------------------------+--------------+-------+---------+----------╮
 | Contract                 | Selector     | Calls | Reverts | Discards |
 +======================================================================+
-| OvertimeInvariantHandler | challenge    | 4042  | 0       | 0        |
+| OvertimeInvariantHandler | challenge    | 4047  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | claimRefund  | 4187  | 0       | 0        |
+| OvertimeInvariantHandler | claimRefund  | 4151  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | claimRewards | 4062  | 0       | 0        |
+| OvertimeInvariantHandler | claimRewards | 4022  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | finalize     | 4093  | 0       | 0        |
+| OvertimeInvariantHandler | finalize     | 4164  | 0       | 0        |
 ╰--------------------------+--------------+-------+---------+----------╯
 
 Logs:
-  Bound result 300
-  Bound result 1990000000000013476
+  Bound result 694
+  Bound result 1058
+  Bound result 532
+  Bound result 1990000000001841088
+  Bound result 447
   Bound result 1
   Bound result 1
-  Bound result 0
-  Bound result 2
-  Bound result 11
-  Bound result 874676413159403553
-  Bound result 593
-  Bound result 1883402217222256865
-  Bound result 157
+  Bound result 1990000000000016717
+  Bound result 341
+  Bound result 26
+  Bound result 212
+  Bound result 392
+  Bound result 14
   Bound result 1
-  Bound result 1198
-  Bound result 1
-  Bound result 324
-  Bound result 1990000000000000016
-  Bound result 1198
-  Bound result 1
+  Bound result 1894907916857238138
   Bound result 2
+  Bound result 64
   Bound result 2
+  Bound result 450
+  Bound result 58568167222177955
+  Bound result 41
+  Bound result 399
+  Bound result 1990000000000002110
   Bound result 2
-  Bound result 173
-  Bound result 10000000000000003
-  Bound result 198
-  Bound result 1990000000000000943
-  Bound result 767
-  Bound result 2
-  Bound result 1041
-  Bound result 469
-  Bound result 0
-  Bound result 1990000000000016357
-  Bound result 115
-  Bound result 2
-  Bound result 600
-  Bound result 1990000000000009329
-  Bound result 4
-  Bound result 485
-  Bound result 1644976884257153308
-  Bound result 384
-  Bound result 1990000000000001911
-  Bound result 2
-  Bound result 1386894744858176186
-  Bound result 32
-  Bound result 1990000000000007513
-  Bound result 538
-  Bound result 1995014370691910963
-  Bound result 20
-  Bound result 10000000000000003
-  Bound result 4
-  Bound result 1
-  Bound result 1128
+  Bound result 1990000000000001310
+  Bound result 3
+  Bound result 3
+  Bound result 192
+  Bound result 1990000000000012400
+  Bound result 409
   Bound result 559
-  Bound result 566
-  Bound result 1990000000000007978
+  Bound result 1939483901129161109
   Bound result 1
-  Bound result 1990000000032055019
-  Bound result 1
-  Bound result 161
-  Bound result 347506584003279330
-  Bound result 18
-  Bound result 1990000000000003043
+  Bound result 1990000000000000512
+  Bound result 4
+  Bound result 4
+  Bound result 5
+  Bound result 1158737496482230937
+  Bound result 603
   Bound result 2
-  Bound result 582
-  Bound result 1990000000000002424
-  Bound result 394
-  Bound result 1519524418170423384
-  Bound result 155
-  Bound result 1990000000836255651
-  Bound result 127
   Bound result 24
-  Bound result 0
-  Bound result 1999570232270579007
+  Bound result 1990000000000008690
+  Bound result 1071
+  Bound result 2
+  Bound result 254
+  Bound result 4
+  Bound result 3
+  Bound result 10000000000000001
+  Bound result 1
+  Bound result 1140
+  Bound result 289
+  Bound result 1580173479777070156
+  Bound result 1
+  Bound result 51
+  Bound result 1990000000004456504
+  Bound result 2
 
 [PASS] invariant_deadlineMonotonicityAndNoResurrection() (runs: 256, calls: 16384, reverts: 0)
 
 ╭--------------------------+--------------+-------+---------+----------╮
 | Contract                 | Selector     | Calls | Reverts | Discards |
 +======================================================================+
-| OvertimeInvariantHandler | challenge    | 4042  | 0       | 0        |
+| OvertimeInvariantHandler | challenge    | 4047  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | claimRefund  | 4187  | 0       | 0        |
+| OvertimeInvariantHandler | claimRefund  | 4151  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | claimRewards | 4062  | 0       | 0        |
+| OvertimeInvariantHandler | claimRewards | 4022  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | finalize     | 4093  | 0       | 0        |
+| OvertimeInvariantHandler | finalize     | 4164  | 0       | 0        |
 ╰--------------------------+--------------+-------+---------+----------╯
 
 Logs:
-  Bound result 300
-  Bound result 1990000000000013476
+  Bound result 694
+  Bound result 1058
+  Bound result 532
+  Bound result 1990000000001841088
+  Bound result 447
   Bound result 1
   Bound result 1
-  Bound result 0
-  Bound result 2
-  Bound result 11
-  Bound result 874676413159403553
-  Bound result 593
-  Bound result 1883402217222256865
-  Bound result 157
+  Bound result 1990000000000016718
+  Bound result 341
+  Bound result 26
+  Bound result 212
+  Bound result 392
+  Bound result 14
   Bound result 1
-  Bound result 1198
-  Bound result 1
-  Bound result 324
-  Bound result 1990000000000000016
-  Bound result 1198
-  Bound result 1
+  Bound result 1894907916857238138
   Bound result 2
+  Bound result 64
   Bound result 2
+  Bound result 450
+  Bound result 58568167222177955
+  Bound result 41
+  Bound result 399
+  Bound result 1990000000000002067
   Bound result 2
-  Bound result 173
-  Bound result 10000000000000003
-  Bound result 198
-  Bound result 1990000000000000943
-  Bound result 767
-  Bound result 2
-  Bound result 1041
-  Bound result 467
-  Bound result 0
-  Bound result 1990000000000016358
-  Bound result 115
-  Bound result 2
-  Bound result 600
-  Bound result 1990000000000009310
-  Bound result 4
-  Bound result 485
-  Bound result 1644976884257153308
-  Bound result 384
-  Bound result 1990000000000001911
-  Bound result 2
-  Bound result 1386894744858176186
-  Bound result 32
-  Bound result 1990000000000007482
-  Bound result 538
-  Bound result 1995014370691910963
-  Bound result 20
-  Bound result 10000000000000003
-  Bound result 4
-  Bound result 1
-  Bound result 1128
+  Bound result 1990000000000001310
+  Bound result 3
+  Bound result 3
+  Bound result 192
+  Bound result 1990000000000012399
+  Bound result 409
   Bound result 559
-  Bound result 566
-  Bound result 1990000000000007978
+  Bound result 1939483901129161109
   Bound result 1
-  Bound result 1990000000032055019
-  Bound result 1
-  Bound result 161
-  Bound result 347506584003279330
-  Bound result 18
-  Bound result 1990000000000002968
+  Bound result 1990000000000000512
+  Bound result 4
+  Bound result 4
+  Bound result 5
+  Bound result 1158737496482230937
+  Bound result 603
   Bound result 2
-  Bound result 582
-  Bound result 1990000000000002424
-  Bound result 394
-  Bound result 1519524418170423384
-  Bound result 155
-  Bound result 1990000000836255651
-  Bound result 600
-  Bound result 24
-  Bound result 0
-  Bound result 1999570232270579007
+  Bound result 434
+  Bound result 1990000000000003989
+  Bound result 1135
+  Bound result 3
+  Bound result 256
+  Bound result 1
+  Bound result 3
+  Bound result 10000000000000001
+  Bound result 1
+  Bound result 1140
+  Bound result 289
+  Bound result 1580173479777070156
+  Bound result 3
+  Bound result 51
+  Bound result 1990000000004456504
+  Bound result 2
 
 [PASS] invariant_solvencyAndLiabilityConservation() (runs: 256, calls: 16384, reverts: 0)
 
 ╭--------------------------+--------------+-------+---------+----------╮
 | Contract                 | Selector     | Calls | Reverts | Discards |
 +======================================================================+
-| OvertimeInvariantHandler | challenge    | 4042  | 0       | 0        |
+| OvertimeInvariantHandler | challenge    | 4047  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | claimRefund  | 4187  | 0       | 0        |
+| OvertimeInvariantHandler | claimRefund  | 4151  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | claimRewards | 4062  | 0       | 0        |
+| OvertimeInvariantHandler | claimRewards | 4022  | 0       | 0        |
 |--------------------------+--------------+-------+---------+----------|
-| OvertimeInvariantHandler | finalize     | 4093  | 0       | 0        |
+| OvertimeInvariantHandler | finalize     | 4164  | 0       | 0        |
 ╰--------------------------+--------------+-------+---------+----------╯
 
 Logs:
-  Bound result 300
-  Bound result 1990000000000013476
+  Bound result 694
+  Bound result 1058
+  Bound result 532
+  Bound result 1990000000001841088
+  Bound result 447
   Bound result 1
   Bound result 1
-  Bound result 0
-  Bound result 2
-  Bound result 11
-  Bound result 874676413159403553
-  Bound result 593
-  Bound result 1883402217222256865
-  Bound result 157
+  Bound result 1990000000000016718
+  Bound result 341
+  Bound result 26
+  Bound result 212
+  Bound result 392
+  Bound result 14
   Bound result 1
-  Bound result 1198
-  Bound result 1
-  Bound result 324
-  Bound result 1990000000000000016
-  Bound result 1198
-  Bound result 1
+  Bound result 1894907916857238138
   Bound result 2
+  Bound result 64
   Bound result 2
+  Bound result 450
+  Bound result 58568167222177955
+  Bound result 41
+  Bound result 399
+  Bound result 1990000000000002067
   Bound result 2
-  Bound result 173
-  Bound result 10000000000000003
-  Bound result 198
-  Bound result 1990000000000000943
-  Bound result 767
-  Bound result 2
-  Bound result 1041
-  Bound result 467
-  Bound result 0
-  Bound result 1990000000000016358
-  Bound result 115
-  Bound result 2
-  Bound result 600
-  Bound result 1990000000000009310
-  Bound result 4
-  Bound result 485
-  Bound result 1644976884257153308
-  Bound result 384
-  Bound result 1990000000000001911
-  Bound result 2
-  Bound result 1386894744858176186
-  Bound result 32
-  Bound result 1990000000000007482
-  Bound result 538
-  Bound result 1995014370691910963
-  Bound result 20
-  Bound result 10000000000000003
-  Bound result 4
-  Bound result 1
-  Bound result 1128
+  Bound result 1990000000000001310
+  Bound result 3
+  Bound result 3
+  Bound result 192
+  Bound result 1990000000000012399
+  Bound result 409
   Bound result 559
-  Bound result 566
-  Bound result 1990000000000007978
+  Bound result 1939483901129161109
   Bound result 1
-  Bound result 1990000000032055019
-  Bound result 1
-  Bound result 161
-  Bound result 347506584003279330
-  Bound result 18
-  Bound result 1990000000000002968
+  Bound result 1990000000000000512
+  Bound result 4
+  Bound result 4
+  Bound result 5
+  Bound result 1158737496482230937
+  Bound result 603
   Bound result 2
-  Bound result 582
-  Bound result 1990000000000002424
-  Bound result 394
-  Bound result 1519524418170423384
-  Bound result 155
-  Bound result 1990000000836255651
-  Bound result 600
-  Bound result 24
-  Bound result 0
-  Bound result 1999570232270579007
+  Bound result 434
+  Bound result 1990000000000003989
+  Bound result 1135
+  Bound result 3
+  Bound result 256
+  Bound result 1
+  Bound result 3
+  Bound result 10000000000000001
+  Bound result 1
+  Bound result 1140
+  Bound result 289
+  Bound result 1580173479777070156
+  Bound result 3
+  Bound result 51
+  Bound result 1990000000004456504
+  Bound result 2
 
-Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 4.95s (11.08s CPU time)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 5.54s (12.87s CPU time)
 
-Ran 6 test suites in 4.96s (6.06s CPU time): 38 tests passed, 0 failed, 0 skipped (38 total tests)
+Ran 2 tests for test/fork/OvertimeMainnetFork.t.sol:OvertimeMainnetForkTest
+[PASS] testFork_currentHeadLifecycleSmoke() (gas: 14771674)
+Logs:
+  current head block: 25706463
+
+[PASS] testFork_pinnedCandidateLifecycle() (gas: 14771733)
+Logs:
+  pinned candidate block: 25700561
+
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 11.95s (12.29s CPU time)
+
+Ran 6 test suites in 11.95s (18.26s CPU time): 42 tests passed, 0 failed, 0 skipped (42 total tests)

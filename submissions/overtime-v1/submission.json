@@ -952,7 +952,7 @@
         "name": "Overtime Challenge Router",
         "kind": "project-router",
         "repository": "https://github.com/voladelta/overtime-hook",
-        "revision": "9ed8686c5193c946bde449cc6b8dac04540cc1b7",
+        "revision": "c8df050fa474a63fdd852d856fd48c2cdd639a83",
         "packageVersion": "1.0.0",
         "license": "MIT",
         "sourceProvenance": "pinned-source",

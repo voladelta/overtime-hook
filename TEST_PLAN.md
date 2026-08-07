@@ -67,6 +67,8 @@
 
 - Full fixed supply minted once; no external mint/pause/tax/blacklist controls.
 - Atomic launch rollback at each external failure.
+- Alternate valid starting prices and alternate WETH budgets revert against the code-bound commitments.
+- The manual-signing digest changes for either authority-selected child salt and binds chain, sender, target, zero value, and the complete calldata hash.
 - Final action bytes contain no deprecated from-deltas liquidity action.
 - Explicit amount bounds, finite deadline, price movement, and refunds.
 - Vault owns the position and exposes no approval/transfer/decrease/rescue path.
@@ -86,9 +88,8 @@ Local profile: at least 256 fuzz runs and 64 invariant runs at depth 32. CI prof
 
 ## Fork rehearsal
 
-Run one reproducible Ethereum mainnet fork pinned to an exact block and one current-head smoke test. Check PoolManager, PositionManager, WETH, StateView, V4Quoter, and Permit2 runtime identities before lifecycle execution. Record block, RPC class (never credential), runtime hashes, actions, results, and skips/failures.
+Run one reproducible Ethereum mainnet fork pinned to an exact block and one separate current-head smoke. Each run checks PoolManager, PositionManager, WETH, StateView, and V4Quoter runtime identities; performs the atomic launch and locked-liquidity assertion; exercises a return-delta challenge, deadline and partial-fill failures, champion/crown-time/Programmable redemption; reconciles ERC-6909 backing to liabilities; and asserts the PoolManager nonzero-delta count plus actor/router/hook currency deltas are zero. Record both blocks, RPC class (never credential), runtime hashes, actions, results, and failures. Neither run has a skip path.
 
 ## Acceptance for package preparation
 
 No failing or skipped mandatory test; no undisposed model-owned static finding; runtime/initcode under EIP-170/EIP-3860 limits with declared headroom; fork rehearsal complete; evidence paths/hash bind the exact reviewed commit. Independent review, deployment, routing, and availability remain separate gates.
-

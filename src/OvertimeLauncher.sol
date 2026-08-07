@@ -34,6 +34,8 @@ contract OvertimeLauncher is ReentrancyGuardTransient {
 
     uint160 public constant REQUIRED_HOOK_FLAGS = Hooks.BEFORE_INITIALIZE_FLAG | Hooks.BEFORE_SWAP_FLAG
         | Hooks.AFTER_SWAP_FLAG | Hooks.BEFORE_SWAP_RETURNS_DELTA_FLAG | Hooks.AFTER_SWAP_RETURNS_DELTA_FLAG;
+    uint160 public constant INITIAL_SQRT_PRICE_X96 = 792_281_625_142_643_375_935_439_503_360_000;
+    uint256 public constant WETH_LIQUIDITY_BUDGET = 10 ether;
 
     struct LaunchResult {
         address token;
@@ -68,9 +70,9 @@ contract OvertimeLauncher is ReentrancyGuardTransient {
     error InvalidInitialTick(int24 actual, int24 expected);
     error InvalidPositionManager(address expectedPoolManager, address actualPoolManager);
     error InvalidTokenOrdering(address weth, address token);
+    error InvalidWethLiquidityBudget(uint256 actual, uint256 expected);
     error LaunchUnauthorized(address caller, address expected);
     error LiquidityTransferMismatch(address token, uint256 expected, uint256 actual);
-    error NoWethLiquidity();
     error PositionNotLocked(uint256 tokenId, address actualOwner, address expectedOwner);
     error UnexpectedPositionCount(uint256 count);
     error ZeroAddress();
@@ -203,8 +205,10 @@ contract OvertimeLauncher is ReentrancyGuardTransient {
     {
         if (!assetsDeployed) revert AssetsNotDeployed();
         if (launched) revert AlreadyLaunched();
-        if (wethLiquidityBudget == 0) revert NoWethLiquidity();
-        if (initialSqrtPriceX96 < TickMath.MIN_SQRT_PRICE || initialSqrtPriceX96 >= TickMath.MAX_SQRT_PRICE) {
+        if (wethLiquidityBudget != WETH_LIQUIDITY_BUDGET) {
+            revert InvalidWethLiquidityBudget(wethLiquidityBudget, WETH_LIQUIDITY_BUDGET);
+        }
+        if (initialSqrtPriceX96 != INITIAL_SQRT_PRICE_X96) {
             revert InvalidInitialPrice(initialSqrtPriceX96);
         }
 

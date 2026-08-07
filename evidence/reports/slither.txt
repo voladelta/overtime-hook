@@ -1,14 +1,21 @@
+Slither 0.11.6
+Command: uvx --from slither-analyzer slither . --exclude-dependencies --filter-paths lib|test|demo --json <report>
+Exit: 255 (findings emitted and dispositioned)
+
+'forge clean' running (wd: /Users/mbp/Codehub/overtime-hook)
+'forge config --json' running
+'forge build --build-info --deny never --skip ./test/** ./script/** --force' running (wd: /Users/mbp/Codehub/overtime-hook)
 Impossible to generate IR for OvertimeHook._takeCrown (src/OvertimeHook.sol#506-548):
  'NoneType' object has no attribute 'parameters'
 
 Detector: reentrancy-benign
-Reentrancy in OvertimeLauncher._launch(uint160,uint256) (src/OvertimeLauncher.sol#200-220):
+Reentrancy in OvertimeLauncher._launch(uint160,uint256) (src/OvertimeLauncher.sol#202-224):
 	External calls:
-	- result = _mintLockedPosition(overtimeToken,overtimeHook,initialSqrtPriceX96,wethLiquidityBudget) (src/OvertimeLauncher.sol#217)
-		- initialTick = poolManager.initialize(key,initialSqrtPriceX96) (src/OvertimeLauncher.sol#252)
-		- positionManager.modifyLiquidities(abi.encode(plan.actions,plan.params),block.timestamp) (src/OvertimeLauncher.sol#265)
+	- result = _mintLockedPosition(overtimeToken,overtimeHook,initialSqrtPriceX96,wethLiquidityBudget) (src/OvertimeLauncher.sol#221)
+		- initialTick = poolManager.initialize(key,initialSqrtPriceX96) (src/OvertimeLauncher.sol#256)
+		- positionManager.modifyLiquidities(abi.encode(plan.actions,plan.params),block.timestamp) (src/OvertimeLauncher.sol#269)
 	State variables written after the call(s):
-	- launchResult = result (src/OvertimeLauncher.sol#218)
+	- launchResult = result (src/OvertimeLauncher.sol#222)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
 
 Detector: timestamp
@@ -35,6 +42,3 @@ Detector: constable-states
 OvertimeHook.roundId (src/OvertimeHook.sol#82) should be constant 
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant
 . analyzed (76 contracts with 102 detectors), 7 result(s) found
-'forge clean' running (wd: /Users/mbp/Codehub/overtime-hook)
-'forge config --json' running
-'forge build --build-info --deny never --skip ./test/** ./script/** --force' running (wd: /Users/mbp/Codehub/overtime-hook)

@@ -1,10 +1,10 @@
 # Overtime v1 evidence
 
-Current state: local prototype evidence passed and repository closure is complete. The evidence is bound to source commit `9ed8686c5193c946bde449cc6b8dac04540cc1b7` (tree `20b28e149aa1a8d97e5ca92957c129a29455f0c3`). External review remains pending.
+Current state: the repaired local prototype evidence passed and repository closure is being rebound through the central application's exact GitHub `revisionObjectId` and `treeObjectId`. Every public evidence record must resolve inside that same immutable source authority. External review remains pending.
 
 ## Pinned upstream inputs
 
-- Programmable production: `c7346ab41046e5a600acc88acb37b73d3bbb80b9`
+- Programmable production: `7728ebf586983a69a39e206e9a0bf7340445335b`
 - Builder CLI/references: `5b47504299c5dbe0ab694be8d163e80d352c8166`
 - v4-core: `59d3ecf53afa9264a16bba0e38f4c5d2231f80bc`
 - v4-periphery: `ad04c9f24a170accf5ea1b2836bbafd514537ca6`
@@ -14,12 +14,13 @@ Current state: local prototype evidence passed and repository closure is complet
 
 ## Local results
 
-- 38 tests passed, including 1,000-run fuzz properties and 49,152 aggregate stateful invariant calls.
+- 42 tests passed with zero failures or skips, including 1,000-run fuzz properties and 49,152 aggregate stateful invariant calls.
 - All four fee quadrants, cumulative exact 10 bps Programmable accounting, specified-WETH and challenge partial-fill rollback, PoolKey isolation, router identity, same-block refunds, double claims, Knockout, Decision, and post-expiry recurrence passed.
-- Ethereum mainnet fork block `25,700,561` matched the production PoolManager and PositionManager runtime hashes and bindings.
-- Runtime sizes: hook 17,198 bytes; router 5,133; launcher 14,828; token 1,920; vault 519. All are below EIP-170.
-- Atomic deployment, initialization, and permanent liquidity custody measured approximately 6.37M gas. The gas-bounded rehearsal phases measured approximately 5.56M and 0.82M gas.
+- The pinned Ethereum mainnet lifecycle at block `25,700,561` and a separate current-head lifecycle at block `25,706,465` each matched PoolManager, PositionManager, StateView, V4Quoter, and WETH runtime hashes; launched and locked liquidity; accrued a return-delta fee; rolled back deadline and partial-fill failures; redeemed champion, crown-time, and Programmable claims; reconciled liabilities; and finished with zero unresolved PoolManager deltas.
+- Runtime sizes: hook 17,198 bytes; router 5,133; launcher 14,909; token 1,920; vault 519. All are below EIP-170.
+- Atomic deployment, initialization, and permanent liquidity custody measured approximately 6.63M gas. The gas-bounded rehearsal phases measured approximately 5.89M and 0.80M gas.
+- Alternate otherwise-valid starting prices and WETH budgets now revert in `OvertimeLauncher`; only the two CREATE2 child salts remain launch-authority-selected, and tests prove the complete calldata preflight digest changes with either salt.
 - Forge high/medium lint was clean. Slither findings and dispositions are recorded in `evidence/reports/STATIC_ANALYSIS.md`.
-- The production Builder verifier reports `PROTOTYPE_READY`, zero blockers, repository closure complete, and hook mask `0x20cc`.
+- The checked-in legacy compatibility report remains advisory because the installed Builder skill predates the seven-file autonomous intake. The resubmission is gated instead by the exact `0xprogrammable/programmable:production` launch-specification and pure seven-file package validators.
 
 Raw reports are under `evidence/reports/`. No audit, acceptance, deployment, source verification, provider support, or live fee collection is claimed.

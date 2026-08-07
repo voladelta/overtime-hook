@@ -119,6 +119,32 @@ contract OvertimeLauncherTest is Test, Deployers {
         assertEq(predictedHook.code.length, 0);
     }
 
+    function test_launchRejectsAlternateValidStartingPrice() public {
+        uint160 committedPrice = launcher.INITIAL_SQRT_PRICE_X96();
+        uint256 committedBudget = launcher.WETH_LIQUIDITY_BUDGET();
+        uint160 alternateValidPrice = committedPrice - 1;
+
+        vm.expectRevert(abi.encodeWithSelector(OvertimeLauncher.InvalidInitialPrice.selector, alternateValidPrice));
+        launcher.deployAndLaunch(
+            tokenCreationCode, hookCreationCode, tokenSalt, hookSalt, alternateValidPrice, committedBudget
+        );
+    }
+
+    function test_launchRejectsAlternateWethBudget() public {
+        uint160 committedPrice = launcher.INITIAL_SQRT_PRICE_X96();
+        uint256 committedBudget = launcher.WETH_LIQUIDITY_BUDGET();
+        uint256 alternateBudget = committedBudget - 1;
+
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                OvertimeLauncher.InvalidWethLiquidityBudget.selector, alternateBudget, committedBudget
+            )
+        );
+        launcher.deployAndLaunch(
+            tokenCreationCode, hookCreationCode, tokenSalt, hookSalt, committedPrice, alternateBudget
+        );
+    }
+
     function test_launcherIsOneShot() public {
         uint160 initialPrice = uint160(uint256(SQRT_PRICE_1_1) * 10_000);
         launcher.deployAssets(tokenCreationCode, hookCreationCode, tokenSalt, hookSalt);
@@ -153,6 +179,77 @@ contract OvertimeLauncherTest is Test, Deployers {
         bytes memory wrong = abi.encodePacked(tokenCreationCode, bytes1(0x00));
         vm.expectRevert();
         launcher.predictTokenAddress(bytes32(0), wrong);
+    }
+
+    function test_manualSigningDigestBindsCompleteLaunchInput() public view {
+        bytes memory callData = abi.encodeCall(
+            OvertimeLauncher.deployAndLaunch,
+            (
+                tokenCreationCode,
+                hookCreationCode,
+                tokenSalt,
+                hookSalt,
+                launcher.INITIAL_SQRT_PRICE_X96(),
+                launcher.WETH_LIQUIDITY_BUDGET()
+            )
+        );
+        bytes32 signingDigest =
+            keccak256(abi.encode(block.chainid, address(this), address(launcher), uint256(0), keccak256(callData)));
+        bytes memory changedTokenSaltCallData = abi.encodeCall(
+            OvertimeLauncher.deployAndLaunch,
+            (
+                tokenCreationCode,
+                hookCreationCode,
+                bytes32(uint256(tokenSalt) + 1),
+                hookSalt,
+                launcher.INITIAL_SQRT_PRICE_X96(),
+                launcher.WETH_LIQUIDITY_BUDGET()
+            )
+        );
+        bytes memory changedHookSaltCallData = abi.encodeCall(
+            OvertimeLauncher.deployAndLaunch,
+            (
+                tokenCreationCode,
+                hookCreationCode,
+                tokenSalt,
+                bytes32(uint256(hookSalt) + 1),
+                launcher.INITIAL_SQRT_PRICE_X96(),
+                launcher.WETH_LIQUIDITY_BUDGET()
+            )
+        );
+
+        assertNotEq(
+            signingDigest,
+            keccak256(
+                abi.encode(
+                    block.chainid, address(this), address(launcher), uint256(0), keccak256(changedTokenSaltCallData)
+                )
+            )
+        );
+        assertNotEq(
+            signingDigest,
+            keccak256(
+                abi.encode(
+                    block.chainid, address(this), address(launcher), uint256(0), keccak256(changedHookSaltCallData)
+                )
+            )
+        );
+        assertNotEq(
+            signingDigest,
+            keccak256(abi.encode(block.chainid + 1, address(this), address(launcher), uint256(0), keccak256(callData)))
+        );
+        assertNotEq(
+            signingDigest,
+            keccak256(abi.encode(block.chainid, address(0xA11CE), address(launcher), uint256(0), keccak256(callData)))
+        );
+        assertNotEq(
+            signingDigest,
+            keccak256(abi.encode(block.chainid, address(this), address(0xA11CE), uint256(0), keccak256(callData)))
+        );
+        assertNotEq(
+            signingDigest,
+            keccak256(abi.encode(block.chainid, address(this), address(launcher), uint256(1), keccak256(callData)))
+        );
     }
 
     function _mineOrderedToken() private view returns (bytes32 salt, address token) {

@@ -1,7 +1,14 @@
 No files changed, compilation skipped
 
-Ran 1 test for test/fork/OvertimeMainnetFork.t.sol:OvertimeMainnetForkTest
-[PASS] testFork_mainnetDependenciesMatchProductionSnapshot() (gas: 23971)
-Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 259.95ms (259.79ms CPU time)
+Ran 2 tests for test/fork/OvertimeMainnetFork.t.sol:OvertimeMainnetForkTest
+[PASS] testFork_currentHeadLifecycleSmoke() (gas: 14771674)
+Logs:
+  current head block: 25706465
 
-Ran 1 test suite in 264.10ms (259.95ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)
+[PASS] testFork_pinnedCandidateLifecycle() (gas: 14771733)
+Logs:
+  pinned candidate block: 25700561
+
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 11.74s (12.09s CPU time)
+
+Ran 1 test suite in 11.75s (11.74s CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)

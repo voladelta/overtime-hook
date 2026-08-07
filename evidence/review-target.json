@@ -1,14 +1,20 @@
 {
-  "status": "bound",
-  "sourceCommit": "9ed8686c5193c946bde449cc6b8dac04540cc1b7",
-  "sourceTree": "20b28e149aa1a8d97e5ca92957c129a29455f0c3",
+  "status": "bound-by-central-exact-source",
+  "sourceBinding": {
+    "repository": "https://github.com/voladelta/overtime-hook",
+    "numericRepositoryId": "1326198143",
+    "authority": "application.json and evidence-index.json revisionObjectId plus treeObjectId",
+    "rule": "Every public evidence URL, source path, and launch specification must resolve within the same exact central-declared GitHub commit and tree."
+  },
   "productionSourceOfTruth": {
     "repository": "https://github.com/0xprogrammable/programmable",
     "branch": "production",
-    "revision": "c7346ab41046e5a600acc88acb37b73d3bbb80b9"
+    "revision": "7728ebf586983a69a39e206e9a0bf7340445335b"
   },
-  "builderTooling": {
+  "advisoryBuilderSkill": {
     "repository": "https://github.com/0xprogrammable/programmable-v4-builder",
-    "revision": "5b47504299c5dbe0ab694be8d163e80d352c8166"
-  }
+    "revision": "5b47504299c5dbe0ab694be8d163e80d352c8166",
+    "authority": "stale-advisory-only"
+  },
+  "evidencePolicy": "Reports were regenerated after the launcher and fork-lifecycle repair. The production pure seven-file validator re-resolves their exact Git blobs and hashes before intake."
 }

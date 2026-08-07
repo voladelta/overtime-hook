@@ -9,15 +9,13 @@
             "type": "function",
             "name": "_launch",
             "source_mapping": {
-              "start": 8808,
-              "length": 1071,
+              "start": 9011,
+              "length": 1118,
               "filename_relative": "src/OvertimeLauncher.sol",
               "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
               "filename_short": "src/OvertimeLauncher.sol",
               "is_dependency": false,
               "lines": [
-                200,
-                201,
                 202,
                 203,
                 204,
@@ -36,7 +34,11 @@
                 217,
                 218,
                 219,
-                220
+                220,
+                221,
+                222,
+                223,
+                224
               ],
               "starting_column": 5,
               "ending_column": 6
@@ -47,7 +49,7 @@
                 "name": "OvertimeLauncher",
                 "source_mapping": {
                   "start": 1569,
-                  "length": 11802,
+                  "length": 12052,
                   "filename_relative": "src/OvertimeLauncher.sol",
                   "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                   "filename_short": "src/OvertimeLauncher.sol",
@@ -319,7 +321,11 @@
                     294,
                     295,
                     296,
-                    297
+                    297,
+                    298,
+                    299,
+                    300,
+                    301
                   ],
                   "starting_column": 1,
                   "ending_column": 2
@@ -332,14 +338,14 @@
             "type": "node",
             "name": "result = _mintLockedPosition(overtimeToken,overtimeHook,initialSqrtPriceX96,wethLiquidityBudget)",
             "source_mapping": {
-              "start": 9692,
+              "start": 9942,
               "length": 99,
               "filename_relative": "src/OvertimeLauncher.sol",
               "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
               "filename_short": "src/OvertimeLauncher.sol",
               "is_dependency": false,
               "lines": [
-                217
+                221
               ],
               "starting_column": 9,
               "ending_column": 108
@@ -349,15 +355,13 @@
                 "type": "function",
                 "name": "_launch",
                 "source_mapping": {
-                  "start": 8808,
-                  "length": 1071,
+                  "start": 9011,
+                  "length": 1118,
                   "filename_relative": "src/OvertimeLauncher.sol",
                   "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                   "filename_short": "src/OvertimeLauncher.sol",
                   "is_dependency": false,
                   "lines": [
-                    200,
-                    201,
                     202,
                     203,
                     204,
@@ -376,7 +380,11 @@
                     217,
                     218,
                     219,
-                    220
+                    220,
+                    221,
+                    222,
+                    223,
+                    224
                   ],
                   "starting_column": 5,
                   "ending_column": 6
@@ -387,7 +395,7 @@
                     "name": "OvertimeLauncher",
                     "source_mapping": {
                       "start": 1569,
-                      "length": 11802,
+                      "length": 12052,
                       "filename_relative": "src/OvertimeLauncher.sol",
                       "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                       "filename_short": "src/OvertimeLauncher.sol",
@@ -659,7 +667,11 @@
                         294,
                         295,
                         296,
-                        297
+                        297,
+                        298,
+                        299,
+                        300,
+                        301
                       ],
                       "starting_column": 1,
                       "ending_column": 2
@@ -677,14 +689,14 @@
             "type": "node",
             "name": "initialTick = poolManager.initialize(key,initialSqrtPriceX96)",
             "source_mapping": {
-              "start": 10924,
+              "start": 11174,
               "length": 68,
               "filename_relative": "src/OvertimeLauncher.sol",
               "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
               "filename_short": "src/OvertimeLauncher.sol",
               "is_dependency": false,
               "lines": [
-                252
+                256
               ],
               "starting_column": 9,
               "ending_column": 77
@@ -694,17 +706,13 @@
                 "type": "function",
                 "name": "_mintLockedPosition",
                 "source_mapping": {
-                  "start": 10427,
+                  "start": 10677,
                   "length": 2019,
                   "filename_relative": "src/OvertimeLauncher.sol",
                   "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                   "filename_short": "src/OvertimeLauncher.sol",
                   "is_dependency": false,
                   "lines": [
-                    239,
-                    240,
-                    241,
-                    242,
                     243,
                     244,
                     245,
@@ -738,7 +746,11 @@
                     273,
                     274,
                     275,
-                    276
+                    276,
+                    277,
+                    278,
+                    279,
+                    280
                   ],
                   "starting_column": 5,
                   "ending_column": 6
@@ -749,7 +761,7 @@
                     "name": "OvertimeLauncher",
                     "source_mapping": {
                       "start": 1569,
-                      "length": 11802,
+                      "length": 12052,
                       "filename_relative": "src/OvertimeLauncher.sol",
                       "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                       "filename_short": "src/OvertimeLauncher.sol",
@@ -1021,7 +1033,11 @@
                         294,
                         295,
                         296,
-                        297
+                        297,
+                        298,
+                        299,
+                        300,
+                        301
                       ],
                       "starting_column": 1,
                       "ending_column": 2
@@ -1039,14 +1055,14 @@
             "type": "node",
             "name": "positionManager.modifyLiquidities(abi.encode(plan.actions,plan.params),block.timestamp)",
             "source_mapping": {
-              "start": 11835,
+              "start": 12085,
               "length": 89,
               "filename_relative": "src/OvertimeLauncher.sol",
               "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
               "filename_short": "src/OvertimeLauncher.sol",
               "is_dependency": false,
               "lines": [
-                265
+                269
               ],
               "starting_column": 9,
               "ending_column": 98
@@ -1056,17 +1072,13 @@
                 "type": "function",
                 "name": "_mintLockedPosition",
                 "source_mapping": {
-                  "start": 10427,
+                  "start": 10677,
                   "length": 2019,
                   "filename_relative": "src/OvertimeLauncher.sol",
                   "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                   "filename_short": "src/OvertimeLauncher.sol",
                   "is_dependency": false,
                   "lines": [
-                    239,
-                    240,
-                    241,
-                    242,
                     243,
                     244,
                     245,
@@ -1100,7 +1112,11 @@
                     273,
                     274,
                     275,
-                    276
+                    276,
+                    277,
+                    278,
+                    279,
+                    280
                   ],
                   "starting_column": 5,
                   "ending_column": 6
@@ -1111,7 +1127,7 @@
                     "name": "OvertimeLauncher",
                     "source_mapping": {
                       "start": 1569,
-                      "length": 11802,
+                      "length": 12052,
                       "filename_relative": "src/OvertimeLauncher.sol",
                       "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                       "filename_short": "src/OvertimeLauncher.sol",
@@ -1383,7 +1399,11 @@
                         294,
                         295,
                         296,
-                        297
+                        297,
+                        298,
+                        299,
+                        300,
+                        301
                       ],
                       "starting_column": 1,
                       "ending_column": 2
@@ -1401,14 +1421,14 @@
             "type": "node",
             "name": "result = _mintLockedPosition(overtimeToken,overtimeHook,initialSqrtPriceX96,wethLiquidityBudget)",
             "source_mapping": {
-              "start": 9692,
+              "start": 9942,
               "length": 99,
               "filename_relative": "src/OvertimeLauncher.sol",
               "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
               "filename_short": "src/OvertimeLauncher.sol",
               "is_dependency": false,
               "lines": [
-                217
+                221
               ],
               "starting_column": 9,
               "ending_column": 108
@@ -1418,15 +1438,13 @@
                 "type": "function",
                 "name": "_launch",
                 "source_mapping": {
-                  "start": 8808,
-                  "length": 1071,
+                  "start": 9011,
+                  "length": 1118,
                   "filename_relative": "src/OvertimeLauncher.sol",
                   "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                   "filename_short": "src/OvertimeLauncher.sol",
                   "is_dependency": false,
                   "lines": [
-                    200,
-                    201,
                     202,
                     203,
                     204,
@@ -1445,7 +1463,11 @@
                     217,
                     218,
                     219,
-                    220
+                    220,
+                    221,
+                    222,
+                    223,
+                    224
                   ],
                   "starting_column": 5,
                   "ending_column": 6
@@ -1456,7 +1478,7 @@
                     "name": "OvertimeLauncher",
                     "source_mapping": {
                       "start": 1569,
-                      "length": 11802,
+                      "length": 12052,
                       "filename_relative": "src/OvertimeLauncher.sol",
                       "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                       "filename_short": "src/OvertimeLauncher.sol",
@@ -1728,7 +1750,11 @@
                         294,
                         295,
                         296,
-                        297
+                        297,
+                        298,
+                        299,
+                        300,
+                        301
                       ],
                       "starting_column": 1,
                       "ending_column": 2
@@ -1746,14 +1772,14 @@
             "type": "node",
             "name": "initialTick = poolManager.initialize(key,initialSqrtPriceX96)",
             "source_mapping": {
-              "start": 10924,
+              "start": 11174,
               "length": 68,
               "filename_relative": "src/OvertimeLauncher.sol",
               "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
               "filename_short": "src/OvertimeLauncher.sol",
               "is_dependency": false,
               "lines": [
-                252
+                256
               ],
               "starting_column": 9,
               "ending_column": 77
@@ -1763,17 +1789,13 @@
                 "type": "function",
                 "name": "_mintLockedPosition",
                 "source_mapping": {
-                  "start": 10427,
+                  "start": 10677,
                   "length": 2019,
                   "filename_relative": "src/OvertimeLauncher.sol",
                   "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                   "filename_short": "src/OvertimeLauncher.sol",
                   "is_dependency": false,
                   "lines": [
-                    239,
-                    240,
-                    241,
-                    242,
                     243,
                     244,
                     245,
@@ -1807,7 +1829,11 @@
                     273,
                     274,
                     275,
-                    276
+                    276,
+                    277,
+                    278,
+                    279,
+                    280
                   ],
                   "starting_column": 5,
                   "ending_column": 6
@@ -1818,7 +1844,7 @@
                     "name": "OvertimeLauncher",
                     "source_mapping": {
                       "start": 1569,
-                      "length": 11802,
+                      "length": 12052,
                       "filename_relative": "src/OvertimeLauncher.sol",
                       "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                       "filename_short": "src/OvertimeLauncher.sol",
@@ -2090,7 +2116,11 @@
                         294,
                         295,
                         296,
-                        297
+                        297,
+                        298,
+                        299,
+                        300,
+                        301
                       ],
                       "starting_column": 1,
                       "ending_column": 2
@@ -2108,14 +2138,14 @@
             "type": "node",
             "name": "positionManager.modifyLiquidities(abi.encode(plan.actions,plan.params),block.timestamp)",
             "source_mapping": {
-              "start": 11835,
+              "start": 12085,
               "length": 89,
               "filename_relative": "src/OvertimeLauncher.sol",
               "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
               "filename_short": "src/OvertimeLauncher.sol",
               "is_dependency": false,
               "lines": [
-                265
+                269
               ],
               "starting_column": 9,
               "ending_column": 98
@@ -2125,17 +2155,13 @@
                 "type": "function",
                 "name": "_mintLockedPosition",
                 "source_mapping": {
-                  "start": 10427,
+                  "start": 10677,
                   "length": 2019,
                   "filename_relative": "src/OvertimeLauncher.sol",
                   "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                   "filename_short": "src/OvertimeLauncher.sol",
                   "is_dependency": false,
                   "lines": [
-                    239,
-                    240,
-                    241,
-                    242,
                     243,
                     244,
                     245,
@@ -2169,7 +2195,11 @@
                     273,
                     274,
                     275,
-                    276
+                    276,
+                    277,
+                    278,
+                    279,
+                    280
                   ],
                   "starting_column": 5,
                   "ending_column": 6
@@ -2180,7 +2210,7 @@
                     "name": "OvertimeLauncher",
                     "source_mapping": {
                       "start": 1569,
-                      "length": 11802,
+                      "length": 12052,
                       "filename_relative": "src/OvertimeLauncher.sol",
                       "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                       "filename_short": "src/OvertimeLauncher.sol",
@@ -2452,7 +2482,11 @@
                         294,
                         295,
                         296,
-                        297
+                        297,
+                        298,
+                        299,
+                        300,
+                        301
                       ],
                       "starting_column": 1,
                       "ending_column": 2
@@ -2470,14 +2504,14 @@
             "type": "node",
             "name": "launchResult = result",
             "source_mapping": {
-              "start": 9801,
+              "start": 10051,
               "length": 21,
               "filename_relative": "src/OvertimeLauncher.sol",
               "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
               "filename_short": "src/OvertimeLauncher.sol",
               "is_dependency": false,
               "lines": [
-                218
+                222
               ],
               "starting_column": 9,
               "ending_column": 30
@@ -2487,15 +2521,13 @@
                 "type": "function",
                 "name": "_launch",
                 "source_mapping": {
-                  "start": 8808,
-                  "length": 1071,
+                  "start": 9011,
+                  "length": 1118,
                   "filename_relative": "src/OvertimeLauncher.sol",
                   "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                   "filename_short": "src/OvertimeLauncher.sol",
                   "is_dependency": false,
                   "lines": [
-                    200,
-                    201,
                     202,
                     203,
                     204,
@@ -2514,7 +2546,11 @@
                     217,
                     218,
                     219,
-                    220
+                    220,
+                    221,
+                    222,
+                    223,
+                    224
                   ],
                   "starting_column": 5,
                   "ending_column": 6
@@ -2525,7 +2561,7 @@
                     "name": "OvertimeLauncher",
                     "source_mapping": {
                       "start": 1569,
-                      "length": 11802,
+                      "length": 12052,
                       "filename_relative": "src/OvertimeLauncher.sol",
                       "filename_absolute": "/Users/mbp/Codehub/overtime-hook/src/OvertimeLauncher.sol",
                       "filename_short": "src/OvertimeLauncher.sol",
@@ -2797,7 +2833,11 @@
                         294,
                         295,
                         296,
-                        297
+                        297,
+                        298,
+                        299,
+                        300,
+                        301
                       ],
                       "starting_column": 1,
                       "ending_column": 2
@@ -2813,10 +2853,10 @@
             }
           }
         ],
-        "description": "Reentrancy in OvertimeLauncher._launch(uint160,uint256) (src/OvertimeLauncher.sol#200-220):\n\tExternal calls:\n\t- result = _mintLockedPosition(overtimeToken,overtimeHook,initialSqrtPriceX96,wethLiquidityBudget) (src/OvertimeLauncher.sol#217)\n\t\t- initialTick = poolManager.initialize(key,initialSqrtPriceX96) (src/OvertimeLauncher.sol#252)\n\t\t- positionManager.modifyLiquidities(abi.encode(plan.actions,plan.params),block.timestamp) (src/OvertimeLauncher.sol#265)\n\tState variables written after the call(s):\n\t- launchResult = result (src/OvertimeLauncher.sol#218)\n",
-        "markdown": "Reentrancy in [OvertimeLauncher._launch(uint160,uint256)](src/OvertimeLauncher.sol#L200-L220):\n\tExternal calls:\n\t- [result = _mintLockedPosition(overtimeToken,overtimeHook,initialSqrtPriceX96,wethLiquidityBudget)](src/OvertimeLauncher.sol#L217)\n\t\t- [initialTick = poolManager.initialize(key,initialSqrtPriceX96)](src/OvertimeLauncher.sol#L252)\n\t\t- [positionManager.modifyLiquidities(abi.encode(plan.actions,plan.params),block.timestamp)](src/OvertimeLauncher.sol#L265)\n\tState variables written after the call(s):\n\t- [launchResult = result](src/OvertimeLauncher.sol#L218)\n",
-        "first_markdown_element": "src/OvertimeLauncher.sol#L200-L220",
-        "id": "6dc0bb31476ccbebb3a1d4db4e164838e9f3969fd4f24fc34a5fef21db9a6248",
+        "description": "Reentrancy in OvertimeLauncher._launch(uint160,uint256) (src/OvertimeLauncher.sol#202-224):\n\tExternal calls:\n\t- result = _mintLockedPosition(overtimeToken,overtimeHook,initialSqrtPriceX96,wethLiquidityBudget) (src/OvertimeLauncher.sol#221)\n\t\t- initialTick = poolManager.initialize(key,initialSqrtPriceX96) (src/OvertimeLauncher.sol#256)\n\t\t- positionManager.modifyLiquidities(abi.encode(plan.actions,plan.params),block.timestamp) (src/OvertimeLauncher.sol#269)\n\tState variables written after the call(s):\n\t- launchResult = result (src/OvertimeLauncher.sol#222)\n",
+        "markdown": "Reentrancy in [OvertimeLauncher._launch(uint160,uint256)](src/OvertimeLauncher.sol#L202-L224):\n\tExternal calls:\n\t- [result = _mintLockedPosition(overtimeToken,overtimeHook,initialSqrtPriceX96,wethLiquidityBudget)](src/OvertimeLauncher.sol#L221)\n\t\t- [initialTick = poolManager.initialize(key,initialSqrtPriceX96)](src/OvertimeLauncher.sol#L256)\n\t\t- [positionManager.modifyLiquidities(abi.encode(plan.actions,plan.params),block.timestamp)](src/OvertimeLauncher.sol#L269)\n\tState variables written after the call(s):\n\t- [launchResult = result](src/OvertimeLauncher.sol#L222)\n",
+        "first_markdown_element": "src/OvertimeLauncher.sol#L202-L224",
+        "id": "fa41647306abb3167d7931ee557214735e0d057816d3f6acd64ae62f9d685d30",
         "check": "reentrancy-benign",
         "impact": "Low",
         "confidence": "Medium",

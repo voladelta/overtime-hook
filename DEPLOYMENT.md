@@ -7,11 +7,11 @@ Status: unsigned plan only. No transaction is authorized by this document.
 - Chain: Ethereum Mainnet (`chainId 1`)
 - Solidity: `0.8.26`
 - EVM: Cancun
-- Canonical upstream product source: `0xprogrammable/programmable:production` commit `c7346ab41046e5a600acc88acb37b73d3bbb80b9`
+- Canonical upstream product source: `0xprogrammable/programmable:production` commit `7728ebf586983a69a39e206e9a0bf7340445335b`
 - Builder source used for local intake: `0xprogrammable/programmable-v4-builder` commit `5b47504299c5dbe0ab694be8d163e80d352c8166`
 - PoolManager: `0x000000000004444c5dc75cB358380D2e3dE08A90`
 - PositionManager: `0xbD216513d74C8cf14cf4747E6AaA6420FF64ee9e`
-- WETH: resolve and bind from the final mainnet dependency record before freezing constructor inputs.
+- WETH: `0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2`
 
 The final deployment record must re-check official addresses and runtime hashes at a pinned confirmed block and at current head. Addresses above are planning inputs from the production repository snapshot, not fresh runtime evidence.
 
@@ -31,14 +31,24 @@ The final lock records repository, commit, tree, license, and clean checkout sta
 
 1. Freeze one clean public commit and root tree.
 2. Regenerate compiler build-info, source closure, test evidence, static-analysis dispositions, gas, initcode/runtime sizes, and known-compiler-bug review.
-3. Freeze token name, symbol, total supply, WETH, LP fee, tick spacing, starting price, liquidity amounts, deadline, challenge router, launcher, deployer, and CREATE2 salts.
+3. Verify the code-bound launch constants: starting `sqrtPriceX96 = 792281625142643375935439503360000` and WETH budget `10000000000000000000` base units. Alternate otherwise-valid values revert.
 4. Recompute hook creation code, constructor args, initcode hash, mask `0x20cc`, expected hook address, and vacancy.
-5. Simulate the complete launch and lifecycle at one pinned mainnet fork block and current head.
-6. Obtain independent review of the exact commit. Any code/config/compiler/dependency change invalidates the target.
+5. After the launch-session wallet fixes the launcher address, let the launch authority select the deterministic ordered-token salt and permission-mined hook salt. These are the only authority-selected `deployAndLaunch` arguments.
+6. Build and simulate the complete final calldata, then show the wallet the exact sender, chain, target, zero value, calldata hash, token address, hook address, and permission mask before signing.
+7. Simulate the complete launch and lifecycle at one pinned mainnet fork block and current head.
+8. Obtain independent review of the exact commit. Any code/config/compiler/dependency change invalidates the target.
 
 ## Planned transaction sequence
 
 The production entry point is `deployAndLaunch`. It validates the committed creation-code hashes, deploys the ordered token and permission-mined hook, pulls the exact WETH budget, initializes the precommitted PoolKey, mints the full-range position to `LockedLiquidityVault`, and verifies ownership. Any failure rolls back the complete transaction, including both CREATE2 child deployments.
+
+`deployAndLaunch` retains the two child salts as launch-authority-selected inputs because both are derived only after the launch-session wallet fixes the launcher address graph. They are not committed production parameters. The token and hook creation bytes are constrained by immutable hashes; the starting price and WETH budget are constrained by contract constants. Before the wallet opens, the launch service must ABI-encode the complete call and bind it with:
+
+```text
+keccak256(abi.encode(chainId, sender, target, valueWei, keccak256(calldata)))
+```
+
+For Overtime v1, `chainId` is `1`, `sender` is the launch-session wallet, `target` is the derived launcher, and `valueWei` is `0`. `calldata` is the full encoding of `deployAndLaunch(tokenCreationCode, hookCreationCode, tokenSalt, hookSalt, 792281625142643375935439503360000, 10000000000000000000)`. Any changed salt, bytecode, sender, target, value, or chain produces a different digest and requires a fresh simulation and manual confirmation. The browser may not accept caller-supplied calldata or silently rebuild a reviewed request.
 
 For gas measurement and fork rehearsal, the same one-shot state machine is also exposed as two authority-only phases:
 

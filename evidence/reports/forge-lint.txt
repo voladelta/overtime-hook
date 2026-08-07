@@ -1,1 +1,1 @@
-No files changed, compilation skipped
+No high- or medium-severity Forge lint findings.

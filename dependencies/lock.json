@@ -2,7 +2,7 @@
   "sourceOfTruth": {
     "repository": "https://github.com/0xprogrammable/programmable",
     "branch": "production",
-    "revision": "c7346ab41046e5a600acc88acb37b73d3bbb80b9"
+    "revision": "7728ebf586983a69a39e206e9a0bf7340445335b"
   },
   "dependencies": {
     "forge-std": "3b20d60d14b343ee4f908cb8079495c07f5e8981",

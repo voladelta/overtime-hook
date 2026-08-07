@@ -20,6 +20,8 @@ Overtime v1 is a recurring leader-time game attached to one canonical Uniswap v4
 | Crown cost | `clamp(activePot * 50 bps, 0.001 WETH, 0.05 WETH)` |
 | Knockout split | 40% champion, 50% crown-time, 10% rollover |
 | Decision split | 0% champion, 90% crown-time, 10% rollover |
+| Initial `sqrtPriceX96` | `792281625142643375935439503360000` |
+| Initial WETH budget | `10 WETH` |
 
 There are no setters, upgrades, pause, WETH or game-token rescue, payout redirection, oracle, randomness, keeper, transfer tax, blacklist, or post-deployment mint.
 
@@ -84,7 +86,7 @@ If leader A takes the crown and is displaced within the same block, A's crown co
 7. Mint the explicit initial position to the vault using bounded token inputs and a finite deadline.
 8. Verify the vault is the position owner and emit the complete launch commitment.
 
-The production path calls `deployAndLaunch`, so any child deployment, initialization, settlement, or custody failure rolls back the entire launch. The gas-bounded phase functions preserve the same one-shot state machine for rehearsal; between phases, only the immutable launcher can initialize the hook's canonical PoolKey. The launcher has no post-launch authority over the hook, token, or locked position.
+The production path calls `deployAndLaunch`, so any child deployment, initialization, settlement, or custody failure rolls back the entire launch. The contract rejects any starting price or WETH budget other than the two committed constants above. The child token and hook salts remain launch-authority-selected because the final values can be derived only after the launch-session wallet fixes the launcher address; the complete call is byte-bound with sender, chain, target, and zero value for fresh simulation and manual wallet confirmation. The gas-bounded phase functions preserve the same one-shot state machine for rehearsal; between phases, only the immutable launcher can initialize the hook's canonical PoolKey. The launcher has no post-launch authority over the hook, token, or locked position.
 
 ## External dependencies
 
