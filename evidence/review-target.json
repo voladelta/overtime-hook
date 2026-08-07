@@ -1,7 +1,7 @@
 {
-  "status": "pending-final-commit-binding",
-  "sourceCommit": null,
-  "sourceTree": null,
+  "status": "bound",
+  "sourceCommit": "bfb535a8cc7c2777d6a4a9fc242679d6c3a1d7ee",
+  "sourceTree": "8d9649afddfc6afa30bb216d8396ee9d27015db5",
   "productionSourceOfTruth": {
     "repository": "https://github.com/0xprogrammable/programmable",
     "branch": "production",

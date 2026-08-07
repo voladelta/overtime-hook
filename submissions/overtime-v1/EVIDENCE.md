@@ -1,6 +1,6 @@
 # Overtime v1 evidence
 
-Current state: local prototype evidence passed and repository closure is complete. Exact source-commit binding and external review remain pending.
+Current state: local prototype evidence passed and repository closure is complete. The evidence is bound to source commit `bfb535a8cc7c2777d6a4a9fc242679d6c3a1d7ee` (tree `8d9649afddfc6afa30bb216d8396ee9d27015db5`). External review remains pending.
 
 ## Pinned upstream inputs
 
