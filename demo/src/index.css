@@ -1,14 +1,25 @@
 :root {
+  color-scheme: light dark;
   font-family: "Inter Variable", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #171812;
-  background: #f4f1e8;
+  color: var(--ink);
+  background: var(--paper);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   font-optical-sizing: auto;
   --paper: #f4f1e8;
   --paper-raised: #fbf9f3;
+  --surface-solid: #fffef9;
+  --surface-muted: #f0ede4;
+  --surface-subtle: #ebe8df;
+  --surface-sunken: #e9e6dc;
+  --surface-grid: #efede5;
+  --surface-card: rgb(255 254 249 / 0.72);
+  --surface-glass: rgb(251 249 243 / 0.86);
+  --surface-menu: rgb(251 249 243 / 0.95);
   --ink: #171812;
   --ink-soft: #565950;
+  --ink-muted: #74776e;
+  --ink-faint: #96988f;
   --line: #d7d3c8;
   --orange: #ff6b35;
   --orange-soft: #ffe1d4;
@@ -16,9 +27,55 @@
   --mint: #54d6ae;
   --violet: #9b8cff;
   --focus: #3457ff;
+  --inverse-surface: #171812;
+  --inverse-ink: #f8f5ed;
+  --accent-icon-surface: #171812;
+  --orange-ink: #b33a13;
+  --success-ink: #2d8d6d;
+  --yellow-panel-border: #e4cf51;
+  --yellow-panel-start: #fffdf2;
+  --yellow-panel-end: #fff5b8;
+  --page-grid-line: rgb(23 24 18 / 0.025);
+  --subtle-inset: inset 0 1px 0 rgb(255 255 255 / 0.9);
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --shadow-card: 0 1px 1px rgb(30 31 25 / 0.04), 0 8px 24px rgb(30 31 25 / 0.06), 0 28px 80px rgb(30 31 25 / 0.05);
+  --shadow-menu: 0 16px 48px rgb(23 24 18 / 0.14);
+  --shadow-hover: 0 8px 24px rgb(23 24 18 / 0.14), inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #11130f;
+    --paper-raised: #1b1d17;
+    --surface-solid: #24261f;
+    --surface-muted: #22241e;
+    --surface-subtle: #272922;
+    --surface-sunken: #20221c;
+    --surface-grid: #181a15;
+    --surface-card: rgb(36 38 31 / 0.78);
+    --surface-glass: rgb(27 29 23 / 0.88);
+    --surface-menu: rgb(27 29 23 / 0.96);
+    --ink: #f2f0e9;
+    --ink-soft: #adb0a6;
+    --ink-muted: #92978d;
+    --ink-faint: #92978d;
+    --line: #35382f;
+    --orange-soft: #48271c;
+    --orange-ink: #ff9a73;
+    --success-ink: #54d6ae;
+    --focus: #8ba3ff;
+    --inverse-surface: #f2f0e9;
+    --inverse-ink: #171812;
+    --yellow-panel-border: #766b30;
+    --yellow-panel-start: #302d1b;
+    --yellow-panel-end: #3b3619;
+    --page-grid-line: rgb(255 255 255 / 0.025);
+    --subtle-inset: inset 0 1px 0 rgb(255 255 255 / 0.055);
+    --shadow-card: 0 1px 1px rgb(0 0 0 / 0.14), 0 10px 28px rgb(0 0 0 / 0.18), 0 32px 90px rgb(0 0 0 / 0.16);
+    --shadow-menu: 0 16px 48px rgb(0 0 0 / 0.32);
+    --shadow-hover: 0 8px 24px rgb(0 0 0 / 0.28), inset 0 1px 0 rgb(255 255 255 / 0.08);
+  }
 }
 
 * {
@@ -112,7 +169,7 @@ footer {
   min-height: 78px;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgb(23 24 18 / 0.12);
+  border-bottom: 1px solid var(--line);
 }
 
 .brand,
@@ -147,8 +204,8 @@ footer a {
   height: 32px;
   justify-content: center;
   border-radius: 50%;
-  color: var(--paper-raised);
-  background: var(--ink);
+  color: var(--inverse-ink);
+  background: var(--inverse-surface);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.14);
   transition: transform 180ms var(--ease-out);
 }
@@ -671,8 +728,8 @@ footer {
   overflow: hidden;
   min-height: 690px;
   padding: clamp(1.25rem, 2.4vw, 2rem);
-  border: 1px solid rgb(23 24 18 / 0.1);
-  background: rgb(251 249 243 / 0.86);
+  border: 1px solid var(--line);
+  background: var(--surface-glass);
   backdrop-filter: blur(24px) saturate(145%);
 }
 
@@ -698,7 +755,7 @@ footer {
   grid-template-columns: repeat(var(--segment-count), 1fr);
   padding: 4px;
   border-radius: 15px;
-  background: #e9e6dc;
+  background: var(--surface-sunken);
 }
 
 .segmented__indicator {
@@ -725,7 +782,7 @@ footer {
   padding: 0 10px;
   border: 0;
   border-radius: 11px;
-  color: #75786f;
+  color: var(--ink-muted);
   background: transparent;
   cursor: pointer;
   font-size: 11px;
@@ -793,8 +850,8 @@ footer {
   padding: 0 1.15rem;
   border: 1px solid var(--line);
   border-radius: 18px 18px 0 0;
-  background: #fffef9;
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9);
+  background: var(--surface-solid);
+  box-shadow: var(--subtle-inset);
   transition: border-color 140ms ease, box-shadow 140ms ease;
 }
 
@@ -843,8 +900,8 @@ footer {
   padding: 0;
   border: 0;
   border-left: 1px solid var(--line);
-  color: #71746b;
-  background: #f0ede4;
+  color: var(--ink-muted);
+  background: var(--surface-muted);
   cursor: pointer;
   font-size: 10px;
   font-variant-numeric: tabular-nums;
@@ -888,7 +945,7 @@ footer {
 }
 
 .cost-total strong {
-  color: #c74417;
+  color: var(--orange-ink);
   font-size: 15px;
 }
 
@@ -896,7 +953,7 @@ footer {
 .reward-note {
   gap: 8px;
   margin: 0 0 1.2rem;
-  color: #74776e;
+  color: var(--ink-muted);
   font-size: 10px;
   line-height: 1.45;
 }
@@ -904,7 +961,7 @@ footer {
 .fee-note svg,
 .reward-note svg {
   flex: 0 0 auto;
-  color: #2d8d6d;
+  color: var(--success-ink);
 }
 
 .button {
@@ -940,7 +997,7 @@ footer {
 }
 
 .button--primary {
-  color: #f8f5ed;
+  color: var(--inverse-ink);
 }
 
 .button--secondary {
@@ -956,13 +1013,13 @@ footer {
   z-index: -1;
   inset: 0;
   border-radius: inherit;
-  background: var(--ink);
+  background: var(--inverse-surface);
   transition: background-color 100ms ease, transform 110ms var(--ease-out), box-shadow 160ms ease;
 }
 
 .button--secondary .button__surface {
   background: var(--yellow);
-  box-shadow: inset 0 0 0 1px rgb(23 24 18 / 0.08);
+  box-shadow: inset 0 0 0 1px rgb(23 24 18 / 0.14);
 }
 
 .button--ghost .button__surface {
@@ -1027,12 +1084,12 @@ footer {
 
 .action-assurance span {
   gap: 4px;
-  color: #898c83;
+  color: var(--ink-muted);
   font-size: 9px;
 }
 
 .action-assurance svg {
-  color: #2d8d6d;
+  color: var(--success-ink);
 }
 
 .rewards-panel {
@@ -1059,8 +1116,8 @@ footer {
   margin-bottom: 8px;
   place-items: center;
   border-radius: 17px;
-  color: #f8f5ed;
-  background: var(--ink);
+  color: var(--inverse-ink);
+  background: var(--inverse-surface);
 }
 
 .rewards-panel--empty h3 {
@@ -1086,12 +1143,12 @@ footer {
   padding: 1rem;
   border: 1px solid var(--line);
   border-radius: 18px;
-  background: rgb(255 254 249 / 0.75);
+  background: var(--surface-card);
 }
 
 .reward-card--accent {
-  border-color: #e2c824;
-  background: linear-gradient(145deg, #fffbed, #fff5b8);
+  border-color: var(--yellow-panel-border);
+  background: linear-gradient(145deg, var(--yellow-panel-start), var(--yellow-panel-end));
 }
 
 .reward-card__icon {
@@ -1101,8 +1158,8 @@ footer {
   height: 42px;
   place-items: center;
   border-radius: 13px;
-  color: #f8f5ed;
-  background: var(--ink);
+  color: var(--inverse-ink);
+  background: var(--inverse-surface);
 }
 
 .reward-card > span {
@@ -1120,7 +1177,7 @@ footer {
 
 .reward-card > small {
   grid-column: 2;
-  color: #7d8077;
+  color: var(--ink-muted);
   font-size: 9px;
 }
 
@@ -1134,7 +1191,7 @@ footer {
   margin: 10px 0 0;
   padding: 11px 12px;
   border-radius: 13px;
-  background: #ebe8df;
+  background: var(--surface-subtle);
 }
 
 .wallet-control {
@@ -1148,10 +1205,10 @@ footer {
   right: 0;
   width: 210px;
   padding: 6px;
-  border: 1px solid rgb(23 24 18 / 0.1);
+  border: 1px solid var(--line);
   border-radius: 15px;
-  background: rgb(251 249 243 / 0.95);
-  box-shadow: 0 16px 48px rgb(23 24 18 / 0.14);
+  background: var(--surface-menu);
+  box-shadow: var(--shadow-menu);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1221,7 +1278,7 @@ footer {
   display: grid;
   grid-template-columns: minmax(280px, 330px) minmax(0, 1fr);
   overflow: hidden;
-  border: 1px solid rgb(23 24 18 / 0.12);
+  border: 1px solid var(--line);
   border-radius: 30px;
   background: var(--paper-raised);
   box-shadow: var(--shadow-card);
@@ -1386,8 +1443,8 @@ footer {
   min-width: 0;
   padding: clamp(1.25rem, 2.7vw, 2.3rem);
   background:
-    linear-gradient(rgb(251 249 243 / 0.94), rgb(251 249 243 / 0.94)),
-    repeating-linear-gradient(90deg, transparent, transparent 39px, rgb(23 24 18 / 0.025) 40px);
+    linear-gradient(var(--surface-glass), var(--surface-glass)),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, var(--page-grid-line) 40px);
 }
 
 .sim-readout {
@@ -1397,9 +1454,9 @@ footer {
   align-items: center;
   margin-bottom: 1.25rem;
   padding: 1rem 1.15rem;
-  border: 1px solid #e4cf51;
+  border: 1px solid var(--yellow-panel-border);
   border-radius: 17px;
-  background: linear-gradient(135deg, #fffdf2, #fff5b8);
+  background: linear-gradient(135deg, var(--yellow-panel-start), var(--yellow-panel-end));
 }
 
 .sim-readout > div {
@@ -1409,12 +1466,12 @@ footer {
   place-items: center;
   border-radius: 13px;
   color: var(--yellow);
-  background: var(--ink);
+  background: var(--accent-icon-surface);
 }
 
 .sim-readout p {
   margin: 0;
-  color: #4f5049;
+  color: var(--ink-soft);
   font-size: 12px;
   line-height: 1.55;
 }
@@ -1430,14 +1487,14 @@ footer {
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 20px;
-  background: #efede5;
+  background: var(--surface-grid);
 }
 
 .scenario-card {
   min-width: 0;
   padding: 1.15rem;
   border-left: 1px solid var(--line);
-  background: rgb(255 254 249 / 0.72);
+  background: var(--surface-card);
 }
 
 .scenario-card:first-child {
@@ -1445,7 +1502,7 @@ footer {
 }
 
 .scenario-card[data-current="true"] {
-  background: #fffef9;
+  background: var(--surface-solid);
   box-shadow: inset 0 3px 0 var(--orange);
 }
 
@@ -1458,7 +1515,7 @@ footer {
 }
 
 .scenario-card__heading span {
-  color: #989a91;
+  color: var(--ink-faint);
   font-size: 8px;
   font-weight: 650;
   letter-spacing: 0.11em;
@@ -1475,7 +1532,7 @@ footer {
 .scenario-card__heading > strong {
   padding: 6px 8px;
   border-radius: 8px;
-  color: #b33a13;
+  color: var(--orange-ink);
   background: var(--orange-soft);
   font-size: 10px;
   font-variant-numeric: tabular-nums;
@@ -1510,7 +1567,7 @@ footer {
 
 .scenario-break-even small {
   margin-top: 3px;
-  color: #9a9c93;
+  color: var(--ink-faint);
   font-size: 8px;
 }
 
@@ -1519,7 +1576,7 @@ footer {
   overflow: hidden;
   margin-bottom: 1rem;
   border-radius: 999px;
-  background: #e7e3d9;
+  background: var(--surface-sunken);
 }
 
 .scenario-bar span {
@@ -1540,7 +1597,7 @@ footer {
   align-items: center;
   justify-content: space-between;
   gap: 0.7rem;
-  border-top: 1px solid #ebe8df;
+  border-top: 1px solid var(--line);
   font-size: 9px;
 }
 
@@ -1550,7 +1607,7 @@ footer {
 
 .scenario-metrics dt {
   overflow: hidden;
-  color: #85887f;
+  color: var(--ink-muted);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1565,7 +1622,7 @@ footer {
 }
 
 .scenario-metrics dd.is-negative {
-  color: #b33a13;
+  color: var(--orange-ink);
 }
 
 .sim-model-note {
@@ -1576,8 +1633,8 @@ footer {
   margin-top: 1rem;
   padding: 0.9rem 1rem;
   border-radius: 14px;
-  color: #6d7067;
-  background: #ebe8df;
+  color: var(--ink-soft);
+  background: var(--surface-subtle);
 }
 
 .sim-model-note > svg {
@@ -1598,13 +1655,13 @@ footer {
 .sim-invariant {
   gap: 6px;
   margin-top: 0.8rem;
-  color: #777a71;
+  color: var(--ink-muted);
   font-size: 9px;
 }
 
 .sim-invariant svg {
   flex: 0 0 auto;
-  color: #2d8d6d;
+  color: var(--success-ink);
 }
 
 .rules {
@@ -1640,7 +1697,7 @@ footer {
 }
 
 .rule-card > div span {
-  color: #96988f;
+  color: var(--ink-faint);
   font-size: 10px;
   font-variant-numeric: tabular-nums;
 }
@@ -1666,7 +1723,7 @@ footer {
 footer {
   min-height: 86px;
   border-top: 1px solid var(--line);
-  color: #74776e;
+  color: var(--ink-muted);
   font-size: 10px;
 }
 
@@ -1700,10 +1757,18 @@ footer a {
   }
 
   .amount-presets button:hover,
-  .wallet-menu button:hover,
-  .sim-resample:hover {
+  .wallet-menu button:hover {
     color: var(--ink);
     background: var(--orange-soft);
+  }
+
+  .sim-controls .sim-resample:hover {
+    color: #f2f0e9;
+    background: rgb(255 255 255 / 0.09);
+  }
+
+  .sim-controls .button:hover .button__surface {
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.2);
   }
 
   .button:hover {
@@ -1711,7 +1776,7 @@ footer a {
   }
 
   .button:hover .button__surface {
-    box-shadow: 0 8px 24px rgb(23 24 18 / 0.14), inset 0 1px 0 rgb(255 255 255 / 0.12);
+    box-shadow: var(--shadow-hover);
   }
 
   .button:hover .button__content svg {
@@ -2040,14 +2105,15 @@ footer a {
 
 @media (prefers-reduced-transparency: reduce) {
   .action-rail,
-  .wallet-menu,
-  .status-pill {
+  .wallet-menu {
     background: var(--paper-raised);
     backdrop-filter: none;
   }
 
-  .status-pill {
-    color: var(--ink);
+  .round-arena .status-pill {
+    color: #dddcd5;
+    background: #20221c;
+    backdrop-filter: none;
   }
 }
 
@@ -2061,5 +2127,12 @@ footer a {
   .amount-field > div,
   .reward-card {
     border-color: var(--ink);
+  }
+}
+
+@media (prefers-color-scheme: dark) and (prefers-contrast: more) {
+  :root {
+    --line: #9a9d93;
+    --ink-soft: #d8d9d3;
   }
 }
