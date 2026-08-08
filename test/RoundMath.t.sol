@@ -43,8 +43,10 @@ contract RoundMathTest is Test {
 
     function test_crownCostClamps() public view {
         assertEq(harness.cost(0), 0.001 ether);
-        assertEq(harness.cost(1 ether), 0.005 ether);
-        assertEq(harness.cost(100 ether), 0.05 ether);
+        assertEq(harness.cost(0.1 ether), 0.001 ether);
+        assertEq(harness.cost(1 ether), 0.01 ether);
+        assertEq(harness.cost(10 ether), 0.1 ether);
+        assertEq(harness.cost(100 ether), 0.1 ether);
     }
 
     function testFuzz_distributionConservesPot(uint256 pot, bool decision) public view {

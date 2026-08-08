@@ -39,7 +39,7 @@ Claims are beneficiary-initiated and never administrator-directed. The fixed Pro
 
 At gross volume `10 WETH`, the hook accrues `0.01 WETH` Programmable and `0.10 WETH` game, for `0.11 WETH` total. A selected `3%` policy example remains `0.1% + 2.9%`, never `3.1%`; selected zero floors to the 10 bps platform share.
 
-At `activePot = 1 WETH`, crown cost is `0.005 WETH`. A `2 WETH` Knockout pot freezes `0.8 WETH` champion, `1.0 WETH` crown-time, and `0.2 WETH` rollover. The same pot at Decision freezes `0` champion, `1.8 WETH` crown-time, and `0.2 WETH` rollover.
+At `activePot = 1 WETH`, crown cost is `0.01 WETH`. A `2 WETH` Knockout pot freezes `0.8 WETH` champion, `1.0 WETH` crown-time, and `0.2 WETH` rollover. The same pot at Decision freezes `0` champion, `1.8 WETH` crown-time, and `0.2 WETH` rollover.
 
 If WETH is specified and the core swap partially fills, the fee basis cannot be reconciled to accepted actual gross WETH, so the complete swap reverts. If WETH is unspecified, the fee uses the executed delta. Challenge partial fills always revert.
 

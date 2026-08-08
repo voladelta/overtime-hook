@@ -33,7 +33,7 @@ const seededAt = Date.now()
 const start = seededAt - 14 * minute - 12_000
 
 function crownCost(activePot: number) {
-  return Math.min(0.05, Math.max(0.001, activePot * 0.005))
+  return Math.min(0.1, Math.max(0.001, activePot * 0.01))
 }
 
 export const useDemoRound = create<DemoRoundState>((set) => ({

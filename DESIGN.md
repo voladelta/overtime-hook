@@ -17,7 +17,7 @@ Overtime v1 is a recurring leader-time game attached to one canonical Uniswap v4
 | Total hook-owned swap fee | 110 bps |
 | Programmable share | 10 bps of gross WETH |
 | Game share | 100 bps of gross WETH |
-| Crown cost | `clamp(activePot * 50 bps, 0.001 WETH, 0.05 WETH)` |
+| Crown cost | `clamp(activePot * 100 bps, 0.001 WETH, 0.10 WETH)` |
 | Knockout split | 40% champion, 50% crown-time, 10% rollover |
 | Decision split | 0% champion, 90% crown-time, 10% rollover |
 | Initial `sqrtPriceX96` | `792281625142643375935439503360000` |

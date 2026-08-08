@@ -9,9 +9,9 @@ library RoundMath {
     uint64 internal constant HARD_CAP = 60 minutes;
 
     uint256 internal constant BPS_DENOMINATOR = 10_000;
-    uint256 internal constant CROWN_COST_BPS = 50;
+    uint256 internal constant CROWN_COST_BPS = 100;
     uint256 internal constant MIN_CROWN_COST = 0.001 ether;
-    uint256 internal constant MAX_CROWN_COST = 0.05 ether;
+    uint256 internal constant MAX_CROWN_COST = 0.1 ether;
 
     struct Distribution {
         uint256 champion;

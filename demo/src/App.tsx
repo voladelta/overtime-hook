@@ -27,6 +27,7 @@ import {
 
 import { Button } from "@/components/Button"
 import { CrownTimeline } from "@/components/CrownTimeline"
+import { MechanismSimulator } from "@/components/MechanismSimulator"
 import { SegmentedControl } from "@/components/SegmentedControl"
 import { WalletControl } from "@/components/WalletControl"
 import {
@@ -97,8 +98,8 @@ function App() {
             <i className={transactionsConfigured ? "is-live" : ""} />
             {transactionsConfigured ? "Ethereum" : "Interactive preview"}
           </span>
-          <a className="text-link header-docs" href="#rules">
-            Rules <ArrowDownRight size={14} />
+          <a className="text-link header-docs" href="#simulator">
+            Simulator <ArrowDownRight size={14} />
           </a>
           <WalletControl />
         </div>
@@ -130,9 +131,11 @@ function App() {
           <ActionRail now={now} activePot={round.activePot} roundId={round.roundId} />
         </section>
 
+        <MechanismSimulator currentPot={round.activePot} />
+
         <section id="rules" className="rules" aria-labelledby="rules-title">
           <div className="rules__intro">
-            <span className="section-number">03 / The game</span>
+            <span className="section-number">04 / The game</span>
             <h2 id="rules-title">Two ways to win.<br />One clock that cannot lie.</h2>
           </div>
           <div className="rules__grid">

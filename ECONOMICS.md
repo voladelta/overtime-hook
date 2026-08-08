@@ -37,8 +37,8 @@ Game fees received while no round is active accrue to `pendingPot`. The first va
 Before a challenge, the required cost is:
 
 ```text
-raw = floor(activePot * 50 / 10_000)
-cost = min(max(raw, 0.001 WETH), 0.05 WETH)
+raw = floor(activePot * 100 / 10_000)
+cost = min(max(raw, 0.001 WETH), 0.10 WETH)
 ```
 
 If no round is active, `activePot` is zero and the cost is `0.001 WETH`.
@@ -46,8 +46,8 @@ If no round is active, `activePot` is zero and the cost is `0.001 WETH`.
 Examples:
 
 - active pot `0 WETH` -> `0.001 WETH`
-- active pot `1 WETH` -> `0.005 WETH`
-- active pot `20 WETH` -> raw `0.1 WETH`, capped at `0.05 WETH`
+- active pot `1 WETH` -> `0.01 WETH`
+- active pot `20 WETH` -> raw `0.2 WETH`, capped at `0.10 WETH`
 
 ## Knockout settlement
 
@@ -89,4 +89,3 @@ programmable liabilities
 ```
 
 `claimed amounts` are cumulative evidence counters and are excluded from current liabilities. Raw WETH balance is never used to derive any category.
-

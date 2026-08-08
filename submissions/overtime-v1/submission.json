@@ -815,7 +815,7 @@
       "asset": "weth",
       "from": "authenticated challenge router caller",
       "to": "active pot or same-block refund liability",
-      "amountRule": "clamp(activePot times 50 bps, 0.001 WETH, 0.05 WETH), paid on every valid challenge.",
+      "amountRule": "clamp(activePot times 100 bps, 0.001 WETH, 0.10 WETH), paid on every valid challenge.",
       "settlement": "The router settles the exact WETH amount in the same PoolManager unlock and the hook records one matching liability category.",
       "failure": "Insufficient payment, wrong identity, partial fill, deadline, or accounting mismatch reverts the complete challenge."
     },
