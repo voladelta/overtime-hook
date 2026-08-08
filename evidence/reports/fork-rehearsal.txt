@@ -1,14 +1,15 @@
 No files changed, compilation skipped
+2026-08-08T04:48:58.559323Z  WARN foundry_fork_db::cache: Failed to read cache file err=Os { code: 2, kind: NotFound, message: "No such file or directory" } path="/Users/mbp/.foundry/cache/rpc/mainnet/25707960"
 
 Ran 2 tests for test/fork/OvertimeMainnetFork.t.sol:OvertimeMainnetForkTest
-[PASS] testFork_currentHeadLifecycleSmoke() (gas: 14771674)
+[PASS] testFork_currentHeadLifecycleSmoke() (gas: 19813549)
 Logs:
-  current head block: 25706465
+  current head block: 25707960
 
-[PASS] testFork_pinnedCandidateLifecycle() (gas: 14771733)
+[PASS] testFork_pinnedCandidateLifecycle() (gas: 19813608)
 Logs:
   pinned candidate block: 25700561
 
-Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 11.74s (12.09s CPU time)
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 12.58s (13.05s CPU time)
 
-Ran 1 test suite in 11.75s (11.74s CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)
+Ran 1 test suite in 12.58s (12.58s CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)

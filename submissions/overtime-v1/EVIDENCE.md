@@ -16,8 +16,8 @@ Current state: the repaired local prototype evidence passed and repository closu
 
 - 42 tests passed with zero failures or skips, including 1,000-run fuzz properties and 49,152 aggregate stateful invariant calls.
 - All four fee quadrants, cumulative exact 10 bps Programmable accounting, specified-WETH and challenge partial-fill rollback, PoolKey isolation, router identity, same-block refunds, double claims, Knockout, Decision, and post-expiry recurrence passed.
-- The pinned Ethereum mainnet lifecycle at block `25,700,561` and a separate current-head lifecycle at block `25,706,465` each matched PoolManager, PositionManager, StateView, V4Quoter, and WETH runtime hashes; launched and locked liquidity; accrued a return-delta fee; rolled back deadline and partial-fill failures; redeemed champion, crown-time, and Programmable claims; reconciled liabilities; and finished with zero unresolved PoolManager deltas.
-- Runtime sizes: hook 17,198 bytes; router 5,133; launcher 14,909; token 1,920; vault 519. All are below EIP-170.
+- The pinned Ethereum mainnet lifecycle at block `25,700,561` and a separate current-head lifecycle at block `25,707,960` each matched PoolManager, PositionManager, StateView, V4Quoter, and WETH runtime hashes; launched and locked liquidity; accrued a return-delta fee; rolled back deadline and partial-fill failures; redeemed champion, crown-time, and Programmable claims; reconciled liabilities; and finished with zero unresolved PoolManager deltas.
+- Runtime sizes: hook 17,200 bytes; router 5,133; launcher 14,909; token 1,920; vault 519. All are below EIP-170.
 - Atomic deployment, initialization, and permanent liquidity custody measured approximately 6.63M gas. The gas-bounded rehearsal phases measured approximately 5.89M and 0.80M gas.
 - Alternate otherwise-valid starting prices and WETH budgets now revert in `OvertimeLauncher`; only the two CREATE2 child salts remain launch-authority-selected, and tests prove the complete calldata preflight digest changes with either salt.
 - Forge high/medium lint was clean. Slither findings and dispositions are recorded in `evidence/reports/STATIC_ANALYSIS.md`.

@@ -6,8 +6,8 @@
   "evmVersion": "cancun",
   "contracts": {
     "OvertimeHook": {
-      "runtimeBytes": 17198,
-      "initcodeBytes": 18582
+      "runtimeBytes": 17200,
+      "initcodeBytes": 18584
     },
     "OvertimeChallengeRouter": {
       "runtimeBytes": 5133,
@@ -28,10 +28,10 @@
   },
   "hookPermissionMask": "0x20cc",
   "launchGas": {
-    "atomicLaunchObserved": 6625865,
-    "deployAssetsObserved": 5893497,
+    "atomicLaunchObserved": 6626325,
+    "deployAssetsObserved": 5893957,
     "lockLiquidityObserved": 803887,
-    "mainnetForkLifecycleMaximumObserved": 14771733
+    "mainnetForkLifecycleMaximumObserved": 19813608
   },
   "report": "evidence/reports/bytecode-sizes.txt"
 }

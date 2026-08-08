@@ -16,7 +16,7 @@
   "fork": {
     "chainId": 1,
     "pinnedBlock": 25700561,
-    "currentHeadBlock": 25706465,
+    "currentHeadBlock": 25707960,
     "status": "passed-two-runs-zero-skips",
     "test": "test/fork/OvertimeMainnetFork.t.sol"
   },

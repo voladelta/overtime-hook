@@ -21,7 +21,7 @@
     },
     {
       "kind": "current-head-smoke",
-      "blockNumber": 25706465,
+      "blockNumber": 25707960,
       "status": "passed",
       "testsPassed": 1,
       "testsFailed": 0,

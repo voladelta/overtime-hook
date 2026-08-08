@@ -3,7 +3,7 @@
     "format": "passed",
     "build": "passed",
     "unitFuzzInvariant": "passed",
-    "forkRehearsal": "passed-pinned-25700561-and-current-head-25706465-zero-skips",
+    "forkRehearsal": "passed-pinned-25700561-and-current-head-25707960-zero-skips",
     "forgeLintHighMedium": "passed",
     "slither": "completed-with-reviewed-findings",
     "bytecodeSize": "passed"
