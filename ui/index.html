@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Overtime</title>
+  </head>
+  <body>
+    <main id="main-content">
+      <header>
+        <div>
+          <p class="eyebrow">Uniswap v4</p>
+          <h1>Overtime</h1>
+          <p class="lede">Take the crown before the clock runs out.</p>
+        </div>
+        <button id="connect" class="secondary" type="button">Connect wallet</button>
+      </header>
+
+      <section class="round-card" aria-labelledby="round-heading">
+        <div class="section-heading">
+          <h2 id="round-heading">Current round</h2>
+          <span id="round-state" class="badge">Loading</span>
+        </div>
+        <dl class="round-stats">
+          <div><dt>Leader</dt><dd id="leader">—</dd></div>
+          <div><dt>Active pot</dt><dd id="pot">—</dd></div>
+          <div><dt>Soft deadline</dt><dd id="soft-end">—</dd></div>
+          <div><dt>Hard deadline</dt><dd id="hard-end">—</dd></div>
+        </dl>
+      </section>
+
+      <section class="challenge-card" aria-labelledby="challenge-heading">
+        <h2 id="challenge-heading">Challenge the leader</h2>
+        <p>Buy OVERTIME with WETH. The preview includes the game fee and crown cost.</p>
+        <form id="challenge-form" novalidate>
+          <label for="gross-weth">WETH for the swap</label>
+          <input id="gross-weth" name="grossWeth" inputmode="decimal" autocomplete="off" value="0.01" aria-describedby="gross-hint gross-error" />
+          <p id="gross-hint" class="hint">Minimum 0.01 WETH.</p>
+          <p id="gross-error" class="field-error"></p>
+
+          <label for="min-overtime">Minimum OVERTIME received</label>
+          <input id="min-overtime" name="minOvertime" inputmode="decimal" autocomplete="off" value="0" aria-describedby="minimum-hint minimum-error" />
+          <p id="minimum-hint" class="hint">Set a minimum to protect against price movement.</p>
+          <p id="minimum-error" class="field-error"></p>
+
+          <dl class="preview">
+            <div><dt>Game fee</dt><dd id="game-fee">—</dd></div>
+            <div><dt>Crown cost</dt><dd id="crown-cost">—</dd></div>
+            <div><dt>Total WETH</dt><dd id="total-weth">—</dd></div>
+          </dl>
+          <div class="actions">
+            <button id="approve" class="secondary" type="button" disabled>Approve WETH</button>
+            <button id="challenge" type="submit" disabled>Take the crown</button>
+          </div>
+        </form>
+      </section>
+
+      <details>
+        <summary>Deployment details</summary>
+        <p id="network">Loading deployment manifest…</p>
+        <dl id="contracts" class="contracts"></dl>
+      </details>
+      <p id="status" role="status" aria-live="polite"></p>
+      <p id="error" role="alert"></p>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
