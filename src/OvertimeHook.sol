@@ -61,6 +61,18 @@ contract OvertimeHook is BaseHook, IUnlockCallback, ReentrancyGuard {
         uint256 totalCrownSeconds;
     }
 
+    struct CurrentOutcome {
+        bool active;
+        bool decision;
+        address champion;
+        uint256 championPool;
+        uint256 crownTimePool;
+        uint256 totalCrownSeconds;
+        uint256 playerCrownSeconds;
+        uint256 championReward;
+        uint256 crownTimeReward;
+    }
+
     error AccountingMismatch(uint256 categorized, uint256 conserved);
     error AlreadyClaimed();
     error ChallengeDeadlinePassed();
@@ -216,6 +228,30 @@ contract OvertimeHook is BaseHook, IUnlockCallback, ReentrancyGuard {
         }
         crown = RoundMath.crownCost(potAfterFee);
         totalWeth = grossWeth + crown;
+    }
+
+    function previewCurrentOutcome(address player) external view returns (CurrentOutcome memory outcome) {
+        ActiveRound memory round = _currentRound;
+        if (round.leader == address(0)) return outcome;
+
+        uint256 openInterval = round.softEnd - round.leaderSince;
+        uint256 projectedTotalSeconds = round.totalCrownSeconds + openInterval;
+        uint256 projectedPlayerSeconds = crownSeconds[latestRoundId][player];
+        if (player == round.leader) projectedPlayerSeconds += openInterval;
+
+        bool decision = round.softEnd == round.hardEnd;
+        (uint256 championPool, uint256 crownTimePool,) = RoundMath.distribution(round.activePot, decision);
+        outcome = CurrentOutcome({
+            active: true,
+            decision: decision,
+            champion: round.leader,
+            championPool: championPool,
+            crownTimePool: crownTimePool,
+            totalCrownSeconds: projectedTotalSeconds,
+            playerCrownSeconds: projectedPlayerSeconds,
+            championReward: player == round.leader ? championPool : 0,
+            crownTimeReward: RoundMath.proRata(crownTimePool, projectedPlayerSeconds, projectedTotalSeconds)
+        });
     }
 
     function finalizeExpiredRound() external nonReentrant {

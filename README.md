@@ -36,9 +36,10 @@ invariant tests, checks devnet cleanup behavior, typechecks TypeScript, and buil
 ```
 
 The lifecycle deploys the pinned local v4 stack, atomically launches Overtime, funds 100 disposable
-Anvil accounts, approves WETH, submits 100 challenges through the production router, verifies
-categorized liabilities against hook-owned PoolManager claims, writes `reports/devnet.json`, and
-shuts down its owned Anvil process.
+Anvil accounts, approves WETH, submits 100 challenges through the production router, advances the
+round clock, finalizes the round, claims the champion and crown-time rewards, verifies categorized
+liabilities against hook-owned PoolManager claims, writes `reports/devnet.json`, and shuts down its
+owned Anvil process.
 
 Generated deployment state lives in `.devnet/deployment.json`; the UI consumes the same manifest at
 `ui/public/deployment.json` while the devnet is running.

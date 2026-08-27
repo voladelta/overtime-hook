@@ -2,6 +2,7 @@ import type { Address, Hex, LocalAccount, PublicClient } from "viem";
 
 export interface DeploymentManifest {
   chainId: number;
+  deploymentBlock: number;
   rpcUrl: string;
   contracts: {
     hook: Address;

@@ -22,11 +22,14 @@ interface IWETH is IERC20 {
 contract TestnetDeployScript is Script {
     using SafeERC20 for IERC20;
 
+    uint256 private _deploymentBlock;
+
     error ChainIdMismatch(uint256 expected, uint256 actual);
     error DependencyMissing(address dependency);
     error PositionManagerMismatch(address expected, address actual);
 
     function run() external {
+        _deploymentBlock = block.number;
         string memory manifestPath = vm.envString("DEPLOYMENT_MANIFEST");
         string memory manifest = vm.readFile(manifestPath);
         uint256 expectedChainId = vm.parseJsonUint(manifest, ".chainId");
@@ -124,6 +127,7 @@ contract TestnetDeployScript is Script {
 
         string memory root = "observed-deployment";
         vm.serializeUint(root, "chainId", block.chainid);
+        vm.serializeUint(root, "deploymentBlock", _deploymentBlock);
         vm.serializeString(root, "network", vm.parseJsonString(sourceManifest, ".network"));
         string memory json = vm.serializeUint(root, "positionTokenId", launcher.positionTokenId());
         string memory outputPath = vm.envOr(

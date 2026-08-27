@@ -4,6 +4,7 @@
   "type": "module",
   "packageManager": "bun@1.4.0",
   "scripts": {
+    "test:ui": "bun test ui/test",
     "typecheck": "tsc --noEmit",
     "ui:dev": "vite ui",
     "ui:build": "vite build ui",

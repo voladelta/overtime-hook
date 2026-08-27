@@ -113,6 +113,83 @@ contract OvertimeHookIntegrationTest is BaseTest {
         assertEq(hook.claimBacking(), fee + crown);
     }
 
+    function test_currentOutcomeProjectsKnockoutAndMatchesFinalization() public {
+        weth.mint(bob, 100 ether);
+        vm.prank(bob);
+        weth.approve(address(router), type(uint256).max);
+
+        vm.prank(alice);
+        router.challenge(1 ether, 1, block.timestamp, TickMath.MIN_SQRT_PRICE + 1);
+        vm.warp(block.timestamp + 5 minutes);
+        vm.roll(block.number + 1);
+        vm.prank(bob);
+        router.challenge(1 ether, 1, block.timestamp, TickMath.MIN_SQRT_PRICE + 1);
+
+        OvertimeHook.ActiveRound memory active = hook.currentRound();
+        OvertimeHook.CurrentOutcome memory aliceOutcome = hook.previewCurrentOutcome(alice);
+        OvertimeHook.CurrentOutcome memory bobOutcome = hook.previewCurrentOutcome(bob);
+        assertTrue(aliceOutcome.active);
+        assertFalse(aliceOutcome.decision);
+        assertEq(aliceOutcome.champion, bob);
+        assertEq(aliceOutcome.championPool, (active.activePot * 40) / 100);
+        assertEq(aliceOutcome.crownTimePool, (active.activePot * 50) / 100);
+        assertEq(aliceOutcome.totalCrownSeconds, 15 minutes);
+        assertEq(aliceOutcome.playerCrownSeconds, 5 minutes);
+        assertEq(aliceOutcome.championReward, 0);
+        assertEq(
+            aliceOutcome.crownTimeReward,
+            (aliceOutcome.crownTimePool * aliceOutcome.playerCrownSeconds) / aliceOutcome.totalCrownSeconds
+        );
+        assertEq(bobOutcome.playerCrownSeconds, 10 minutes);
+        assertEq(bobOutcome.championReward, bobOutcome.championPool);
+
+        vm.warp(active.softEnd);
+        hook.finalizeExpiredRound();
+        OvertimeHook.FinalizedRound memory finalized = hook.finalizedRounds(1);
+        assertEq(finalized.champion, bobOutcome.champion);
+        assertEq(finalized.championPool, bobOutcome.championPool);
+        assertEq(finalized.crownTimePool, bobOutcome.crownTimePool);
+        assertEq(finalized.totalCrownSeconds, bobOutcome.totalCrownSeconds);
+        assertEq(hook.crownSeconds(1, alice), aliceOutcome.playerCrownSeconds);
+        assertEq(hook.crownSeconds(1, bob), bobOutcome.playerCrownSeconds);
+    }
+
+    function test_currentOutcomeProjectsDecisionAndIdleState() public {
+        OvertimeHook.CurrentOutcome memory idle = hook.previewCurrentOutcome(alice);
+        assertFalse(idle.active);
+        assertEq(idle.champion, address(0));
+        assertEq(idle.championPool, 0);
+        assertEq(idle.crownTimePool, 0);
+
+        vm.prank(alice);
+        router.challenge(1 ether, 1, block.timestamp, TickMath.MIN_SQRT_PRICE + 1);
+        uint64 hardEnd = hook.currentRound().hardEnd;
+        while (hook.currentRound().softEnd < hardEnd) {
+            vm.warp(hook.currentRound().softEnd - 1);
+            vm.roll(block.number + 1);
+            vm.prank(alice);
+            router.challenge(0.01 ether, 1, block.timestamp, TickMath.MIN_SQRT_PRICE + 1);
+        }
+
+        OvertimeHook.CurrentOutcome memory outcome = hook.previewCurrentOutcome(alice);
+        assertTrue(outcome.active);
+        assertTrue(outcome.decision);
+        assertEq(outcome.champion, alice);
+        assertEq(outcome.championPool, 0);
+        assertEq(outcome.crownTimePool, (hook.currentRound().activePot * 90) / 100);
+        assertEq(outcome.totalCrownSeconds, 60 minutes);
+        assertEq(outcome.playerCrownSeconds, 60 minutes);
+        assertEq(outcome.championReward, 0);
+        assertEq(outcome.crownTimeReward, outcome.crownTimePool);
+
+        vm.warp(hardEnd);
+        hook.finalizeExpiredRound();
+        OvertimeHook.FinalizedRound memory finalized = hook.finalizedRounds(1);
+        assertTrue(finalized.decision);
+        assertEq(finalized.crownTimePool, outcome.crownTimePool);
+        assertEq(finalized.totalCrownSeconds, outcome.totalCrownSeconds);
+    }
+
     function test_sameBlockDisplacementCreditsPullRefundAndPreservesSolvency() public {
         weth.mint(bob, 100 ether);
         vm.prank(bob);

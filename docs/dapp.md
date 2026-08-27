@@ -30,9 +30,14 @@ decoded contract failures into an actionable message while retaining diagnostic 
 Treat RPC reads as fallible: expose unavailable or stale state, bound receipt polling and retry
 idempotent reads through a deliberate fallback. A transaction hash is progress, not completion.
 
-`ui/` is deliberately small: wallet connection, manifest loading and status display. The product
-agent adds hook-specific reads and actions after contract interfaces stabilize. Keep private keys
-out of the browser and repository.
+`ui/` reads the current round and authoritative projected outcome, reconstructs bounded round
+activity from events, and exposes the production challenge, finalization and pull-claim paths. The
+deployment manifest includes `deploymentBlock`, which must be at or before launch events so browser
+history reads never scan from genesis. Keep private keys out of the browser and repository.
+
+Countdowns interpolate locally from the latest observed block timestamp, but each new block and
+every confirmed write refreshes contract state. Countdown elements are not live regions. Transaction
+status uses one stable polite live region, while actionable failures use the page alert.
 
 The dapp boundary is complete when every supported write uses its production entry point, routed
 swaps use the intended router, the transaction state machine exposes no conflicting actions,

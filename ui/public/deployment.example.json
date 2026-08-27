@@ -1,5 +1,6 @@
 {
   "chainId": 31337,
+  "deploymentBlock": 0,
   "network": "overtime-local",
   "rpcUrl": "http://127.0.0.1:8545",
   "contracts": {

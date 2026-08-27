@@ -387,6 +387,36 @@ The implementation must emit enough indexed data to reconstruct swaps, rounds, c
 
 Event names must use Overtime naming and must not expose a stale fee stream or stale token identity.
 
+## Player experience
+
+The browser application must make the existing game rules observable without becoming a second
+source of economic truth.
+
+- Show the live soft deadline, immutable hard deadline, current leader, active pot and round
+  classification.
+- Show the exact champion and crown-time outcome if no further challenge occurs. The hook must own
+  this projection through a constant-time read that includes the current leader's open interval
+  through `softEnd`.
+- Reconstruct round participants and recent activity from bounded contract-event reads. Deployment
+  manifests must include a block at or before the launch events. No participant array may be added
+  to contract storage.
+- Show each observed participant's projected crown-time and reward through the authoritative hook
+  preview.
+- Let a connected player approve WETH, challenge, finalize an expired round, claim a champion
+  reward, claim a crown-time reward and claim a same-block refund through the production entry
+  points.
+- Simulate each wallet write, wait for a successful receipt, then refresh authoritative state
+  before reporting completion.
+- Explain Knockout and Decision in the action context. A Knockout allocates 40% to the champion and
+  50% by crown-time. A Decision allocates 90% by crown-time and no champion reward.
+- Keep transaction status in a polite live region and errors in an alert. Countdown updates must
+  not create repeated live-region announcements.
+- Preserve keyboard operation, visible focus, 320 CSS-pixel reflow, 200% zoom and reduced-motion
+  behavior.
+
+The application may use event history for presentation, but contract reads remain authoritative for
+leader, timing, balances, claims and payouts.
+
 ## Security invariants
 
 - `start < softEnd <= hardEnd == start + 60 minutes` for every active round.
@@ -425,7 +455,10 @@ The implementation is not complete until tests cover:
 17. atomic launch rollback;
 18. fixed OVERTIME supply and absence of token privileges;
 19. permanent position custody and inability to transfer or reduce liquidity; and
-20. a pinned Ethereum mainnet fork lifecycle using canonical Uniswap v4 and WETH deployments.
+20. a pinned Ethereum mainnet fork lifecycle using canonical Uniswap v4 and WETH deployments;
+21. current-outcome previews agreeing exactly with subsequent Knockout and Decision finalization;
+22. browser state derivation for idle, active, expired, Knockout and Decision rounds; and
+23. a devnet lifecycle that finalizes a round and consumes its champion and crown-time claims.
 
 Property and invariant tests must assert that hook-controlled WETH backing never falls below categorized liabilities and that no state transition creates or destroys WETH accounting value.
 

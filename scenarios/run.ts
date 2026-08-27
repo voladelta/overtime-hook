@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { createPublicClient, createWalletClient, defineChain, http } from "viem";
 import { mnemonicToAccount } from "viem/accounts";
 
+import { completeRound } from "./lifecycle.js";
 import { prepareTrade } from "./trade.js";
 import { verifyScenario } from "./verify.js";
 import type { DeploymentManifest } from "./types.js";
@@ -192,7 +193,12 @@ results.sort((left, right) => left.index - right.index);
 failures.sort((left, right) => left.index - right.index);
 
 await mkdir(resolve(root, "reports"), { recursive: true });
-const verification = failures.length === 0 ? await verifyScenario(publicClient, manifest, traderCount) : null;
+const lifecycle =
+  failures.length === 0 ? await completeRound(manifest, mnemonic, traderCount, defaultGasLimit) : null;
+const verification =
+  failures.length === 0 && lifecycle
+    ? await verifyScenario(publicClient, manifest, traderCount, lifecycle)
+    : null;
 await writeFile(
   reportPath,
   `${JSON.stringify(
@@ -203,6 +209,7 @@ await writeFile(
       failedTransactions: failures.length,
       transactions: results,
       failures,
+      lifecycle,
       verification,
     },
     null,

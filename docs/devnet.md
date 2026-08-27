@@ -24,6 +24,12 @@ The scenario path is ready when deployment, trade, and verifier surfaces use the
 interfaces, every prepared transaction targets the intended router, and the report includes the
 verifier's product-specific postconditions.
 
+After the configured challenges succeed, the lifecycle advances Anvil to the soft deadline through
+its test RPC, finalizes through the production hook and submits the champion and crown-time claims
+from the actual champion account. The verifier reconciles the champion's WETH increase, consumed
+claim markers, cumulative claimed WETH, remaining liabilities and PoolManager backing. This time
+control is localhost-only evidence and is not a keeper or public-network dependency.
+
 ## Run and diagnose
 
 Use individual scripts while developing one stage. Before completion, run the owned lifecycle:

@@ -47,6 +47,7 @@ if [ "${SKIP_APP:-0}" != "1" ]; then
         echo "run bun install --frozen-lockfile before ./scripts/check.sh" >&2
         exit 1
     }
+    run_step "UI unit tests" bun run test:ui
     run_step "TypeScript typecheck" bun run typecheck
     run_step "Vite production build" bun run ui:build
 fi

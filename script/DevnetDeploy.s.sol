@@ -21,8 +21,10 @@ contract DevnetDeployScript is Script {
     using SafeERC20 for IERC20;
 
     string private constant MNEMONIC = "test test test test test test test test test test test junk";
+    uint256 private _deploymentBlock;
 
     function run() external {
+        _deploymentBlock = block.number;
         address authority = msg.sender;
         vm.startBroadcast();
         IPermit2 permit2 = IPermit2(Permit2Deployer.deploy());
@@ -103,6 +105,7 @@ contract DevnetDeployScript is Script {
 
         string memory root = "deployment";
         vm.serializeUint(root, "chainId", block.chainid);
+        vm.serializeUint(root, "deploymentBlock", _deploymentBlock);
         vm.serializeString(root, "network", "overtime-local");
         string memory json =
             vm.serializeString(root, "rpcUrl", vm.envOr("DEVNET_RPC_URL", string("http://127.0.0.1:8545")));
