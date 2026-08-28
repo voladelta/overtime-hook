@@ -1,3 +1,5 @@
+![Overtime — Crown Protocol](docs/assets/overtime-banner.png)
+
 # Overtime Hook
 
 Overtime is a recurring leader-time game on one canonical Uniswap v4 WETH/OVERTIME pool. Every
