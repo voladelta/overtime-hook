@@ -43,10 +43,12 @@ if [ "${SKIP_APP:-0}" != "1" ]; then
         echo "bun is required for app checks (or set SKIP_APP=1 for a contract-only task)" >&2
         exit 1
     }
-    [ -x node_modules/.bin/tsc ] || {
+    [ -x node_modules/.bin/tsc ] && [ -x node_modules/.bin/oxlint ] && [ -x node_modules/.bin/oxfmt ] || {
         echo "run bun install --frozen-lockfile before ./scripts/check.sh" >&2
         exit 1
     }
+    run_step "Oxlint" bun run lint
+    run_step "Oxfmt" bun run format:check
     run_step "UI unit tests" bun run test:ui
     run_step "TypeScript typecheck" bun run typecheck
     run_step "Vite production build" bun run ui:build

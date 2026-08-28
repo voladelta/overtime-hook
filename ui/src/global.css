@@ -1,0 +1,71 @@
+@layer reset {
+  :root {
+    color-scheme: dark;
+    font-family: var(--font-sans, Inter, ui-sans-serif, system-ui, sans-serif);
+    font-synthesis: none;
+    font-optical-sizing: auto;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    min-width: 20rem;
+    background: #05060a;
+  }
+
+  body {
+    position: relative;
+    min-width: 20rem;
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  button,
+  input,
+  summary {
+    font: inherit;
+  }
+
+  button,
+  summary,
+  a {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-thickness: from-font;
+    text-underline-position: from-font;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  :focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  #root {
+    min-height: 100vh;
+    isolation: isolate;
+  }
+
+  ::selection {
+    background: rgb(255 64 159 / 0.35);
+    color: #ffffff;
+  }
+
+  @media (forced-colors: active) {
+    :focus-visible {
+      outline-color: Highlight;
+    }
+  }
+}

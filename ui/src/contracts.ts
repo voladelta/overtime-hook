@@ -1,16 +1,19 @@
 import {
   createPublicClient,
-  createWalletClient,
-  custom,
-  formatEther,
   http,
   isAddressEqual,
+  TransactionNotFoundError,
+  TransactionReceiptNotFoundError,
+  type Account,
   type Address,
-  type EIP1193Provider,
+  type Chain,
   type Hash,
+  type Transport,
+  type WalletClient,
 } from "viem";
 
 import { erc20Abi, hookAbi, routerAbi } from "./abi.js";
+import { formatWeth } from "./format.js";
 import {
   ZERO_ADDRESS,
   shortAddress,
@@ -22,6 +25,16 @@ import {
   type GameSnapshot,
   type PlayerStanding,
 } from "./game-state.js";
+import {
+  receiptProvesApproval,
+  receiptProvesChallenge,
+  receiptProvesChampionClaim,
+  receiptProvesCrownTimeClaim,
+  receiptProvesFinalization,
+  receiptProvesRefundClaim,
+} from "./transaction-receipt.js";
+import { ResolvedTransactionFailure } from "./transaction-state.js";
+import { isCurrentWalletAccount } from "./wallet-state.js";
 
 export interface DeploymentManifest {
   chainId: number;
@@ -43,9 +56,15 @@ export interface ChallengeQuote {
   totalWeth: bigint;
 }
 
+export type SubmittedTransactionStatus = "pending" | "success" | "reverted" | "not-found";
+
+export type ConnectedWalletClient = WalletClient<Transport, Chain, Account>;
+type SubmissionCallback = (hash: Hash) => void;
+
 export async function loadDeployment(): Promise<DeploymentManifest> {
   const response = await fetch("/deployment.json");
-  if (!response.ok) throw new Error("Deployment data is unavailable. Start the Overtime devnet and try again.");
+  if (!response.ok)
+    throw new Error("Deployment data is unavailable. Start the Overtime devnet and try again.");
   const deployment = (await response.json()) as DeploymentManifest;
   if (!Number.isSafeInteger(deployment.deploymentBlock) || deployment.deploymentBlock < 0) {
     throw new Error("Deployment data has an invalid deployment block.");
@@ -63,7 +82,9 @@ export class OvertimeClient {
   async assertChain(): Promise<void> {
     const actual = await this.publicClient.getChainId();
     if (actual !== this.deployment.chainId) {
-      throw new Error(`RPC is on chain ${actual}, but Overtime is deployed on chain ${this.deployment.chainId}.`);
+      throw new Error(
+        `RPC is on chain ${actual}, but Overtime is deployed on chain ${this.deployment.chainId}.`,
+      );
     }
   }
 
@@ -142,84 +163,173 @@ export class OvertimeClient {
     };
   }
 
-  watchBlocks(onBlock: () => void, onError: (cause: Error) => void): () => void {
-    return this.publicClient.watchBlockNumber({
-      emitOnBegin: false,
-      pollingInterval: 4_000,
-      onBlockNumber: onBlock,
-      onError,
-    });
-  }
-
-  async connect(provider: EIP1193Provider): Promise<Address> {
-    const wallet = createWalletClient({ transport: custom(provider) });
-    const currentChainId = await wallet.getChainId();
-    if (currentChainId !== this.deployment.chainId) {
-      await wallet.switchChain({ id: this.deployment.chainId });
-    }
-    const [account] = await wallet.requestAddresses();
-    if (!account) throw new Error("No account was returned. Unlock your wallet and try again.");
-    return account;
-  }
-
-  approve(provider: EIP1193Provider, account: Address, amount: bigint): Promise<Hash> {
-    return this.write(provider, account, {
-      address: this.deployment.contracts.weth,
-      abi: erc20Abi,
-      functionName: "approve",
-      args: [this.deployment.contracts.challengeRouter, amount],
-    });
+  approve(
+    wallet: ConnectedWalletClient,
+    account: Address,
+    amount: bigint,
+    onSubmitted?: SubmissionCallback,
+  ): Promise<Hash> {
+    return this.write(
+      wallet,
+      account,
+      {
+        address: this.deployment.contracts.weth,
+        abi: erc20Abi,
+        functionName: "approve",
+        args: [this.deployment.contracts.challengeRouter, amount],
+      },
+      onSubmitted,
+    );
   }
 
   async challenge(
-    provider: EIP1193Provider,
+    wallet: ConnectedWalletClient,
     account: Address,
     grossWeth: bigint,
     minTokenOut: bigint,
+    onSubmitted?: SubmissionCallback,
   ): Promise<Hash> {
     const block = await this.publicClient.getBlock();
-    return this.write(provider, account, {
-      address: this.deployment.contracts.challengeRouter,
-      abi: routerAbi,
-      functionName: "challenge",
-      args: [grossWeth, minTokenOut, block.timestamp + 600n, 4_295_128_740n],
-    });
+    return this.write(
+      wallet,
+      account,
+      {
+        address: this.deployment.contracts.challengeRouter,
+        abi: routerAbi,
+        functionName: "challenge",
+        args: [grossWeth, minTokenOut, block.timestamp + 600n, 4_295_128_740n],
+      },
+      onSubmitted,
+    );
   }
 
-  finalize(provider: EIP1193Provider, account: Address): Promise<Hash> {
-    return this.write(provider, account, {
-      address: this.deployment.contracts.hook,
-      abi: hookAbi,
-      functionName: "finalizeExpiredRound",
-      args: [],
-    });
+  finalize(wallet: ConnectedWalletClient, account: Address, onSubmitted?: SubmissionCallback): Promise<Hash> {
+    return this.write(
+      wallet,
+      account,
+      {
+        address: this.deployment.contracts.hook,
+        abi: hookAbi,
+        functionName: "finalizeExpiredRound",
+        args: [],
+      },
+      onSubmitted,
+    );
   }
 
-  claimChampion(provider: EIP1193Provider, account: Address, roundId: bigint): Promise<Hash> {
-    return this.write(provider, account, {
-      address: this.deployment.contracts.hook,
-      abi: hookAbi,
-      functionName: "claimChampionReward",
-      args: [roundId],
-    });
+  claimChampion(
+    wallet: ConnectedWalletClient,
+    account: Address,
+    roundId: bigint,
+    onSubmitted?: SubmissionCallback,
+  ): Promise<Hash> {
+    return this.write(
+      wallet,
+      account,
+      {
+        address: this.deployment.contracts.hook,
+        abi: hookAbi,
+        functionName: "claimChampionReward",
+        args: [roundId],
+      },
+      onSubmitted,
+    );
   }
 
-  claimCrownTime(provider: EIP1193Provider, account: Address, roundId: bigint): Promise<Hash> {
-    return this.write(provider, account, {
-      address: this.deployment.contracts.hook,
-      abi: hookAbi,
-      functionName: "claimCrownTimeReward",
-      args: [roundId],
-    });
+  claimCrownTime(
+    wallet: ConnectedWalletClient,
+    account: Address,
+    roundId: bigint,
+    onSubmitted?: SubmissionCallback,
+  ): Promise<Hash> {
+    return this.write(
+      wallet,
+      account,
+      {
+        address: this.deployment.contracts.hook,
+        abi: hookAbi,
+        functionName: "claimCrownTimeReward",
+        args: [roundId],
+      },
+      onSubmitted,
+    );
   }
 
-  claimRefund(provider: EIP1193Provider, account: Address): Promise<Hash> {
-    return this.write(provider, account, {
-      address: this.deployment.contracts.hook,
-      abi: hookAbi,
-      functionName: "claimRefund",
-      args: [],
-    });
+  claimRefund(
+    wallet: ConnectedWalletClient,
+    account: Address,
+    onSubmitted?: SubmissionCallback,
+  ): Promise<Hash> {
+    return this.write(
+      wallet,
+      account,
+      {
+        address: this.deployment.contracts.hook,
+        abi: hookAbi,
+        functionName: "claimRefund",
+        args: [],
+      },
+      onSubmitted,
+    );
+  }
+
+  async transactionStatus(hash: Hash): Promise<SubmittedTransactionStatus> {
+    await this.assertChain();
+    try {
+      const receipt = await this.publicClient.getTransactionReceipt({ hash });
+      return receipt.status === "success" ? "success" : "reverted";
+    } catch (cause) {
+      if (!(cause instanceof TransactionReceiptNotFoundError)) throw cause;
+    }
+
+    try {
+      await this.publicClient.getTransaction({ hash });
+      return "pending";
+    } catch (cause) {
+      if (cause instanceof TransactionNotFoundError) return "not-found";
+      throw cause;
+    }
+  }
+
+  async verifyApproval(hash: Hash, account: Address, amount: bigint): Promise<boolean> {
+    const receipt = await this.successfulReceipt(hash);
+    return receiptProvesApproval(
+      receipt.logs,
+      this.deployment.contracts.weth,
+      account,
+      this.deployment.contracts.challengeRouter,
+      amount,
+    );
+  }
+
+  async verifyChallenge(hash: Hash, account: Address, grossWeth: bigint): Promise<boolean> {
+    const receipt = await this.successfulReceipt(hash);
+    return receiptProvesChallenge(
+      receipt.logs,
+      this.deployment.contracts.challengeRouter,
+      account,
+      grossWeth,
+    );
+  }
+
+  async verifyFinalization(hash: Hash): Promise<boolean> {
+    const receipt = await this.successfulReceipt(hash);
+    return receiptProvesFinalization(receipt.logs, this.deployment.contracts.hook);
+  }
+
+  async verifyChampionClaim(hash: Hash, account: Address, roundId: bigint): Promise<boolean> {
+    const receipt = await this.successfulReceipt(hash);
+    return receiptProvesChampionClaim(receipt.logs, this.deployment.contracts.hook, account, roundId);
+  }
+
+  async verifyCrownTimeClaim(hash: Hash, account: Address, roundId: bigint): Promise<boolean> {
+    const receipt = await this.successfulReceipt(hash);
+    return receiptProvesCrownTimeClaim(receipt.logs, this.deployment.contracts.hook, account, roundId);
+  }
+
+  async verifyRefundClaim(hash: Hash, account: Address): Promise<boolean> {
+    const receipt = await this.successfulReceipt(hash);
+    return receiptProvesRefundClaim(receipt.logs, this.deployment.contracts.hook, account);
   }
 
   private async readStandings(
@@ -375,30 +485,87 @@ export class OvertimeClient {
     const items: ActivityItem[] = [];
     for (const event of starts) {
       const leader = event.args.leader ?? ZERO_ADDRESS;
-      items.push(this.activity(event, "start", `${shortAddress(leader)} started the round`, `${formatEther(event.args.crownCost ?? 0n)} WETH crown`));
+      items.push(
+        this.activity(
+          event,
+          "start",
+          `${shortAddress(leader)} started the round`,
+          `${formatWeth(event.args.crownCost ?? 0n, 6)} crown`,
+        ),
+      );
     }
     for (const event of changes) {
       const next = event.args.newLeader ?? ZERO_ADDRESS;
       const previous = event.args.previousLeader ?? ZERO_ADDRESS;
-      items.push(this.activity(event, "crown", `${shortAddress(next)} took the crown`, `From ${shortAddress(previous)} · ${formatEther(event.args.crownCost ?? 0n)} WETH`));
+      items.push(
+        this.activity(
+          event,
+          "crown",
+          `${shortAddress(next)} took the crown`,
+          `From ${shortAddress(previous)} · ${formatWeth(event.args.crownCost ?? 0n, 6)}`,
+        ),
+      );
     }
     for (const event of finalizations) {
-      items.push(this.activity(event, "finalized", event.args.decision ? "Round ended by Decision" : `${shortAddress(event.args.champion ?? ZERO_ADDRESS)} won the Knockout`, `${formatEther(event.args.championPool ?? 0n)} WETH champion pool`));
+      items.push(
+        this.activity(
+          event,
+          "finalized",
+          event.args.decision
+            ? "Round ended by Decision"
+            : `${shortAddress(event.args.champion ?? ZERO_ADDRESS)} won the Knockout`,
+          `${formatWeth(event.args.championPool ?? 0n, 6)} champion pool`,
+        ),
+      );
     }
     for (const event of championClaims) {
-      items.push(this.activity(event, "champion-claim", `${shortAddress(event.args.champion ?? ZERO_ADDRESS)} claimed the champion reward`, `${formatEther(event.args.amount ?? 0n)} WETH`));
+      items.push(
+        this.activity(
+          event,
+          "champion-claim",
+          `${shortAddress(event.args.champion ?? ZERO_ADDRESS)} claimed the champion reward`,
+          formatWeth(event.args.amount ?? 0n, 6),
+        ),
+      );
     }
     for (const event of timeClaims) {
-      items.push(this.activity(event, "time-claim", `${shortAddress(event.args.holder ?? ZERO_ADDRESS)} claimed crown-time`, `${formatEther(event.args.amount ?? 0n)} WETH`));
+      items.push(
+        this.activity(
+          event,
+          "time-claim",
+          `${shortAddress(event.args.holder ?? ZERO_ADDRESS)} claimed crown-time`,
+          formatWeth(event.args.amount ?? 0n, 6),
+        ),
+      );
     }
     for (const event of refunds) {
-      items.push(this.activity(event, "refund", `${shortAddress(event.args.beneficiary ?? ZERO_ADDRESS)} received a refund credit`, `${formatEther(event.args.amount ?? 0n)} WETH`));
+      items.push(
+        this.activity(
+          event,
+          "refund",
+          `${shortAddress(event.args.beneficiary ?? ZERO_ADDRESS)} received a refund credit`,
+          formatWeth(event.args.amount ?? 0n, 6),
+        ),
+      );
     }
-    items.sort((left, right) => (left.blockNumber === right.blockNumber ? right.key.localeCompare(left.key) : left.blockNumber > right.blockNumber ? -1 : 1));
+    items.sort((left, right) =>
+      left.blockNumber === right.blockNumber
+        ? right.key.localeCompare(left.key)
+        : left.blockNumber > right.blockNumber
+          ? -1
+          : 1,
+    );
     const recent = items.slice(0, 12);
     const blockNumbers = [...new Set(recent.map((item) => item.blockNumber))];
     const timestamps = new Map<bigint, bigint>();
-    await Promise.all(blockNumbers.map(async (blockNumber) => timestamps.set(blockNumber, (await this.publicClient.getBlock({ blockNumber })).timestamp)));
+    await Promise.all(
+      blockNumbers.map(async (eventBlockNumber) =>
+        timestamps.set(
+          eventBlockNumber,
+          (await this.publicClient.getBlock({ blockNumber: eventBlockNumber })).timestamp,
+        ),
+      ),
+    );
     return recent.map((item) => ({ ...item, timestamp: timestamps.get(item.blockNumber) }));
   }
 
@@ -419,30 +586,51 @@ export class OvertimeClient {
   }
 
   private async write(
-    provider: EIP1193Provider,
+    wallet: ConnectedWalletClient,
     account: Address,
     request: Parameters<typeof this.publicClient.simulateContract>[0],
+    onSubmitted?: SubmissionCallback,
   ): Promise<Hash> {
-    await this.assertWallet(provider, account);
+    await this.assertWallet(wallet, account);
     const simulation = await this.publicClient.simulateContract({ ...request, account });
-    const wallet = createWalletClient({ account, transport: custom(provider) });
     const hash = await wallet.writeContract(simulation.request);
-    const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
-    if (receipt.status !== "success") throw new Error("The transaction was mined but reverted.");
-    return hash;
+    onSubmitted?.(hash);
+    let replacementFailure: "cancelled" | "replaced" | undefined;
+    const receipt = await this.publicClient.waitForTransactionReceipt({
+      hash,
+      timeout: 120_000,
+      onReplaced(replacement) {
+        onSubmitted?.(replacement.transaction.hash);
+        if (replacement.reason !== "repriced") replacementFailure = replacement.reason;
+      },
+    });
+    if (replacementFailure) {
+      throw new ResolvedTransactionFailure(
+        replacementFailure === "cancelled"
+          ? "The transaction was cancelled in the wallet."
+          : "The transaction was replaced by a different wallet action.",
+      );
+    }
+    if (receipt.status !== "success") {
+      throw new ResolvedTransactionFailure("The transaction was mined but reverted.");
+    }
+    return receipt.transactionHash;
   }
 
-  private async assertWallet(provider: EIP1193Provider, account: Address): Promise<void> {
-    const [chainIdValue, accountsValue] = await Promise.all([
-      provider.request({ method: "eth_chainId" }),
-      provider.request({ method: "eth_accounts" }),
-    ]);
-    const chainId = Number.parseInt(String(chainIdValue), 16);
-    if (chainId !== this.deployment.chainId) {
+  private async successfulReceipt(hash: Hash) {
+    await this.assertChain();
+    const receipt = await this.publicClient.getTransactionReceipt({ hash });
+    if (receipt.status !== "success") throw new Error("The transaction reverted.");
+    return receipt;
+  }
+
+  private async assertWallet(wallet: ConnectedWalletClient, account: Address): Promise<void> {
+    await this.assertChain();
+    const [walletChainId, walletAddresses] = await Promise.all([wallet.getChainId(), wallet.getAddresses()]);
+    if (wallet.chain.id !== this.deployment.chainId || walletChainId !== this.deployment.chainId) {
       throw new Error(`Switch your wallet to chain ${this.deployment.chainId} and try again.`);
     }
-    const accounts = Array.isArray(accountsValue) ? accountsValue.map(String) : [];
-    if (!accounts.some((candidate) => candidate.toLowerCase() === account.toLowerCase())) {
+    if (!isCurrentWalletAccount(wallet.account.address, walletAddresses, account)) {
       throw new Error("The connected wallet account changed. Connect it again and retry the action.");
     }
   }

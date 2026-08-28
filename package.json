@@ -2,21 +2,39 @@
   "name": "overtime-hook",
   "private": true,
   "type": "module",
-  "packageManager": "bun@1.4.0",
   "scripts": {
+    "format": "oxfmt --write package.json tsconfig.json .oxlintrc.json .oxfmtrc.json ui/index.html ui/vite.config.ts ui/src ui/test",
+    "format:check": "oxfmt --check package.json tsconfig.json .oxlintrc.json .oxfmtrc.json ui/index.html ui/vite.config.ts ui/src ui/test",
+    "lint": "oxlint --deny-warnings ui/src ui/test",
     "test:ui": "bun test ui/test",
     "typecheck": "tsc --noEmit",
-    "ui:dev": "vite ui",
-    "ui:build": "vite build ui",
+    "ui:dev": "vite --config ui/vite.config.ts ui",
+    "ui:build": "vite build --config ui/vite.config.ts ui",
+    "ui:check": "bun run lint && bun run format:check && bun run test:ui && bun run typecheck && bun run ui:build",
     "scenario:devnet": "tsx scenarios/run.ts"
   },
   "dependencies": {
-    "viem": "2.55.15"
+    "@base-ui/react": "^1.7.0",
+    "@stylexjs/stylex": "^0.19.0",
+    "@tanstack/react-query": "^5.101.4",
+    "lucide-react": "^1.33.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "viem": "2.55.15",
+    "wagmi": "^3.7.6",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@stylexjs/unplugin": "^0.19.0",
     "@types/node": "26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "oxfmt": "^0.64.0",
+    "oxlint": "^1.79.0",
     "tsx": "4.23.12",
     "typescript": "7.0.2",
     "vite": "8.2.1"
-  }
+  },
+  "packageManager": "bun@1.4.0"
 }

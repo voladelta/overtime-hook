@@ -27,7 +27,12 @@ bun install --frozen-lockfile
 ```
 
 The full gate formats and builds Solidity, reports contract sizes, runs unit/integration/fuzz/stateful
-invariant tests, checks devnet cleanup behavior, typechecks TypeScript, and builds the browser app.
+invariant tests, checks devnet cleanup behavior, runs Oxlint and Oxfmt, typechecks TypeScript, and
+builds the browser app.
+
+The browser app uses React, Wagmi and Viem for the wallet boundary, TanStack Query for authoritative
+chain reads, Zustand for the serialized action state, and StyleX for the visual system. It is one
+arena screen, so it does not add a routing dependency.
 
 ## Disposable devnet
 

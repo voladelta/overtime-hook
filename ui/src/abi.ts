@@ -19,6 +19,15 @@ export const erc20Abi = [
     ],
     outputs: [{ name: "", type: "bool" }],
   },
+  {
+    type: "event",
+    name: "Approval",
+    inputs: [
+      { name: "owner", type: "address", indexed: true },
+      { name: "spender", type: "address", indexed: true },
+      { name: "value", type: "uint256", indexed: false },
+    ],
+  },
 ] as const;
 
 export const hookAbi = [
@@ -233,6 +242,14 @@ export const hookAbi = [
       { name: "amount", type: "uint256", indexed: false },
     ],
   },
+  {
+    type: "event",
+    name: "RefundClaimed",
+    inputs: [
+      { name: "beneficiary", type: "address", indexed: true },
+      { name: "amount", type: "uint256", indexed: false },
+    ],
+  },
 ] as const;
 
 export const routerAbi = [
@@ -247,5 +264,16 @@ export const routerAbi = [
       { name: "sqrtPriceLimitX96", type: "uint160" },
     ],
     outputs: [{ name: "overtimeOut", type: "uint256" }],
+  },
+  {
+    type: "event",
+    name: "OvertimeChallengeExecuted",
+    inputs: [
+      { name: "player", type: "address", indexed: true },
+      { name: "grossWeth", type: "uint256", indexed: false },
+      { name: "crownCost", type: "uint256", indexed: false },
+      { name: "overtimeOut", type: "uint256", indexed: false },
+      { name: "deadline", type: "uint256", indexed: false },
+    ],
   },
 ] as const;

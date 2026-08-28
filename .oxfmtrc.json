@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    "broadcast/**",
+    "cache/**",
+    "node_modules/**",
+    "out/**",
+    "reports/**",
+    "ui/dist/**",
+    "vendor/**"
+  ],
+  "printWidth": 110,
+  "proseWrap": "preserve",
+  "semi": true,
+  "sortImports": true,
+  "sortPackageJson": true
+}

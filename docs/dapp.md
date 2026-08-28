@@ -5,15 +5,31 @@ The dapp consumes one generated deployment manifest rather than duplicating addr
 `deployments/mainnet.json` records pinned Ethereum mainnet inputs. Deployment writes the ignored
 `ui/public/deployment.json`, and devnet shutdown removes it so verification remains clean.
 
+## Browser architecture
+
+- Vite 8 builds the React app and Bun owns dependency and script execution.
+- Wagmi owns wallet connection and chain switching. Viem owns contract reads, simulation, receipt
+  polling, parsing and formatting.
+- TanStack Query owns fallible authoritative reads and block-driven refresh. Zustand owns only the
+  serialized user action state. A shared `useSyncExternalStore` clock interpolates countdowns
+  without component effects.
+- StyleX owns all visual styling. Coss-compatible component contracts supply semantic Card, Field,
+  Input, Button, Badge and Progress composition without adding a second styling system.
+- Oxlint and Oxfmt are the only JavaScript and TypeScript lint and format tools.
+
+The product is one arena screen. Add TanStack Router only when a second route has a real product
+boundary.
+
 ## Boundary
 
 - Verify the wallet chain before reads, simulations or writes.
 - Read contract addresses and pool parameters from the manifest.
 - Parse and format token amounts with each token's decimals; validate address input and render
-  addresses in a copyable, explorer-linked form.
+  addresses in a copyable form. Add explorer links only when the manifest supplies an explorer.
 - Use the product's intended router. Universal Router flows bind Permit2 approvals, deadlines,
   recipients and hook data explicitly.
-- Treat emitted events as indexing hints; read authoritative balances and claim state from contracts.
+- Use the submitted receipt's product event to prove that exact transaction. Then refresh current
+  balances, round data and claim state from contracts before the next action.
 
 ## Transaction flow
 
